@@ -1,4 +1,5 @@
 <?php
+ob_start();
 
 # server name
 $sName = "193.203.184.53";

@@ -1,4 +1,6 @@
 <?php
+ob_start();
+
 $servername = "193.203.184.53"; // or your server name
 $username = "u306273205_cc";
 $password = "Weblux@@1122";
