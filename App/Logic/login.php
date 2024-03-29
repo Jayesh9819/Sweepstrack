@@ -1,4 +1,6 @@
 <?php
+ob_start();
+
 session_start();
 
 // Include your database connection script

@@ -1,4 +1,5 @@
 <?php
+ob_start();
 
 use function PHPSTORM_META\type;
 
