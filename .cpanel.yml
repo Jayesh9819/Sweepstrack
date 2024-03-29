@@ -1,0 +1,17 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYDIR=~/public_html/quickchat.sweepstrac.net/
+    - /bin/cp -R App/* $DEPLOYDIR/App/
+    - /bin/cp -R assets/* $DEPLOYDIR/assets/
+    - /bin/cp -R Other/* $DEPLOYDIR/Other/
+    - /bin/cp -R Public/* $DEPLOYDIR/Public/
+    - /bin/cp -R Router/* $DEPLOYDIR/Router/
+    - /bin/cp -R uploads/* $DEPLOYDIR/uploads/
+    - /bin/cp .gitignore $DEPLOYDIR
+    - /bin/cp db.php $DEPLOYDIR
+    - /bin/cp index.php $DEPLOYDIR
+    - /bin/cp README.md $DEPLOYDIR
+    - /bin/cp -R snippets/* $DEPLOYDIR/snippets/
+    - /bin/cp -R test/* $DEPLOYDIR/test/
+    - /bin/cp test.php $DEPLOYDIR
