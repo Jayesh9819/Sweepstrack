@@ -1,5 +1,7 @@
 <?php
 // sjd
+ob_start();
+
 $uri = parse_url($_SERVER['REQUEST_URI'])['path'];
 include './Router/initialize.php';
 
