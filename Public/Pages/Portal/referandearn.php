@@ -171,7 +171,7 @@
             $stmt->close();
 
             // Generate the referral link
-            $referralLink = "https://quickchat.sweepstrac.net/index.php/Register_to_CustCount?r=" . $refercode . "&p=" . $page;
+            $referralLink = "https://sweepstrac.net/index.php/Register_to_CustCount?r=" . $refercode . "&p=" . $page;
             ?>
             <br> <br>
             <br>

@@ -1,6 +1,6 @@
 <?php
-$firstparam ="/CC_Disto/QuickChat/";
-$secondparam ="/CC_Disto/QuickChat/index.php";
-$thirdparam ="/CC_Disto/QuickChat";
+$firstparam ="/Sweepstrack/";
+$secondparam ="/Sweepstrack/index.php";
+$thirdparam ="/Sweepstrack";
 $fourthparam ="/index.php";
 ?>
