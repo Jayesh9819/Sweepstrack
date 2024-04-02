@@ -198,7 +198,7 @@ if (isset($action)) {
         echo $Cancel;
         echo $formend;
     } else if ($action == "DEPOSIT" && ($role != "User")) {
-        echo "Current URL: " . $_SERVER['REQUEST_URI'] . "<br>";
+        // echo "Current URL: " . $_SERVER['REQUEST_URI'] . "<br>";
 
         $title = "Reedem Details";
         $heading = "Fill in the Redeem Details";
