@@ -31,7 +31,7 @@
     // Initialize variables
     $referralPercentage = '';
     $affiliatePercentage = '';
-    $minimum ='';
+    $minimum = '';
 
     // Fetch the existing bonus rates
     $fetchQuery = "SELECT * FROM refferal_bonus LIMIT 1";
@@ -42,36 +42,37 @@
         $referralPercentage = $existingData['referal'];
         $affiliatePercentage = $existingData['affiliate'];
         $minimum = $existingData['minimum'];
-
-
     }
 
     // Check if form is submitted
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' ) {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Get new bonus percentages from the form
         $referralPercentage = $_POST['referralPercentage'];
         $affiliatePercentage = $_POST['affiliatePercentage'];
-        $minimum=$_POST['minimum'];
+        $minimum = $_POST['minimum'];
+        $ref = $_POST['ref'];
 
         // Sanitize input
         $referralPercentage = filter_var($referralPercentage, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         $affiliatePercentage = filter_var($affiliatePercentage, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         $minimum = filter_var($minimum, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+        $ref = filter_var($ref);
+
 
         // Update the referral_bonus table
         if ($existingData) {
-            $updateQuery = "UPDATE refferal_bonus SET referal = ?, affiliate = ?,minimum=? WHERE id = ?";
+            $updateQuery = "UPDATE refferal_bonus SET referal = ?, affiliate = ?,minimum=?,ref=? WHERE id = ?";
             $stmt = $conn->prepare($updateQuery);
-            $stmt->bind_param("dddi", $referralPercentage, $affiliatePercentage,$minimum, $existingData['id']);
+            $stmt->bind_param("dddsi", $referralPercentage, $affiliatePercentage, $minimum, $ref, $existingData['id']);
         } else {
-            $insertQuery = "INSERT INTO refferal_bonus (referal, affiliate,minimum) VALUES (?, ?,?)";
+            $insertQuery = "INSERT INTO refferal_bonus (referal, affiliate,minimum,ref) VALUES (?, ?,?,?)";
             $stmt = $conn->prepare($insertQuery);
-            $stmt->bind_param("ddd", $referralPercentage, $affiliatePercentage,$minimum);
+            $stmt->bind_param("ddds", $referralPercentage, $affiliatePercentage, $minimum, $ref);
         }
 
         if ($stmt->execute()) {
             // If you want to show a success message, you can use session or direct echo
-            $_SESSION['toast'] = ['type' => 'success', 'message' => 'Bonus Updated Sucessfully.'];
+            $_SESSION['toast'] = ['type' => 'success', 'message' => 'Minimum Updated Sucessfully.'];
             header("Location: " . $_SERVER['PHP_SELF']);
             exit();
         } else {
@@ -120,14 +121,7 @@
                             </div>
                             <div class="card-body">
                                 <form action="" method="POST">
-                                    <div class="mb-3">
-                                        <label for="referralPercentage" class="form-label">Referral Bonus Percentage</label>
-                                        <input type="text" class="form-control" id="referralPercentage" name="referralPercentage" required value="<?php echo htmlspecialchars($referralPercentage); ?>">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="affiliatePercentage" class="form-label">Affiliate Bonus Percentage</label>
-                                        <input type="text" class="form-control" id="affiliatePercentage" name="affiliatePercentage" required value="<?php echo htmlspecialchars($affiliatePercentage); ?>">
-                                    </div>
+
                                     <div class="mb-3">
                                         <label for="minimum" class="form-label">Minimum Withdraw</label>
                                         <input type="text" class="form-control" id="minimum" name="minimum" required value="<?php echo htmlspecialchars($minimum); ?>">
@@ -170,6 +164,10 @@
                                                 <th scope="col">Referred By Username</th>
                                                 <th scope="col">Affiliated By Username</th>
                                                 <th scope="col">Time</th>
+                                                <th scope="col">Send ReferMoney</th>
+
+
+
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -178,8 +176,13 @@
                                                     <td><?= htmlspecialchars($row['id']); ?></td>
                                                     <td><?= htmlspecialchars($row['name']); ?></td>
                                                     <td><?= htmlspecialchars($row['refered_by']); ?></td>
-                                                    <td><?= htmlspecialchars($row['afilated_by']); ?></td>
-                                                    <td><?= htmlspecialchars($row['created_at']); ?></td>
+                                                    <td><?= !empty($row['afilated_by']) ? htmlspecialchars($row['afilated_by']) : "NO"; ?></td>
+                                                    <td><?= htmlspecialchars($row['created_at']);  ?></td>
+                                                    
+                                                    <td> <a href="./Add_Refer?u=<?php $username=$row['refered_by']; echo $username; ?>" style="text-decoration: none;">
+                                                            <button type="button" class="btn btn-danger rounded-pill mt-2">Send Refer</button>
+                                                        </a>
+                                                    </td>
                                                 </tr>
                                             <?php endwhile; ?>
                                         </tbody>
@@ -222,7 +225,7 @@
 
         <?
         include("./Public/Pages/Common/footer.php");
-       
+
         ?>
 
     </main>

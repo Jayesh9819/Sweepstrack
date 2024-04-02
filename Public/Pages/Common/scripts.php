@@ -1,5 +1,14 @@
 <!-- Include Bootstrap and other CSS libraries -->
+<?php
+if (isset($_SESSION['role'])) {
 
+
+    $role = $_SESSION['role'];
+    if ($role != 'User') {
+        echo '<script src="../Public/Chats/globalNotifications.js" > </script>';
+    }
+}
+?>
 <!-- jQuery Library - Load this first to ensure it's available for all jQuery-dependent scripts -->
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 

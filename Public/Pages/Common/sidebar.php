@@ -12,7 +12,7 @@
                 </div>
             </div>
             <!--logo End-->
-            <h4 class="logo-title">CustCount</h4>
+            <h4 class="logo-title">QuickChat</h4>
         </a>
         <div class="sidebar-toggle" data-toggle="sidebar" data-active="true">
             <i class="icon">
@@ -68,13 +68,6 @@
                 <li>
                     <hr class="hr-horizontal">
                 </li>
-
-
-
-
-
-
-
 
                 <?php if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) : ?>
 

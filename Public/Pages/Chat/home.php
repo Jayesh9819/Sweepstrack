@@ -14,7 +14,7 @@
 		echo "<script type='text/javascript'>document.addEventListener('DOMContentLoaded', function() { toastr['$type']('$message'); });</script>";
 	}
 
-	
+
 	if (isset($_SESSION['toast'])) {
 		$toast = $_SESSION['toast'];
 		echoToastScript($toast['type'], $toast['message']);
@@ -52,12 +52,11 @@
 		}
 
 		$chats = getChats($_SESSION['user_id'], $chatWith['id'], $conn);
-
 		opened($chatWith['id'], $conn, $chats);
 	}
 
 
-	
+
 	?>
 
 	<style>
@@ -403,6 +402,7 @@
 					         rounded p-2 mb-1">
 									<?= linkify($chat['message']) ?>
 									<?php
+
 									$attachmentHTML = '';
 									if (!empty($chat['attachment'])) {
 										$file = "../uploads/" . $chat['attachment']; // Adjust the path as needed
@@ -446,6 +446,14 @@
 									<small style="font-size: x-small;" class="d-block">
 										<?= $chat['created_at'] ?>
 									</small>
+									<?php
+									// Check if 'sender_username' is set and not empty for the current chat
+									if (isset($chat['sender_username']) && !empty($chat['sender_username'])) {
+										$participantName = $chat['sender_username']; // Retrieve the participant's name
+										echo "<small style=\"font-size: small;\" class=\"d-block\">By " . htmlspecialchars($participantName) . "</small>";
+									}
+									?>
+
 								</p>
 						<?php }
 						}
@@ -714,7 +722,7 @@
 
 		<?
 		include("./Public/Pages/Common/footer.php");
-		
+
 		?>
 
 	</main>

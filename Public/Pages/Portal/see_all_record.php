@@ -39,13 +39,16 @@
             $_SESSION[$key] = $value;
         }
     }
-    $_SESSION['timezone'] = 'America/New_York';
+    // $_SESSION['timezone'] = 'America/New_York';
     if (isset($_SESSION['timezone'])) {
         $selectedTimezone = $_SESSION['timezone'];
         // Set the default timezone to the selected timezone
         date_default_timezone_set($selectedTimezone);
     }
 
+    if (!isset($_SESSION['time_filter']) || $_SESSION['time_filter'] == "") {
+        $_SESSION['time_filter'] = "Custom";
+    }
 
 
     ?>
@@ -102,7 +105,7 @@
                 <input type="hidden" name="u" value="<?php echo isset($_SESSION['u']) ? htmlspecialchars($_SESSION['u']) : ''; ?>">
                 <input type="hidden" name="r" value="<?php echo isset($_SESSION['r']) ? htmlspecialchars($_SESSION['r']) : ''; ?>">
                 <input type="hidden" name="page" value="<?php echo isset($_SESSION['page']) ? htmlspecialchars($_SESSION['page']) : ''; ?>">
-                        <input type="hidden" name="branch" value="<?php echo isset($_SESSION['branch']) ? htmlspecialchars($_SESSION['branch']) : ''; ?>">
+                <input type="hidden" name="branch" value="<?php echo isset($_SESSION['branch']) ? htmlspecialchars($_SESSION['branch']) : ''; ?>">
 
                 <div class="form-row align-items-center">
                     <div class="col-auto">
@@ -123,6 +126,14 @@
                         }
                         ?>
                     </select>
+                    <label for="time_filter">Select Time Filter:</label>
+                    <select name="time_filter" id="time_filter">
+                        <option value="custom" <?php echo ($_SESSION['time_filter'] == 'custom') ? 'selected' : ''; ?>>ALL</option>
+                        <option value="1" <?php echo ($_SESSION['time_filter'] == '1') ? 'selected' : ''; ?>>1 Hour</option>
+                        <option value="2" <?php echo ($_SESSION['time_filter'] == '2') ? 'selected' : ''; ?>>2 Hours</option>
+                        <option value="24" <?php echo ($_SESSION['time_filter'] == '24') ? 'selected' : ''; ?>>24 Hours</option>
+                    </select>
+
 
                     <div class="col-auto">
                         <button type="submit" class="btn btn-primary">Filter</button>
@@ -157,7 +168,7 @@
                         $sql = "SELECT * FROM transaction WHERE branch='$u'";
                         unset($_SESSION['branch']);
                     } else {
-                        unset($_SESSION['start_date'],$_SESSION['end_date'],$_SESSION['u'],$_SESSION['r'],$_SESSION['page'],$_SESSION['branch']);
+                        unset($_SESSION['u'], $_SESSION['r'], $_SESSION['page'], $_SESSION['branch']);
                         $sql = "SELECT * FROM transaction WHERE 1=1"; // Always true condition to start the WHERE clause
                     }
 
@@ -170,7 +181,7 @@
                         // Only start date is provided
                         $start_date = $_SESSION['start_date'];
                         $sql .= " AND created_at >= '$start_date 00:00:00'";
-                    } elseif (!isset($_SESSION['start_date']) && isset($_SESSION['end_date']) && $_SESSION['end_date'] !== '') {
+                    } elseif (isset($_SESSION['start_date']) && isset($_SESSION['end_date']) && $_SESSION['end_date'] !== '') {
                         // Only end date is provided
                         $end_date = $_SESSION['end_date'];
                         $sql .= " AND created_at <= '$end_date 23:59:59'";
@@ -179,8 +190,20 @@
                         $start_date = $_SESSION['start_date'];
                         $sql .= " AND created_at >= '$start_date 00:00:00'";
                     }
-
-
+                    if (isset($_SESSION['time_filter']) && $_SESSION != "") {
+                        $timeFilter = $_SESSION['time_filter'];
+                        if ($timeFilter === '1') {
+                            $sql .= " AND created_at >= NOW() - INTERVAL 1 HOUR";
+                        } elseif ($timeFilter === '2') {
+                            $sql .= " AND created_at >= NOW() - INTERVAL 2 HOUR";
+                        } elseif ($timeFilter === '24') {
+                            $sql .= " AND created_at >= NOW() - INTERVAL 24 HOUR";
+                        } elseif ($timeFilter === 'custom') {
+                            // Handle custom time filter here
+                            // Example: $customStartTime = $_GET['custom_start_time']; $customEndTime = $_GET['custom_end_time'];
+                        }
+                    }
+                    // echo $sql;
                     $stmt = $conn->prepare($sql);
                     // $stmt->bind_param('s', $u);
                     $stmt->execute();

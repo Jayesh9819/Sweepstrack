@@ -37,14 +37,14 @@
 		if ($_SESSION['role'] == 'User') {
 			// Fetch online agents in the same page
 			$pagename = $_SESSION['page'];
-			$sql = "SELECT * FROM user WHERE role = 'Agent' AND last_seen(last_seen) = 'Active' AND pagename = ?";
+			$sql = "SELECT * FROM user WHERE role = 'Agent' AND last_seen(last_seen) COLLATE utf8mb4_unicode_ci = 'Active' AND pagename = ? COLLATE utf8mb4_unicode_ci";
 			$stmt = $conn->prepare($sql);
 			$stmt->execute([$pagename]);
 			$agents = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 			$user = getUser($_SESSION['username'], $conn);
 
-			# Getting User conversations
+			// Getting User conversations
 			$conversations = getConversation($user['id'], $conn);
 		} else {
 			$user = getUser($_SESSION['username'], $conn);
@@ -215,6 +215,26 @@
 			overflow-y: auto;
 			max-height: 400px;
 		}
+
+		.unread-messages {
+			display: inline-block;
+			background-color: green;
+			color: white;
+			font-size: 0.8em;
+			border-radius: 50%;
+			padding: 2px 6px;
+			margin-left: 5px;
+			vertical-align: top;
+			float: right;
+			/* Add float right to move it to the right side */
+			margin-right: 10px;
+			/* Adjust as needed for spacing from the right edge */
+		}
+
+		.d-flex.align-items-center {
+			flex-grow: 1;
+			/* Ensure the container takes all available space */
+		}
 	</style>
 
 
@@ -282,9 +302,10 @@
 	    				          align-items-center p-2">
 											<div class="d-flex
 	    					            align-items-center">
-										<img src="../uploads/profile/<?= !empty($chatWith['p_p']) ? $chatWith['p_p'] : '07.png' ?>" class="w-15 rounded-circle">
+												<img src="../uploads/profile/<?= !empty($chatWith['p_p']) ? $chatWith['p_p'] : '07.png' ?>" class="w-15 rounded-circle">
 												<h3 class="fs-xs m-2">
 													<?= $conversation['name'] ?><br>
+
 													<small>
 														<?php
 														echo lastChat($_SESSION['user_id'], $conversation['id'], $conn);
@@ -292,6 +313,10 @@
 													</small>
 												</h3>
 											</div>
+											<?php if (!empty($conversation['unread_messages']) && $conversation['unread_messages'] > 0) { ?>
+												<div class="unread-messages"><?= $conversation['unread_messages'] ?></div>
+											<?php } ?>
+
 											<?php if (last_seen($conversation['last_seen']) == "Active") { ?>
 												<div title="online">
 													<div class="online"></div>
@@ -322,7 +347,7 @@
 			            align-items-center">
 							<div class="d-flex
     			            align-items-center">
-							<img src="../uploads/profile/<?= !empty($chatWith['p_p']) ? $chatWith['p_p'] : '07.png' ?>" class="w-15 rounded-circle">
+								<img src="../uploads/profile/<?= !empty($chatWith['p_p']) ? $chatWith['p_p'] : '07.png' ?>" class="w-15 rounded-circle">
 								<h3 class="fs-xs m-2"><?= $user['name'] ?></h3>
 							</div>
 						</div>
@@ -434,7 +459,7 @@
 
 		<?
 		include("./Public/Pages/Common/footer.php");
-		
+
 		?>
 
 	</main>

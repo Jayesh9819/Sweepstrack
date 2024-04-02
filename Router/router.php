@@ -1,5 +1,6 @@
 <?php
 // sjd
+ob_start();
 
 $uri = parse_url($_SERVER['REQUEST_URI'])['path'];
 include './Router/initialize.php';
@@ -11,12 +12,10 @@ if ($uri == $firstparam || $uri == $secondparam) {
     </script>';
     die();
 } else {
-
     $prefix = $thirdparam;
     $root = $fourthparam;
     $routes = [
 
-        //? This is Routes which will automatically routed when index page is loaded..
 
         $prefix . $root . '/Login_to_CustCount'                    => './Public/Pages/Signing/login/login.php',
         $prefix . $root . '/Register_to_CustCount'                 => './Public/Pages/Signing/register/register.php',
@@ -65,12 +64,10 @@ if ($uri == $firstparam || $uri == $secondparam) {
         $prefix . $root . '/Withdraw_Earning'                         => './Public/Pages/Portal/withdrawlearning.php',
 
         $prefix . $root . '/Scripts'                         => './Public/Pages/Portal/scripts.php',
-
-
-
         $prefix . $root . '/Add_User'                         => './Public/Pages/Portal/temp.php',
-
         $prefix . $root . '/Add_CashApp'                         => './Public/Pages/Portal/temp.php',
+        $prefix . $root . '/Add_Refer'                         => './Public/Pages/Portal/add_refer.php',
+
 
         //Edit Fields
         $prefix . $root . '/Edit_User'                         => './Public/Pages/Portal/temp.php',

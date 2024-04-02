@@ -29,7 +29,6 @@
         unset($_SESSION['login_error']); // Clear the error message
     }
 
-    print($uri);
 
     include './App/db/db_connect.php';
     $userid = $_SESSION['userid'];
@@ -117,8 +116,8 @@
                                 <button type="button" class="content-sidebar-submit"><i class="ri-search-line"></i></button>
                             </form>
 
-                            
-                            
+
+
                             <div class="content-messages">
                                 <ul class="content-messages-list">
                                     <li class="content-message-title"><span>Recently</span></li>
@@ -199,7 +198,6 @@
                     </span>
                 </a>
             </li>';
-
                                         }
                                     }
                                     ?>
@@ -260,14 +258,14 @@
                             foreach ($dataArray as $data) {
 
                                 $chatId = $data['chat_id'];
-                                
+
                                 if ($data['sender_id'] == $userid) {
                                     $tobepass = $data['receiver_id'];
                                 } else if ($data['receiver_id'] == $userid) {
                                     $tobepass = $data['sender_id'];
-                                } 
+                                }
 
-                               
+
 
                                 echo '
 
@@ -295,16 +293,16 @@
 
 
                                 // foreach ($chatRecords as $row) : 
-                                    $query = mysqli_query($conn,"SELECT * FROM chat_records WHERE chat_id = $chatId");
-                                    while($row = mysqli_fetch_assoc($query)) {
-                                        // $chatRecords[] = $row;
-                                   
-                                
+                                $query = mysqli_query($conn, "SELECT * FROM chat_records WHERE chat_id = $chatId");
+                                while ($row = mysqli_fetch_assoc($query)) {
+                                    // $chatRecords[] = $row;
+
+
                                     // print_r($row);
-                                ?>
+                        ?>
 
 
-<!-- <div class="ourphp-conversation-container"></div> -->
+                                    <!-- <div class="ourphp-conversation-container"></div> -->
                                     <li class="conversation-item <?php echo ($row['from_user'] == $_SESSION['userid']) ? '' : 'me'; ?>">
                                         <div class="conversation-item-side">
                                             <img class="conversation-item-image" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8cGVvcGxlfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60" alt="">
@@ -339,13 +337,13 @@
 
 
 
-                    <form id="messageForm'.$tobepass.'">
+                    <form id="messageForm' . $tobepass . '">
     <div class="conversation-form">
         <button type="button" class="conversation-form-button"><i class="ri-emotion-line"></i></button>
         <div class="conversation-form-group">
 
-            <textarea id="messageInput'.$tobepass.'" class="conversation-form-input" rows="1" placeholder="Type here..."></textarea>
-            <input type="hidden" id="receiver_id'.$tobepass.'" name="receiver_id" value="'.$tobepass.'">
+            <textarea id="messageInput' . $tobepass . '" class="conversation-form-input" rows="1" placeholder="Type here..."></textarea>
+            <input type="hidden" id="receiver_id' . $tobepass . '" name="receiver_id" value="' . $tobepass . '">
             <button type="button" class="conversation-form-record"><i class="ri-mic-line"></i></button>
         </div>
         <button type="submit" class="conversation-form-button conversation-form-submit"><i class="ri-send-plane-2-line"></i></button>
@@ -395,17 +393,17 @@
 
 
 
-                    <form id="ananonymousForm'.$an_id.'" >
+                    <form id="ananonymousForm' . $an_id . '" >
                     <div class="conversation-form">
                         <button type="button" class="conversation-form-button"><i class="ri-emotion-line"></i></button>
                         <div class="conversation-form-group">
                         
-                            <textarea id="messageInput2'.$an_id.'" class="conversation-form-input" rows="1" placeholder="Type here..."></textarea>
+                            <textarea id="messageInput2' . $an_id . '" class="conversation-form-input" rows="1" placeholder="Type here..."></textarea>
                             
                             
-                            <input type="hidden" id="receiver_id'.$an_id.'" name="receiver_id" value="'.$an_id.'">
+                            <input type="hidden" id="receiver_id' . $an_id . '" name="receiver_id" value="' . $an_id . '">
             
-                            <input type="hidden" name="additionalValue2'.$an_id.'" value="Value 2">
+                            <input type="hidden" name="additionalValue2' . $an_id . '" value="Value 2">
                             
                             <button type="button" class="conversation-form-record"><i class="ri-mic-line"></i></button>
                         </div>
@@ -467,89 +465,91 @@
 
     ?>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    
-$(document).ready(function() {
-    // Loop through each form with a dynamic identifier
-    $('[id^="ananonymousForm"]').each(function() {
-        var form = $(this);
-        var an_id = form.attr('id').replace('ananonymousForm', ''); // Extract the dynamic ID
-        var messageInput = $('#messageInput2' + an_id);
-        var receiverId = $('#receiver_id' + an_id).val();
-        console.log(receiverId)
-        // Form submission for each form
-        form.submit(function(e) {
-            e.preventDefault(); // Prevent default form submission
-            sendMessage2(an_id, messageInput, receiverId);
-        });
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Loop through each form with a dynamic identifier
+            $('[id^="ananonymousForm"]').each(function() {
+                var form = $(this);
+                var an_id = form.attr('id').replace('ananonymousForm', ''); // Extract the dynamic ID
+                var messageInput = $('#messageInput2' + an_id);
+                var receiverId = $('#receiver_id' + an_id).val();
+                console.log(receiverId)
+                // Form submission for each form
+                form.submit(function(e) {
+                    e.preventDefault(); // Prevent default form submission
+                    sendMessage2(an_id, messageInput, receiverId);
+                });
 
-        // Keypress event for the message input in each form
-        messageInput.keypress(function(e) {
-            if (e.which === 13) { // 13 is the key code for Enter
+                // Keypress event for the message input in each form
+                messageInput.keypress(function(e) {
+                    if (e.which === 13) { // 13 is the key code for Enter
+                        e.preventDefault(); // Prevent default form submission
+                        sendMessage2(an_id, messageInput, receiverId);
+                    }
+                });
+            });
+
+            // Function to send message for a specific form
+            function sendMessage2(an_id, messageInput, receiverId) {
+                var message = messageInput.val();
+
+                $.ajax({
+                    url: '../App/Logic/update_chat_unknownmsg.php',
+                    type: 'POST',
+                    data: {
+                        message: message,
+                        receiver_id: receiverId
+                    },
+                    success: function(response) {
+                        console.log('Message sent successfully for form with ID: ' + an_id);
+                        messageInput.val(''); // Clear input field after sending message
+                        // Update UI if needed
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error sending message for form with ID: ' + an_id);
+                    }
+                });
+            }
+
+
+            $('form[id^="messageForm"]').submit(function(e) {
                 e.preventDefault(); // Prevent default form submission
-                sendMessage2(an_id, messageInput, receiverId);
+                sendMessage($(this));
+            });
+
+            // Keypress event for each form
+            $('textarea[id^="messageInput"]').keypress(function(e) {
+                if (e.which === 13) { // 13 is the key code for Enter
+                    e.preventDefault(); // Prevent default form submission
+                    sendMessage($(this).closest('form'));
+                }
+            });
+
+            // Function to send message for each form
+            function sendMessage(form) {
+                var message = form.find('textarea').val();
+                var receiverId = form.find('input[name="receiver_id"]').val(); // Get the value of the hidden input for receiver ID
+
+                $.ajax({
+                    url: '../App/Logic/update_chat_unknownmsg.php',
+                    type: 'POST',
+                    data: {
+                        message: message,
+                        receiver_id: receiverId
+                    }, // Pass message and receiverId in the POST request
+                    success: function(response) {
+                        console.log('Message sent successfully');
+                        form.find('textarea').val('');
+                        // Clear input field after sending message
+                        // Update UI if needed
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error sending message');
+                    }
+                });
             }
         });
-    });
-
-    // Function to send message for a specific form
-    function sendMessage2(an_id, messageInput, receiverId) {
-        var message = messageInput.val();
-
-        $.ajax({
-            url: '../App/Logic/update_chat_unknownmsg.php',
-            type: 'POST',
-            data: {
-                message: message,
-                receiver_id: receiverId
-            },
-            success: function(response) {
-                console.log('Message sent successfully for form with ID: ' + an_id);
-                messageInput.val(''); // Clear input field after sending message
-                // Update UI if needed
-            },
-            error: function(xhr, status, error) {
-                console.error('Error sending message for form with ID: ' + an_id);
-            }
-        });
-    }
-
-
-    $('form[id^="messageForm"]').submit(function(e) {
-    e.preventDefault(); // Prevent default form submission
-    sendMessage($(this));
-});
-
-// Keypress event for each form
-$('textarea[id^="messageInput"]').keypress(function(e) {
-    if (e.which === 13) { // 13 is the key code for Enter
-        e.preventDefault(); // Prevent default form submission
-        sendMessage($(this).closest('form'));
-    }
-});
-
-// Function to send message for each form
-function sendMessage(form) {
-    var message = form.find('textarea').val();
-    var receiverId = form.find('input[name="receiver_id"]').val(); // Get the value of the hidden input for receiver ID
-
-    $.ajax({
-        url: '../App/Logic/update_chat_unknownmsg.php',
-        type: 'POST',
-        data: { message: message, receiver_id: receiverId }, // Pass message and receiverId in the POST request
-        success: function(response) {
-            console.log('Message sent successfully');
-            form.find('textarea').val('');
-            // Clear input field after sending message
-            // Update UI if needed
-        },
-        error: function(xhr, status, error) {
-            console.error('Error sending message');
-        }
-    });
-}
-});
 
         // start: Sidebar
         document.querySelector('.chat-sidebar-profile-toggle').addEventListener('click', function(e) {
@@ -613,27 +613,29 @@ function sendMessage(form) {
             })
         })
 
-       
-   
-    function fetchChatRecords(chatId) {
-        $.ajax({
-            url: '../App/Logic/fetchrecords.php',
-            type: 'GET',
-            data: { chatId: chatId }, // Pass chat ID as a parameter
-            success: function(data) {
-                $('.ourphp-conversation-container').html(data); // Update conversation container with fetched data
-            },
-            error: function(xhr, status, error) {
-                console.log('Error fetching chat records');
-            }
-        });
-    }
 
-    // Fetch chat records for a specific chat ID every 2 seconds
-    setInterval(function() {
-        fetchChatRecords(chatId);
-    }, 2000); 
-</script>
+
+        function fetchChatRecords(chatId) {
+            $.ajax({
+                url: '../App/Logic/fetchrecords.php',
+                type: 'GET',
+                data: {
+                    chatId: chatId
+                }, // Pass chat ID as a parameter
+                success: function(data) {
+                    $('.ourphp-conversation-container').html(data); // Update conversation container with fetched data
+                },
+                error: function(xhr, status, error) {
+                    console.log('Error fetching chat records');
+                }
+            });
+        }
+
+        // Fetch chat records for a specific chat ID every 2 seconds
+        setInterval(function() {
+            fetchChatRecords(chatId);
+        }, 2000);
+    </script>
 </body>
 
 </html>

@@ -2,14 +2,14 @@
 ob_start();
 
 # server name
-$sName = "193.203.184.53";
+$sName = "199.231.187.147";
 # user name
-$uName = "u306273205_cc";
+$uName = "sweeps_trac";
 # password
 $pass = "Weblux@@1122";
 
 # database name
-$db_name = "u306273205_cc";
+$db_name = "sweeps_trac";
 
 #creating database connection
 try {

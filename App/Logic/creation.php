@@ -303,9 +303,9 @@ class Creation
             $pagename=$userData['pagename'];
 
 
-            $sql = "Insert into transaction (username,redeem,page,branch,excess,cashapp,platform,tip,type,remark,by_u) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+            $sql = "Insert into transaction (username,redeem,page,branch,excess,cashapp,platform,tip,type,remark,by_u,by_role) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
             if ($stmt = mysqli_prepare($this->conn, $sql)) {
-                mysqli_stmt_bind_param($stmt, "sississssss", $username, $cashoutamount, $pagename,$branchId, $accessamount, $cashupName, $platformName, $tip, $type, $remark, $by_username);
+                mysqli_stmt_bind_param($stmt, "sississsssss", $username, $cashoutamount, $pagename,$branchId, $accessamount, $cashupName, $platformName, $tip, $type, $remark, $by_username,$by_role);
                 if ($stmt->execute()) {
                     $_SESSION['toast'] = ['type' => 'success', 'message' => 'Reedem Added Sucessfully '];
 
@@ -329,7 +329,7 @@ class Creation
     {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Validate input fields
-            if (empty($_POST['username']) || empty($_POST['platformname']) || empty($_POST['cashAppname']) || empty($_POST['bonusamount'])) {
+            if (empty($_POST['username']) || empty($_POST['platformname']) || empty($_POST['cashAppname']) ) {
                 echo "Validation failed. Redirecting...<br>";
                 echo "Current URL: " . $_SERVER['REQUEST_URI'] . "<br>";
 
@@ -352,16 +352,17 @@ class Creation
             $userData=$this->getUserDataByUsername($username);
             $branchId=$userData['branchname'];
             $pagename=$userData['pagename'];
+            $byrole=$this->srole;
 
 
 
             $type = "Debit"; // Adjust the type as needed
 
-            $sql = "INSERT INTO transaction (username, recharge, page_id,page, platform,branch, cashapp, bonus, remark, by_id, by_u, type, created_at, updated_at)
-                    VALUES (?, ?, ?, ?, ?, ?,?, ?, ?,?, ?, ?, NOW(), NOW())";
+            $sql = "INSERT INTO transaction (username, recharge, page_id,page, platform,branch, cashapp, bonus, remark, by_id,by_role, by_u, type, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?,?, ?, ?,?,?, ?, ?, NOW(), NOW())";
 
             if ($stmt = $this->conn->prepare($sql)) {
-                $stmt->bind_param("ssssssssssss", $username, $recharge, $pageId, $pagename, $platform, $branchId, $cashName, $bonus, $remark, $byId, $byUsername, $type);
+                $stmt->bind_param("sssssssssssss", $username, $recharge, $pageId, $pagename, $platform, $branchId, $cashName, $bonus, $remark, $byId,$byrole, $byUsername, $type);
 
                 if ($stmt->execute()) {
                     $_SESSION['toast'] = ['type' => 'success', 'message' => 'Recharge Added Sucessfully '];

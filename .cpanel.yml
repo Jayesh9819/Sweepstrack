@@ -1,7 +1,7 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYDIR=~/public_html/quickchat.sweepstrac.net/
+    - export DEPLOYDIR=~/public_html/test.sweepstrac.net/
     - /bin/cp -R App/* $DEPLOYDIR/App/
     - /bin/cp -R assets/* $DEPLOYDIR/assets/
     - /bin/cp -R Other/* $DEPLOYDIR/Other/

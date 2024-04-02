@@ -58,15 +58,17 @@ if (isset($action)) {
             }
             // echo select("Sub Section", "condtion", "condtion", $branchOptions, isset($_POST['condtion']) ? $_POST['condtion'] : '');
 
-            echo $name = field("Name", "text", "name", "Enter Your Name", isset($row['name']) ? $row['name'] : '');
+            echo $name = field("Name", "text", "fullname", "Enter Your Name", isset($row['name']) ? $row['name'] : '');
             echo $username = field("Username", "text", "username", "Enter Your Username", isset($row['username']) ? $row['username'] : '');
             echo $password = field("Password", "password", "password", "Enter Your Password", isset($row['password']) ? $row['password'] : '');
             echo '<input type="hidden" name="role" value="' . (isset($row['role']) ? $row['role'] : '') . '" >';
+            if (isset($row['role'])) {
+                if ($row['role'] == 'User') {
 
-            // Additional fields for 'EDIT_USER'
-
-            echo $fbLink = field("Facebook Link", "text", "fb_link", "Enter Your Facebook Link", isset($row['Fb-link']) ? $row['Fb-link'] : '');
-
+                    // Additionl fields for 'EDIT_USER'
+                    echo $fbLink = field("Facebook Link", "text", "fb_link", "Enter Your Facebook Link", isset($row['Fb-link']) ? $row['Fb-link'] : '');
+                }
+            }
             if (isset($row['role'])) {
                 if ($row['role'] == 'Supervisor' || $row['role'] == 'Agent') {
                     echo select("Page name", "page", "page", $branchOptions, isset($row['pagename']) ? $row['pagename'] : '');
@@ -79,24 +81,25 @@ if (isset($action)) {
         } else {
 
 
-            echo $name = field("Name", "text", "name", "Enter Your Name", isset($_POST['name']) ? $_POST['name'] : '');
+            echo $name = field("Name", "text", "fullname", "Enter Your Name", isset($_POST['name']) ? $_POST['name'] : '');
             echo $username = field("Username", "text", "username", "Enter Your Username", isset($_POST['username']) ? $_POST['username'] : '');
             echo $password = field("Password", "password", "password", "Enter Your Password", isset($_POST['password']) ? $_POST['password'] : '');
             echo '<input type="hidden" name="role" value="' . (isset($_POST['role']) ? $_POST['role'] : '') . '" >';
 
             // Additional fields for 'EDIT_USER'
-            echo $fbLink = field("Facebook Link", "text", "fb_link", "Enter Your Facebook Link", isset($_POST['fb_link']) ? $_POST['fb_link'] : '');
 
 
             if (isset($_POST['role'])) {
                 if ($_POST['role'] == 'Supervisor' || $_POST['role'] == 'Agent') {
                     echo '<label for="pagename">Page Name</label>';
                     echo '<select class="form-select" id="pagename" name="page" onchange="showOtherField(this, \'cashAppname-other\')">' . $pageopt . '</select>';
-                } elseif ($_POST['role'] == 'Manager' || $_POST['role'] == 'User') {
+                } elseif ($_POST['role'] == 'Manager') {
                     echo '<label for="pagename">Page Name</label>';
                     echo '<select class="form-select" id="pagename" name="page" onchange="showOtherField(this, \'cashAppname-other\')">' . $pageopt . '</select>';
-                } else {
-                    echo "Invalid attempt";
+                } elseif ($_POST['role'] == 'User') {
+                    echo $fbLink = field("Facebook Link", "text", "fb_link", "Enter Your Facebook Link", isset($_POST['fb_link']) ? $_POST['fb_link'] : '');
+                    echo '<label for="pagename">Page Name</label>';
+                    echo '<select class="form-select" id="pagename" name="page" onchange="showOtherField(this, \'cashAppname-other\')">' . $pageopt . '</select>';
                 }
             }
 
@@ -533,14 +536,13 @@ if (isset($action)) {
 
         echo fhead($title, $heading, $postUrl);
         $name = $_GET['u'];
-        echo field("Username", "text", "username", "", $name,"required","readonly");
+        echo field("Username", "text", "username", "", $name, "required", "readonly");
         echo field("Amount", "number", "amount", "Enter Amount for the free play", '');
         echo select("Platform", "platform", "platform", array_combine($conditionOptions, $conditionOptions));
-        echo field("Remark", "text", "remark", "Enter Remark", "","");
+        echo field("Remark", "text", "remark", "Enter Remark", "", "");
         echo $Submit;
         echo $Cancel;
         echo $formend;
-
     }
 }
 

@@ -120,7 +120,14 @@
                                             <?php
                                             while ($row = $result->fetch_assoc()) {
                                                 // Check if the link already includes http:// or https://
-                                                $fbLink = (strpos($row['Fb-link'], 'http://') === 0 || strpos($row['Fb-link'], 'https://') === 0) ? $row['Fb-link'] : 'http://' . $row['Fb-link'];
+                                                // Check if 'Fb-link' is not null
+                                                if (!is_null($row['Fb-link']) && $row['Fb-link'] != '') {
+                                                    // Check if the link starts with 'http://' or 'https://'
+                                                    $fbLink = (strpos($row['Fb-link'], 'http://') === 0 || strpos($row['Fb-link'], 'https://') === 0) ? $row['Fb-link'] : 'http://' . $row['Fb-link'];
+                                                } else {
+                                                    // 'Fb-link' is null, set $fbLink to "Not Provided"
+                                                    $fbLink = "Not Provided";
+                                                }
 
                                                 echo "<tr>
                 <td>{$row['id']}</td>
@@ -165,7 +172,7 @@
 
         <?
         include("./Public/Pages/Common/footer.php");
-       
+
         ?>
 
     </main>

@@ -23,9 +23,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $action == "register") {
     $password = trim($_POST['password']);
     $ref = isset($_POST['rfc']) ? $_POST['rfc'] : null;
     $refercode = generateReferralCode($fullname, $conn);
+    
+    $role = trim($_POST['role']);
     $referby=getUsernameByReferralCode($conn,$ref);
 
-    $role = trim($_POST['role']);
     $termsAccepted = isset($_POST['terms']) && $_POST['terms'] == 'on';
 
     // Additional fields
@@ -42,10 +43,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $action == "register") {
         $creationInstance = new Creation($conn);
         $branchId = $creationInstance->getBranchNameByPageName($pageId, $conn);
     }
-    echo $branchId, $pageId;
-    print_r("the bra" . $branchId);
-    print_r($_POST);
-    // Get the user's IP address
     $ipAddress = $_SERVER['REMOTE_ADDR'];
 
     // Validate inputs are not empty
@@ -93,7 +90,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $action == "register") {
 
         if ($stmt->execute()) {
             setToast('success', 'New record created successfully.');
-            processReferralCode($conn,$username,$ref);
+            if($role=='User'){
+            processReferralCode($conn,$username,$ref);}
 
             $redirectTo = '../../index.php/Portal'; // Success: Redirect to the home page or dashboard
         } else {

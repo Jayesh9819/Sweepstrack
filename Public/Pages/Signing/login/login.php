@@ -63,7 +63,7 @@
                                 <div class="logo-normal">
                                     <img src="../assets/images/CustCountFinal.png" style="height: 100px; " alt="">
                                 </div>
-                                <h1 style="font-family: 'Times New Roman', Times, serif; color: #d9be36; font-size: 3em; font-weight: bold; " class="logo-title ms-3 mb-0">Sweepstrac</h1>
+                                <h1 style="font-family: 'Times New Roman', Times, serif; color:#2fe082; font-size: 3em; font-weight: bold; " class="logo-title ms-3 mb-0">QuickChat</h1>
 
                                 <h5 style=" text-decoration:double; position: relative; right: 180px; top: 40px; color: #251469; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;" class="logo-title ms-3 mb-0">COUNT, IMPACT, PROSPER</h5>
 
@@ -101,6 +101,9 @@
                                                     <button type="submit" class="btn btn-primary">Sign In</button>
                                                 </div>
                                                 <p class="text-center my-3">or sign in with other accounts?</p>
+                                                <!-- For Android -->
+                                                </p>
+                                                
                                                 <div class="d-flex justify-content-center">
                                                     <ul class="list-group list-group-horizontal list-group-flush">
 
@@ -111,6 +114,12 @@
                                                     </ul>
                                                 </div>
                                                 <p class="mt-3 text-center">
+                                                    <button onclick="window.location.href='https://storage.appilix.com/uploads/app-apk-660a6ec0b839b-1711959744.apk'" class="btn btn-primary">Download for Android</button>
+
+<!-- For iOS -->
+<button onclick="window.location.href='https://warehouse.appilix.com/uploads/app-ipa-660a6f91c5ea7-1711959953.ipa'" class="btn btn-primary">Download for iOS</button>
+                                                <p class="mt-3 text-center">
+    For iOS Install using Scarlet or AltStore or similar tools
                                                     <!-- Don’t have an account? <a href="./Register_to_CustCount" class="text-underline">Click here to sign up.</a> -->
                                                 </p>
                                             </form>
