@@ -1,7 +1,7 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYDIR=/home/sweeps/public_html/
+    - export DEPLOYDIR=/home/sweeps/public_html1/
     - /bin/cp -R App/* $DEPLOYDIR/App/
     - /bin/cp -R assets/* $DEPLOYDIR/assets/
     - /bin/cp -R Other/* $DEPLOYDIR/Other/
