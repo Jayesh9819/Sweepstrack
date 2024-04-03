@@ -65,7 +65,7 @@
                                 </div>
                                 <h1 style="font-family: 'Times New Roman', Times, serif; color:#2fe082; font-size: 3em; font-weight: bold; " class="logo-title ms-3 mb-0">Sweepstrack</h1>
 
-                                <h5 style=" text-decoration:double; position: relative; right: 180px; top: 40px; color: #ffdf3a; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;" class="logo-title ms-3 mb-0">COUNT, IMPACT, PROSPER</h5>
+                                <h5 style=" text-decoration:double; position: relative; right: 180px; top: 40px; color: #ffbb00; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;" class="logo-title ms-3 mb-0"></h5>
 
                             </a>
                         </div>
