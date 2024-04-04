@@ -1,4 +1,4 @@
 ---
 deployment:
   tasks:
-    - /bin/cp -R * /home/sweeps/public_html/test/
+    - /bin/cp -R * /home/sweeps/public_html/test1/
