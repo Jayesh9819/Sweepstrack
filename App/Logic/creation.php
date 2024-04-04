@@ -73,7 +73,7 @@ class Creation
                 $stmt->bind_param("sids", $platformName, $status, $currentBalance, $addedBy);
 
                 if ($stmt->execute()) {
-                    $this->createRecord("platformRecord", "platform", $platformName, $currentBalance, "Recharge", $addedBy,"", 0, $currentBalance, "");
+                    $this->createRecord("platformRecord", "platform", $platformName, $currentBalance, "Recharge", $addedBy, "", 0, $currentBalance, "");
                     $_SESSION['toast'] = ['type' => 'success', 'message' => 'Platform added successfully.'];
                     header("location: ../../index.php/Portal_Platform_Management");
                     exit();
@@ -86,12 +86,12 @@ class Creation
             }
         }
     }
-    public function createRecord($rtname, $name, $namef, $amount, $type, $addedBy,$from, $openingBalance, $closingBalance, $remark)
+    public function createRecord($rtname, $name, $namef, $amount, $type, $addedBy, $from, $openingBalance, $closingBalance, $remark)
     {
         $sql = "INSERT INTO $rtname ($name, amount, type, by_name,for_name, opening_balance, closing_balance, created_at, updated_at, remark) 
         VALUES (?, ?, ?,?, ?, ?, ?, NOW(), NOW(), ?)";
         if ($stmt = $this->conn->prepare($sql)) {
-            $stmt->bind_param("sdsssdss", $namef, $amount, $type, $addedBy,$from, $openingBalance, $closingBalance, $remark);
+            $stmt->bind_param("sdsssdss", $namef, $amount, $type, $addedBy, $from, $openingBalance, $closingBalance, $remark);
 
             if ($stmt->execute()) {
                 $_SESSION['toast'] = ['type' => 'success', 'message' => 'Platform recharged successfully.'];
@@ -205,7 +205,7 @@ class Creation
                 $stmt->bind_param("sssdsi", $name, $cashtag, $email, $currentBalance, $remark, $status);
 
                 if ($stmt->execute()) {
-                    $this->createRecord("cashappRecord", "name", $name, $currentBalance, "Recharge", $addedBy,"", 0, $currentBalance, $remark);
+                    $this->createRecord("cashappRecord", "name", $name, $currentBalance, "Recharge", $addedBy, "", 0, $currentBalance, $remark);
 
                     $_SESSION['toast'] = ['type' => 'success', 'message' => 'CashApp details added successfully.'];
                     header("location: ../../index.php/Portal_Cashup_Management");
@@ -308,7 +308,7 @@ class Creation
                 mysqli_stmt_bind_param($stmt, "sississsssss", $username, $cashoutamount, $pagename, $branchId, $accessamount, $cashupName, $platformName, $tip, $type, $remark, $by_username, $by_role);
                 if ($stmt->execute()) {
                     $_SESSION['toast'] = ['type' => 'success', 'message' => 'Reedem Added Sucessfully '];
-                     $this->updateBalances($type, $cashoutamount, $platformName, $cashupName, $username, $by_username);
+                    $this->updateBalances($type, $cashoutamount, $platformName, $cashupName, $username, $by_username);
                     echo "Transaction added successfully. Redirecting...<br>";
                     header("Location: ../../index.php/Portal_User_Management");
                     exit();
@@ -368,7 +368,6 @@ class Creation
                     $_SESSION['toast'] = ['type' => 'success', 'message' => 'Recharge Added Sucessfully '];
                     $this->recordReferralAndAffiliateBonus($conn, $username, $recharge);
                     $this->updateBalances($type, $recharge, $platform, $cashName, $username, $byUsername);
-
                     echo "Transaction added successfully. Redirecting...<br>";
                     header("Location: ../../index.php/Portal_User_Management");
                     exit();
@@ -848,22 +847,20 @@ class Creation
             // Update balances in the database
             $stmt = $this->conn->prepare("UPDATE platform SET current_balance = ? WHERE name = ?");
             $stmt->bind_param("ds", $newPlatformBalance, $platform);
-           if( $stmt->execute()){
-            // $this->createRecord("platformRecord", "platform", $platformName, $currentBalance, "Recharge", $addedBy, 0, $currentBalance, "");
-            // $this->createRecord("cashappRecord", "name", $name, $currentBalance, "Recharge", $addedBy, 0, $currentBalance, $remark);
+            if ($stmt->execute()) {
+                // $this->createRecord("platformRecord", "platform", $platformName, $currentBalance, "Recharge", $addedBy, 0, $currentBalance, "");
+                // $this->createRecord("cashappRecord", "name", $name, $currentBalance, "Recharge", $addedBy, 0, $currentBalance, $remark);
 
-            $this->createRecord("platformRecord", "platform", $platform, $amount, $type, $by_username,$username, $platformBalance, $newPlatformBalance, "");
-
-           }
+                $this->createRecord("platformRecord", "platform", $platform, $amount, $type, $by_username, $username, $platformBalance, $newPlatformBalance, "");
+            }
 
             $stmt->close();
 
             $stmt = $this->conn->prepare("UPDATE cashapp SET current_balance = ? WHERE name = ?");
             $stmt->bind_param("ds", $newCashappBalance, $cashapp);
-           if( $stmt->execute()){
-            $this->createRecord("cashappRecord", "name", $cashapp, $amount, $type, $by_username,$username, $cashappBalance, $newCashappBalance, "");
-
-           }
+            if ($stmt->execute()) {
+                $this->createRecord("cashappRecord", "name", $cashapp, $amount, $type, $by_username, $username, $cashappBalance, $newCashappBalance, "");
+            }
             $stmt->close();
 
             // Commit transaction
