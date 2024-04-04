@@ -2,7 +2,7 @@
 deployment:
   tasks:
 
-    - export DEPLOYPATH=/home/sweeps/public_html1/
+    - export DEPLOYPATH=/home/sweeps/public_html/test/
       - /bin cp * $DEPLOYPATH                           #copy all from root 
     # - /bin/cp -R App/* $DEPLOYPATH/App/
     # - /bin/cp -R assets/* $DEPLOYPATH/assets/
