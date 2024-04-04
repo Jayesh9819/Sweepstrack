@@ -86,7 +86,7 @@ class Creation
             }
         }
     }
-    public function createRecord($rtname, $name, $namef, $amount, $type, $addedBy,$from, $openingBalance, $closingBalance, $remark,)
+    public function createRecord($rtname, $name, $namef, $amount, $type, $addedBy,$from, $openingBalance, $closingBalance, $remark)
     {
         $sql = "INSERT INTO $rtname ($name, amount, type, by_name,for_name, opening_balance, closing_balance, created_at, updated_at, remark) 
         VALUES (?, ?, ?,?, ?, ?, ?, NOW(), NOW(), ?)";
