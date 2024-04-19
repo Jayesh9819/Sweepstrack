@@ -1,7 +1,7 @@
 <?php
-$firstparam ="/Sweepstrack/";
-$secondparam ="/Sweepstrack/index.php";
-$thirdparam ="/Sweepstrack";
+$firstparam ="/";
+$secondparam ="/index.php";
+$thirdparam ="";
 $fourthparam ="/index.php";
 //jdd
 // vfs
