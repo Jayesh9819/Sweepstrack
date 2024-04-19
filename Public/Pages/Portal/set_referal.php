@@ -122,6 +122,14 @@
                             <div class="card-body">
                                 <form action="" method="POST">
 
+                                <div class="mb-3">
+                                        <label for="referralPercentage" class="form-label">Referral Bonus Percentage</label>
+                                        <input type="text" class="form-control" id="referralPercentage" name="referralPercentage" required value="<?php echo htmlspecialchars($referralPercentage); ?>">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="affiliatePercentage" class="form-label">Affiliate Bonus Percentage</label>
+                                        <input type="text" class="form-control" id="affiliatePercentage" name="affiliatePercentage" required value="<?php echo htmlspecialchars($affiliatePercentage); ?>">
+                                    </div>
                                     <div class="mb-3">
                                         <label for="minimum" class="form-label">Minimum Withdraw</label>
                                         <input type="text" class="form-control" id="minimum" name="minimum" required value="<?php echo htmlspecialchars($minimum); ?>">
