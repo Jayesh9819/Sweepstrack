@@ -170,17 +170,7 @@
                             }
                             // }
                             $sql .= " ORDER BY created_at DESC";
-                            echo $sql;
                             $result = $conn->query($sql);
-
-                            // if (isset($_POST)) {
-                            //    
-                            //     $condition = $_POST['field'];
-                            //     $query = $_POST['condtion'];
-                            //     $sql = "select * from transaction where $condition='$query'";
-                            //     $result = $conn->query($sql);
-                            // }
-
                             if ($result->num_rows > 0) {
                             ?>
                                 <!-- <div class="card-body"> -->

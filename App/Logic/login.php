@@ -27,6 +27,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $_SESSION['userid'] = $row['id'];
                     $_SESSION['user_id'] = $row['id'];
                     $_SESSION['page'] = $row['pagename'];
+                    $_SESSION['page1'] = $row['pagename'];
+
                     $_SESSION['role'] = $row['role'];
                     $_SESSION['fullname'] = $row['name'];
                     $_SESSION['timezone'] = $row['timezone'];

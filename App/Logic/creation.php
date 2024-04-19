@@ -310,7 +310,13 @@ class Creation
                     $_SESSION['toast'] = ['type' => 'success', 'message' => 'Reedem Added Sucessfully '];
                     $this->updateBalances($type, $cashoutamount, $platformName, $cashupName, $username, $by_username);
                     echo "Transaction added successfully. Redirecting...<br>";
-                    header("Location: ../../index.php/Portal_User_Management");
+                    if($by_role=='User'){
+                        header("Location: ../../index.php");
+
+                    }else{
+
+                        header("Location: ../../index.php/Portal_User_Management");
+                    }
                     exit();
                 } else {
                     echo "Error adding transaction details: " . $stmt->error . "<br>";
@@ -353,16 +359,18 @@ class Creation
             $branchId = $userData['branchname'];
             $pagename = $userData['pagename'];
             $byrole = $this->srole;
+            $redeem_status=1;
+            $cashapp_statu=1;
 
 
 
             $type = "Debit"; // Adjust the type as needed
 
-            $sql = "INSERT INTO transaction (username, recharge, page_id,page, platform,branch, cashapp, bonus, remark, by_id,by_role, by_u, type, created_at, updated_at)
-                    VALUES (?, ?, ?, ?, ?, ?,?, ?, ?,?,?, ?, ?, NOW(), NOW())";
+            $sql = "INSERT INTO transaction (username, recharge, page_id,page, platform,branch, cashapp, bonus, remark, by_id,by_role, by_u, type,redeem_status,cashout_status, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, ?,?, ?, ?,?,?, ?, ?,?,?, NOW(), NOW())";
 
             if ($stmt = $this->conn->prepare($sql)) {
-                $stmt->bind_param("sssssssssssss", $username, $recharge, $pageId, $pagename, $platform, $branchId, $cashName, $bonus, $remark, $byId, $byrole, $byUsername, $type);
+                $stmt->bind_param("sssssssssssssss", $username, $recharge, $pageId, $pagename, $platform, $branchId, $cashName, $bonus, $remark, $byId, $byrole, $byUsername, $type,$redeem_status,$cashapp_statu);
 
                 if ($stmt->execute()) {
                     $_SESSION['toast'] = ['type' => 'success', 'message' => 'Recharge Added Sucessfully '];

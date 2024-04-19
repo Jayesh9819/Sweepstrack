@@ -60,7 +60,7 @@
 
          
             $user = $_POST['state'];
-            
+           
             $username = $conn->real_escape_string($_POST['state']);
 
             // Prepare the SQL statement

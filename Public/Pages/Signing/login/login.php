@@ -21,7 +21,7 @@
         echo "<script type='text/javascript'>document.addEventListener('DOMContentLoaded', function() { toastr['$type']('$message'); });</script>";
     }
 
-  
+
     if (isset($_SESSION['toast'])) {
         $toast = $_SESSION['toast'];
         echoToastScript($toast['type'], $toast['message']);
@@ -58,15 +58,15 @@
             <div class="row no-gutters align-items-center bg-white">
                 <div class="col-md-12 col-lg-6 align-self-center">
                     <div class="row justify-content-center">
-                        <div style="position: relative ; left: 100px;" class="col-md-12 col-lg-6 align-self-center">
+                        <div style="position: relative ; left: 10px;" class="col-md-12 col-lg-6 align-self-center">
                             <a href="#" class="navbar-brand d-flex align-items-center mb-3 justify-content-center text-primary">
                                 <div class="logo-normal">
                                     <img src="../assets/images/CustCountFinal.png" style="height: 100px; " alt="">
                                 </div>
+                                
                                 <h1 style="font-family: 'Times New Roman', Times, serif; color:#2fe082; font-size: 3em; font-weight: bold; " class="logo-title ms-3 mb-0">Sweepstrack</h1>
 
-                                <h5 style=" text-decoration:double; position: relative; right: 180px; top: 40px; color: #ffbb00; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;" class="logo-title ms-3 mb-0"></h5>
-
+  
                             </a>
                         </div>
                         <div class="row justify-content-center pt-5">
@@ -103,7 +103,7 @@
                                                 <p class="text-center my-3">or sign in with other accounts?</p>
                                                 <!-- For Android -->
                                                 </p>
-                                                
+
                                                 <div class="d-flex justify-content-center">
                                                     <ul class="list-group list-group-horizontal list-group-flush">
 
@@ -113,27 +113,29 @@
 
                                                     </ul>
                                                 </div>
-                                                <p class="mt-3 text-center">
-                                                    <button onclick="window.location.href='https://storage.appilix.com/uploads/app-apk-660a6ec0b839b-1711959744.apk'" class="btn btn-primary">Download for Android</button>
+                                                <button id="installButton" style="display: none;">Install App</button>
 
-<!-- For iOS -->
-<button onclick="window.location.href='https://warehouse.appilix.com/uploads/app-ipa-660a6f91c5ea7-1711959953.ipa'" class="btn btn-primary">Download for iOS</button>
                                                 <p class="mt-3 text-center">
-    For iOS Install using Scarlet or AltStore or similar tools
+                                                    <button onclick="window.location.href='https://sweepstrac.net/links/quickchat.apk'" class="btn btn-primary">Download for Android</button>
+
+                                                    <!-- For iOS -->
+                                                    <button onclick="window.location.href='https://sweepstrac.net/links/quickchat.iab'" class="btn btn-primary">Download for iOS</button>
+                                                <p class="mt-3 text-center">
+                                                    For iOS Install using Scarlet or AltStore or similar tools
                                                     <!-- Don’t have an account? <a href="./Register_to_CustCount" class="text-underline">Click here to sign up.</a> -->
                                                 </p>
                                             </form>
-                                  
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                    <div class="col-lg-6 d-lg-block d-none p-0 overflow-hidden" style="position: relative; right: 80px; background-color: #39DFE5;">
-                        <img src="../assets/images/cccc.webp" class="img-fluid gradient-main" alt="images" loop autoplay muted></img>
                     </div>
                 </div>
+                <div class="col-lg-6 d-lg-block d-none p-0 overflow-hidden" style="position: relative; right: 80px; background-color: #39DFE5;">
+                    <img src="../assets/images/cccc.webp" class="img-fluid gradient-main" alt="images" loop autoplay muted></img>
+                </div>
+            </div>
         </section>
     </div>
 

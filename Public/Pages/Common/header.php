@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>CustCount - At your Service</title>
+<title>QuickChat</title>
 <meta name="description" content="">
 <meta name="keywords" content="">
 <meta name="author" content="Weblux Digi">
@@ -8,6 +8,7 @@
 
 <!-- Favicon -->
 <link rel="shortcut icon" href="../assets/images/CustCountLogo.png">
+<link rel="manifest" href="./Public/Pages/Common/manifest.json">
 
 <!-- Library / Plugin Css Build -->
 <link rel="stylesheet" href="../assets/css/core/libs.min.css">

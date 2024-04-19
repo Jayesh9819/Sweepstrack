@@ -1,10 +1,10 @@
 <?php
 ob_start();
 
-$servername = "199.231.187.147"; // or your server name
-$username = "sweeps_trac";
-$password = "Weblux@@1122";
-$dbname = "sweeps_trac";
+$servername = "localhost"; // or your server name
+$username = "sweepstrac";
+$password = "12345678";
+$dbname = "sweepstrac";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);

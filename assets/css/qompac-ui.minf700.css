@@ -18767,8 +18767,8 @@ th {
 
 .loader.simple-loader .loader-body .image-loader {
     position: absolute;
-    -webkit-animation: spin 4s linear infinite;
-    animation: spin 4s linear infinite
+    /* -webkit-animation: spin 4s linear infinite; */
+    /* animation: spin 4s linear infinite */
 }
 
 @-webkit-keyframes spin {

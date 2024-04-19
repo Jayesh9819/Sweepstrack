@@ -162,42 +162,57 @@
                     if (isset($_SESSION['page']) && $_SESSION['page'] !== "") {
                         $u = $_SESSION['page'];
                         $sql = "SELECT * FROM transaction WHERE page='$u'";
-                        unset($_SESSION['page']);
+                        $sumSql = "SELECT SUM(recharge) AS total_recharge, SUM(redeem) AS total_redeem, SUM(excess) AS total_excess, SUM(bonus) AS total_bonus, SUM(freepik) AS total_freepik FROM transaction WHERE page='$u'";
+                        $_SESSION['page'] = '';
+                        // unset($_SESSION['page']);
                     } elseif (isset($_SESSION['branch']) && $_SESSION['branch'] !== "") {
                         $u = $_SESSION['branch'];
                         $sql = "SELECT * FROM transaction WHERE branch='$u'";
+                        $sumSql = "SELECT SUM(recharge) AS total_recharge, SUM(redeem) AS total_redeem, SUM(excess) AS total_excess, SUM(bonus) AS total_bonus, SUM(freepik) AS total_freepik FROM transaction WHERE branch='$u'";
+
                         unset($_SESSION['branch']);
                     } else {
                         unset($_SESSION['u'], $_SESSION['r'], $_SESSION['page'], $_SESSION['branch']);
-                        $sql = "SELECT * FROM transaction WHERE 1=1"; // Always true condition to start the WHERE clause
+                        $sql = "SELECT * FROM transaction WHERE 1=1";
+                        $sumSql = "SELECT SUM(recharge) AS total_recharge, SUM(redeem) AS total_redeem, SUM(excess) AS total_excess, SUM(bonus) AS total_bonus, SUM(freepik) AS total_freepik FROM transaction WHERE 1=1";
                     }
+                    $sql .= " AND redeem_status = 1 AND cashout_status = 1";
+                    $sumSql .= " AND redeem_status = 1 AND cashout_status = 1";
+
 
                     if (isset($_SESSION['start_date']) && isset($_SESSION['end_date']) && $_SESSION['start_date'] !== '' && $_SESSION['end_date'] !== '') {
                         // Both start and end dates are provided
                         $start_date = $_SESSION['start_date'];
                         $end_date = $_SESSION['end_date'];
                         $sql .= " AND created_at BETWEEN '$start_date 00:00:00' AND '$end_date 23:59:59'";
+                        $sumSql .= " AND created_at BETWEEN '$start_date 00:00:00' AND '$end_date 23:59:59'";
                     } elseif (isset($_SESSION['start_date']) && !isset($_SESSION['end_date']) && $_SESSION['start_date'] !== '') {
                         // Only start date is provided
                         $start_date = $_SESSION['start_date'];
                         $sql .= " AND created_at >= '$start_date 00:00:00'";
+                        $sumSql .= " AND created_at >= '$start_date 00:00:00'";
                     } elseif (isset($_SESSION['start_date']) && isset($_SESSION['end_date']) && $_SESSION['end_date'] !== '') {
                         // Only end date is provided
                         $end_date = $_SESSION['end_date'];
                         $sql .= " AND created_at <= '$end_date 23:59:59'";
+                        $sumSql .= " AND created_at <= '$end_date 23:59:59'";
                     } elseif (isset($_SESSION['start_date']) && isset($_SESSION['end_date']) && $_SESSION['start_date'] !== '' && $_SESSION['end_date'] === '') {
                         // Only start date is provided and end date is empty
                         $start_date = $_SESSION['start_date'];
                         $sql .= " AND created_at >= '$start_date 00:00:00'";
+                        $sumSql .= " AND created_at >= '$start_date 00:00:00'";
                     }
                     if (isset($_SESSION['time_filter']) && $_SESSION != "") {
                         $timeFilter = $_SESSION['time_filter'];
                         if ($timeFilter === '1') {
                             $sql .= " AND created_at >= NOW() - INTERVAL 1 HOUR";
+                            $sumSql .= " AND created_at >= NOW() - INTERVAL 1 HOUR";
                         } elseif ($timeFilter === '2') {
                             $sql .= " AND created_at >= NOW() - INTERVAL 2 HOUR";
+                            $sumSql .= " AND created_at >= NOW() - INTERVAL 2 HOUR";
                         } elseif ($timeFilter === '24') {
                             $sql .= " AND created_at >= NOW() - INTERVAL 24 HOUR";
+                            $sumSql .= " AND created_at >= NOW() - INTERVAL 24 HOUR";
                         } elseif ($timeFilter === 'custom') {
                             // Handle custom time filter here
                             // Example: $customStartTime = $_GET['custom_start_time']; $customEndTime = $_GET['custom_end_time'];
@@ -210,6 +225,10 @@
 
                     $result = $stmt->get_result();
                     $results = $result->fetch_all(MYSQLI_ASSOC);
+                    $stmt = $conn->prepare($sumSql);
+                    $stmt->execute();
+                    $sumResult = $stmt->get_result();
+                    $sums = $sumResult->fetch_assoc();
 
                     $stmt->close();
                     $conn->close();
@@ -268,6 +287,22 @@
                                             <td><?= $row['by_u'] ?></td>
                                         </tr>
                                     <?php endforeach; ?>
+                                    <?php
+                                    if ($sums) {
+                                        echo "<tfoot>";
+                                        echo "<tr>";
+                                        echo "<th colspan=''>Total:</th>";
+                                        echo "<th>{$sums['total_recharge']}</th>";
+                                        echo "<th>{$sums['total_redeem']}</th>";
+                                        echo "<th>{$sums['total_excess']}</th>";
+                                        echo "<th>{$sums['total_bonus']}</th>";
+                                        echo "<th>{$sums['total_freepik']}</th>";
+                                        echo "<th colspan='4'></th>"; // Adjust colspan based on number of remaining columns
+                                        echo "</tr>";
+                                        echo "</tfoot>";
+                                    }
+                                    ?>
+
                                 </tbody>
                             </table>
 

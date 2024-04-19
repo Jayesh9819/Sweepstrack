@@ -123,10 +123,6 @@
                                 </div>
                                 <br>
                                 <br>
-                                <a href="./Edit_User?u=<?php echo $username; ?>" style="text-decoration: none;">
-                                    <button type="button" class="btn btn-danger rounded-pill mt-2">Edit Details</button>
-                                </a>
-
                                 <a href="./Recharge_Platform?name=<?php echo $username; ?>" style="text-decoration: none;">
                                     <button type="button" class="btn btn-danger rounded-pill mt-2">Recharge Platform</button>
                                 </a>
@@ -137,7 +133,6 @@
                                 <a href="./PlatformRec<?php $_SESSION['r']=$username ?>">
                                     <button type="submit" class="btn btn-warning rounded-pill mt-2">Transaction Record</button>
                                 </a>
-                                <button type="button" class="btn btn-warning rounded-pill mt-2">Edit Page</button>
                                 <a href="javascript:void(0);" class="btn btn-outline-info rounded-pill mt-2" onclick="status(<?php echo $id; ?>, 'platform', 'status','pid')">
                                     <i class="fas fa-xmark"><?php echo $status == 1 ? 'DeActivate' : 'Activate'  ?></i>
                                 </a>

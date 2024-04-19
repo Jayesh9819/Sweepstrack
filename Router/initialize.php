@@ -1,6 +1,6 @@
 <?php
-$firstparam ="/";
-$secondparam ="/index.php";
-$thirdparam ="";
+$firstparam ="/Sweepstrack/";
+$secondparam ="/Sweepstrack/index.php";
+$thirdparam ="/Sweepstrack";
 $fourthparam ="/index.php";
 ?>
