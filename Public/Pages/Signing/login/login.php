@@ -64,7 +64,7 @@
                                     <img src="../assets/images/CustCountFinal.png" style="height: 100px; " alt="">
                                 </div>
                                 
-                                <h1 style="font-family: 'Times New Roman', Times, serif; color:#2fe082; font-size: 3em; font-weight: bold; " class="logo-title ms-3 mb-0">Sweepstrack</h1>
+                                <h1 style="font-family: 'Times New Roman', Times, serif; color:rgb(224 147 47); font-size: 3em; font-weight: bold; " class="logo-title ms-3 mb-0">Sweepstrack</h1>
 
   
                             </a>
