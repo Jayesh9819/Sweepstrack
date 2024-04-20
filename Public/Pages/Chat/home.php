@@ -5,6 +5,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<?php
+		ob_start();
+
 	include("./Public/Pages/Common/header.php");
 	include "./Public/Pages/Common/auth_user.php";
 
