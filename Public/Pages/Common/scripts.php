@@ -6,12 +6,31 @@ if (isset($_SESSION['role'])) {
     $role = $_SESSION['role'];
     if ($role != 'User') {
         echo '<script src="../Public/Chats/globalNotifications.js" > </script>';
-    }else{
+    } else {
         echo '<script src="../Public/Chats/usernot.js" > </script>';
-
     }
 }
 ?>
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+
+
+        let lastSeenUpdate = function() {
+            $.get('../Public/Pages/Chat/app/ajax/update_last_seen.php')
+                .done(function(data) {
+                    console.log('Success:', data); // Successful response handling
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    console.error('AJAX Error:', textStatus); // Error handling
+                });
+        };
+
+        lastSeenUpdate(); // Initial call
+        setInterval(lastSeenUpdate, 10000); // Set to run every 10 seconds
+    });
+</script>
 <!-- jQuery Library - Load this first to ensure it's available for all jQuery-dependent scripts -->
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 
