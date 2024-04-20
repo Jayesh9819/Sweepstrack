@@ -292,7 +292,7 @@
 					<div>
 						<h3>Chat History</h3>
 
-						<ul id="chatList" class="list-group mvh-50 overflow-auto" id="chat-box">
+						<!-- <ul id="chatList" class="list-group mvh-50 overflow-auto" id="chat-box">
 							<?php if (!empty($conversations)) { ?>
 								<?php
 
@@ -334,7 +334,7 @@
 								</div>
 							<?php }
 							?>
-						</ul>
+						</ul> -->
 
 					</div>
 
