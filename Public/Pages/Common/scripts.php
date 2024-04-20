@@ -6,6 +6,9 @@ if (isset($_SESSION['role'])) {
     $role = $_SESSION['role'];
     if ($role != 'User') {
         echo '<script src="../Public/Chats/globalNotifications.js" > </script>';
+    }else{
+        echo '<script src="../Public/Chats/usernot.js" > </script>';
+
     }
 }
 ?>
