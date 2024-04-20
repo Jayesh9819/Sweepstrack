@@ -36,7 +36,7 @@ if (isset($_SESSION['username'])) {
 			         class="w-10 rounded-circle">
 
 			    <h3 class="fs-xs m-2">
-			    	<?=$user['name']?>
+			    	<?=$user['username']?>
 			    </h3>            	
 			</div>
 		 </a>
