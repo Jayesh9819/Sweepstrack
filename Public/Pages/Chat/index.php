@@ -377,7 +377,7 @@
 											<img src="../uploads/profile/<?= !empty($conversation['p_p']) ? htmlspecialchars($conversation['p_p']) : '07.png'; ?>" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid #2c2c2c;">
 										</div>
 										<div class="chat-details" style="flex-grow: 1; margin-left: 15px;">
-											<h5 style="margin: 0; font-size: 16px; font-weight: 500; color: darkblue;"><?= htmlspecialchars($conversation['name']); ?></h5>
+											<h5 style="margin: 0; font-size: 16px; font-weight: 500; color: darkblue;"><?= htmlspecialchars($conversation['username']); ?></h5>
 											<h6 style="color: #010011; font-size: 14px; display: block;"><?= lastChat($_SESSION['user_id'], $conversation['id'], $conn); ?></h6>
 										</div>
 										<?php if ($hasUnread) { ?>
