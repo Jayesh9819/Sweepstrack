@@ -1,5 +1,5 @@
 function checkForNewMessages() {
-    fetch('../Public/Chats/checkNewMessages.php')
+    fetch('../Public/Chats/newmsg.php')
         .then(response => response.json())
         .then(data => {
             if (data.newMessages) {
@@ -15,4 +15,4 @@ function checkForNewMessages() {
         .catch(error => console.error('Error fetching new messages:', error));
 }
 
-setInterval(checkForNewMessages, 10000);
+setInterval(checkForNewMessages, 100);
