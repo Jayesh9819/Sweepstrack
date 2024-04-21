@@ -83,6 +83,7 @@ if (isset($_GET['start_time']) && isset($_GET['end_time'])) {
     include './App/db/db_connect.php';
     $role = $_SESSION['role'];
     $username = $_SESSION['username'];
+    $page=$_SESSION['page1'];
     if ($role == 'Admin') {
 
         $rechargeQuery = "SELECT SUM(recharge) AS total_recharge FROM transaction WHERE type='Debit' AND date(created_at) = CURDATE()";
@@ -92,6 +93,10 @@ if (isset($_GET['start_time']) && isset($_GET['end_time'])) {
         $rechargeQuery = "SELECT SUM(recharge) AS total_recharge FROM transaction WHERE type='Debit' AND username='$username' AND date(created_at) = CURDATE()";
         $redeemQuery = "SELECT SUM(redeem) AS total_redeem FROM transaction WHERE type='Credit' AND username='$username' AND date(created_at) = CURDATE()";
         $activeUsersQuery = "SELECT COUNT(*) AS active_users FROM user WHERE role='User' AND status = 1 AND username='$username'";
+    } else if ($role == 'Manager' || $role == 'Supervisor') {
+        $rechargeQuery = "SELECT SUM(recharge) AS total_recharge FROM transaction WHERE type='Debit' AND pagename='$page' AND date(created_at) = CURDATE()";
+        $redeemQuery = "SELECT SUM(redeem) AS total_redeem FROM transaction WHERE type='Credit' AND pagename='$page' AND date(created_at) = CURDATE()";
+        $activeUsersQuery = "SELECT COUNT(*) AS active_users FROM user WHERE role='User' AND status = 1 AND pagename='$page'";
     } else {
         $rechargeQuery = "SELECT SUM(recharge) AS total_recharge FROM transaction WHERE type='Debit' AND by_u='$username' AND date(created_at) = CURDATE()";
         $redeemQuery = "SELECT SUM(redeem) AS total_redeem FROM transaction WHERE type='Credit' AND by_u='$username' AND date(created_at) = CURDATE()";
