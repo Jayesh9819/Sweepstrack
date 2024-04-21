@@ -55,7 +55,7 @@ if (isset($_GET['start_time']) && isset($_GET['end_time'])) {
 <html lang="en" dir="ltr">
 
 <head>
-    <?php
+    <?php 
 
     include("./Public/Pages/Common/header.php");
     include "./Public/Pages/Common/auth_user.php";
@@ -81,10 +81,22 @@ if (isset($_GET['start_time']) && isset($_GET['end_time'])) {
         unset($_SESSION['login_error']); // Clear the error message
     }
     include './App/db/db_connect.php';
+    $role = $_SESSION['role'];
+    $username = $_SESSION['username'];
+    if ($role == 'Admin') {
 
-    $rechargeQuery = "SELECT SUM(recharge) AS total_recharge FROM transaction WHERE type='Debit' AND date(created_at) = CURDATE()";
-    $redeemQuery = "SELECT SUM(redeem) AS total_redeem FROM transaction WHERE type='Credit' AND  date(created_at) = CURDATE()";
-    $activeUsersQuery = "SELECT COUNT(*) AS active_users FROM user WHERE role='User' AND status = 1";
+        $rechargeQuery = "SELECT SUM(recharge) AS total_recharge FROM transaction WHERE type='Debit' AND date(created_at) = CURDATE()";
+        $redeemQuery = "SELECT SUM(redeem) AS total_redeem FROM transaction WHERE type='Credit' AND  date(created_at) = CURDATE()";
+        $activeUsersQuery = "SELECT COUNT(*) AS active_users FROM user WHERE role='User' AND status = 1";
+    } else if ($role == 'User') {
+        $rechargeQuery = "SELECT SUM(recharge) AS total_recharge FROM transaction WHERE type='Debit' AND username='$username' AND date(created_at) = CURDATE()";
+        $redeemQuery = "SELECT SUM(redeem) AS total_redeem FROM transaction WHERE type='Credit' AND username='$username' AND date(created_at) = CURDATE()";
+        $activeUsersQuery = "SELECT COUNT(*) AS active_users FROM user WHERE role='User' AND status = 1 AND username='$username'";
+    } else {
+        $rechargeQuery = "SELECT SUM(recharge) AS total_recharge FROM transaction WHERE type='Debit' AND by_u='$username' AND date(created_at) = CURDATE()";
+        $redeemQuery = "SELECT SUM(redeem) AS total_redeem FROM transaction WHERE type='Credit' AND by_u='$username' AND date(created_at) = CURDATE()";
+        $activeUsersQuery = "SELECT COUNT(*) AS active_users FROM user WHERE role='User' AND status = 1 AND 'by' ='$username' ";
+    }
     // ... Add more queries as needed
 
     // Execute the queries and fetch the results
@@ -138,14 +150,107 @@ if (isset($_GET['start_time']) && isset($_GET['end_time'])) {
             color: black;
             cursor: pointer;
         }
+
+
+        .button-82-pushable {
+            position: relative;
+            border: none;
+            background: transparent;
+            padding: 0;
+            cursor: pointer;
+            outline-offset: 4px;
+            transition: filter 250ms;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        .button-82-shadow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            background: hsl(120, 100%, 20%, 0.25);
+            /* Light green background with 25% opacity */
+            will-change: transform;
+            transform: translateY(2px);
+            transition: transform 600ms cubic-bezier(.3, .7, .4, 1);
+        }
+
+        .button-82-edge {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            background: linear-gradient(to left, hsl(120, 100%, 25%) 0%, hsl(120, 100%, 40%) 8%, hsl(120, 100%, 40%) 92%, hsl(120, 100%, 25%) 100%);
+            /* Light green gradient */
+        }
+
+        .button-82-front {
+            display: block;
+            position: relative;
+            padding: 12px 27px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            color: white;
+            background: hsl(120, 100%, 35%);
+            /* Light green background */
+            will-change: transform;
+            transform: translateY(-4px);
+            transition: transform 600ms cubic-bezier(.3, .7, .4, 1);
+        }
+
+        @media (min-width: 768px) {
+            .button-82-front {
+                font-size: 1.25rem;
+                padding: 12px 42px;
+            }
+        }
+
+        .button-82-pushable:hover {
+            filter: brightness(110%);
+            -webkit-filter: brightness(110%);
+        }
+
+        .button-82-pushable:hover .button-82-front {
+            transform: translateY(-6px);
+            transition: transform 250ms cubic-bezier(.3, .7, .4, 1.5);
+        }
+
+        .button-82-pushable:active .button-82-front {
+            transform: translateY(-2px);
+            transition: transform 34ms;
+        }
+
+        .button-82-pushable:hover .button-82-shadow {
+            transform: translateY(4px);
+            transition: transform 250ms cubic-bezier(.3, .7, .4, 1.5);
+        }
+
+        .button-82-pushable:active .button-82-shadow {
+            transform: translateY(1px);
+            transition: transform 34ms;
+        }
+
+        .button-82-pushable:focus:not(:focus-visible) {
+            outline: none;
+        }
     </style>
 
 </head>
 
+<!-- HTML !-->
+
+
+
 <body class="  ">
     <!-- loader Start -->
     <?php
-    //  include("./Public/Pages/Common/loader.php");
+     include("./Public/Pages/Common/loader.php");
     ?>
     <!-- loader END -->
 
@@ -162,7 +267,38 @@ if (isset($_GET['start_time']) && isset($_GET['end_time'])) {
         <div class="content-inner container-fluid pb-0" id="page_layout">
             <br>
             <br>
-            <button class="btn btn-outline-success rounded-pill mt-2" id="myBtn">End Shift</button>
+            <?php
+            $role = $_SESSION['role'];
+
+            if ($role == 'User') { ?>
+                <a href="./Portal_Chats<?php $_SESSION['r'] = $username ?>">
+                    <button class="button-82-pushable" role="button">
+                        <span class="button-82-shadow"></span>
+                        <span class="button-82-edge"></span>
+                        <span class="button-82-front text">
+                            Chat With Us 24x7
+                        </span>
+                    </button>
+                </a>
+
+
+            <?php } else { ?>
+                <button class="btn btn-outline-success rounded-pill mt-2" id="myBtn">End Shift</button>
+
+
+
+
+
+            <?php
+            }
+
+
+            ?>
+            </br>
+            </br>
+
+
+
             <div id="myModal" class="modal">
                 <div class="modal-content">
                     <span class="close">&times;</span>
@@ -178,41 +314,115 @@ if (isset($_GET['start_time']) && isset($_GET['end_time'])) {
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="row">
-                        <h4 class="mb-5">Analytics Overview</h4>
-                        <div class="col-lg-3 col-md-6">
-                            <div class="card text-center">
-                                <div class="card-body">
-                                    <h2 class="mb-3"><?php echo $totalRecharge; ?></h2>
-                                    <h5>Today Recharge Total</h5>
-                                    <!-- You can add logic to calculate percentage changes -->
+
+
+
+            <div id="page_layout">
+                <?php
+                include './App/db/db_connect.php';
+
+                // Assuming $conn is your database connection
+                $query = "SELECT id,name, content, image FROM offers";
+                $result = mysqli_query($conn, $query);
+
+                if (mysqli_num_rows($result) > 0) {
+                    echo '<div class="row">'; // Start the Bootstrap row
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        $title = htmlspecialchars($row["name"]); // Escape special characters to prevent XSS
+                        $content = htmlspecialchars($row["content"]);
+                        $image = htmlspecialchars($row["image"]);
+                        $id = htmlspecialchars($row["id"]);
+
+                        $imagePath = "../uploads/" . $image; // Adjust the path as needed
+
+                        // Display the data in a Bootstrap card
+                        echo "
+                    <div class='col-md-4'>
+                        <div class='card'>
+                            <img src='{$imagePath}' class='card-img-top' alt='{$title}'>
+                            <div class='card-body'>
+                                <h5 class='card-title'>{$title}</h5>
+                                <div class='content-collapse'>
+                                <p class='card-text'>{$content}</p>
                                 </div>
+                                <button class='btn btn-link' onclick='expandText(this)'>More</button>
                             </div>
                         </div>
-                        <div class="col-lg-3 col-md-6">
-                            <div class="card text-center">
-                                <div class="card-body">
-                                    <h2 class="mb-3"><?php echo $totalRedeem; ?></h2>
-                                    <h5>Today Redeem Amount</h5>
-                                    <!-- You can add logic to calculate percentage changes -->
+                    </div>
+                    ";
+
+                        echo "
+                    <script>
+                    function expandText(button) {
+                        var content = button.previousElementSibling;
+                        if (button.innerText === 'More') {
+                            content.style.maxHeight = 'none';
+                            button.innerText = 'Less';
+                        } else {
+                            content.style.maxHeight = '4.5em';
+                            button.innerText = 'More';
+                        }
+                    }
+                    </script>
+                    ";
+                    }
+                    echo '</div>'; // End the Bootstrap row
+                } else {
+                    echo "No results found.";
+                }
+                ?>
+
+            </div>
+
+            <?php
+            $role = $_SESSION['role'];
+
+            if ($role != 'User') { ?>
+
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="row">
+                            <h4 class="mb-5">Analytics Overview</h4>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h2 class="mb-3"><?php echo $totalRecharge; ?></h2>
+                                        <h5>Today Recharge Total</h5>
+                                        <!-- You can add logic to calculate percentage changes -->
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-lg-3 col-md-6">
-                            <div class="card text-center">
-                                <div class="card-body">
-                                    <h2 class="mb-3"><?php echo $activeUsers; ?></h2>
-                                    <h5>Active Users</h5>
-                                    <!-- You can add logic to calculate percentage changes -->
+                            <div class="col-lg-3 col-md-6">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h2 class="mb-3"><?php echo $totalRedeem; ?></h2>
+                                        <h5>Today Redeem Amount</h5>
+                                        <!-- You can add logic to calculate percentage changes -->
+                                    </div>
                                 </div>
                             </div>
+                            <div class="col-lg-3 col-md-6">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h2 class="mb-3"><?php echo $activeUsers; ?></h2>
+                                        <h5>Active Users</h5>
+                                        <!-- You can add logic to calculate percentage changes -->
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- ... Other cards -->
                         </div>
-                        <!-- ... Other cards -->
                     </div>
                 </div>
-            </div>
+
+
+            <?php } else { ?>
+
+
+
+            <?php }  ?>
+
+
             <?
             include("./Public/Pages/Common/footer.php");
 

@@ -6,9 +6,31 @@ if (isset($_SESSION['role'])) {
     $role = $_SESSION['role'];
     if ($role != 'User') {
         echo '<script src="../Public/Chats/globalNotifications.js" > </script>';
+    } else {
+        echo '<script src="../Public/Chats/usernot.js" > </script>';
     }
 }
 ?>
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+
+
+        let lastSeenUpdate = function() {
+            $.get('../Public/Pages/Chat/app/ajax/update_last_seen.php')
+                .done(function(data) {
+                    console.log('Success:', data); // Successful response handling
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    console.error('AJAX Error:', textStatus); // Error handling
+                });
+        };
+
+        lastSeenUpdate(); // Initial call
+        setInterval(lastSeenUpdate, 10000); // Set to run every 10 seconds
+    });
+</script>
 <!-- jQuery Library - Load this first to ensure it's available for all jQuery-dependent scripts -->
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 
@@ -36,3 +58,14 @@ if (isset($_SESSION['role'])) {
 <script src="../assets/js/pages/chat-popup.js"></script>
 <script src="../assets/js/template.js"></script>
 <script src="../assets/js/vendor_components/datatable/datatables.min.js"></script>
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('../Public/Pages/Common/service-worker.js')
+            .then((registration) => {
+                console.log('Service Worker registered with scope:', registration.scope);
+            })
+            .catch((error) => {
+                console.error('Service Worker registration failed:', error);
+            });
+    }
+</script>

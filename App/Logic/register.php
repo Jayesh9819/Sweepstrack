@@ -16,7 +16,7 @@ $redirectTo = '../../index.php/Register_to_CustCount';
 $action = $_GET['action'];
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST" && $action == "register") {
-    print_r($_POST);
+    // print_r($_POST);
     // Retrieve and sanitize form data
     $fullname = trim($_POST['fullname']);
     $username = trim($_POST['username']);
@@ -104,7 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $action == "register") {
     $conn->close();
 } elseif ($_SERVER["REQUEST_METHOD"] == "POST" && $action == "editregister") {
     print_r($_POST);
-    $fullname = trim($_POST['name']);
+    $fullname = trim($_POST['fullname']);
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
 
@@ -130,14 +130,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $action == "register") {
     $condition_value = $username;
 
     // Validate inputs are not empty
-    if (empty($fullname) || empty($username) || empty($role)) {
-        // Set error message and retain form values
-        setToast('error', 'Please fill in all required fields and accept the terms.');
-        $_SESSION['form_values'] = $_POST;
-        print_r($_POST);
-        header('Location: ' . $redirectTo);
-        exit();
-    }
 
 
     $status = '1'; // Replace with actual value

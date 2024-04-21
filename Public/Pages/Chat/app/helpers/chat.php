@@ -48,7 +48,7 @@ function getChatPage($id_1, $id_2, $conn)
     $sql = "SELECT * FROM bmessages
             WHERE (from_id=? AND pagename=?)
             OR    (pagename=? AND from_id=?)
-            ORDER BY id ASC";
+            ORDER BY id DESC";
     $stmt = $conn->prepare($sql);
     $stmt->execute([$id_1, $id_2, $id_1, $id_2]);
 

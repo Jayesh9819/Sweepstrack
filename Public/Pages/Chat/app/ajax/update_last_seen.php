@@ -1,26 +1,38 @@
 <?php  
-
 session_start();
 
-# check if the user is logged in
+# Function to return JSON response to AJAX
+function jsonResponse($status, $message, $data = []) {
+    echo json_encode([
+        'status' => $status,
+        'message' => $message,
+        'data' => $data
+    ]);
+    exit;
+}
+
+# Check if the user is logged in
 if (isset($_SESSION['username'])) {
-	
-	# database connection file
-	include '../db.conn.php';
+    
+    # Database connection file
+    include 'db.conn.php';  // Ensure this path is correctly specified
 
-	# get the logged in user's id and time zone from SESSION
-	$id = $_SESSION['user_id'];
-	$timeZone = $_SESSION['timezone']; // Assuming you have time zone information in the session
+    # Get the logged in user's username from SESSION
+    $username = $_SESSION['username'];
+    $sql = "UPDATE user SET last_seen = NOW() WHERE username = ?";
+    $stmt = $conn->prepare($sql);
 
-	# SQL to update last_seen and time_zone
-	$sql = "UPDATE user
-	        SET last_seen = NOW(), 
-	            time_zone = ?
-	        WHERE id = ?";
-	$stmt = $conn->prepare($sql);
-	$stmt->execute([$timeZone, $id]);
+    if ($stmt === false) {
+        jsonResponse('error', 'Failed to prepare SQL statement.');
+    } else {
+        # Execute the prepared statement with parameter binding
+        if ($stmt->execute([$username])) {
+            jsonResponse('success', 'User last seen updated successfully.');
+        } else {
+            jsonResponse('error', 'Failed to execute update.', ['errorInfo' => $stmt->errorInfo()]);
+        }
+    }
 
-}else {
-	header("Location: ../../index.php");
-	exit;
+} else {
+    jsonResponse('error', 'User not logged in.');
 }

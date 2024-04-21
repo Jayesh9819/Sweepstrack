@@ -59,7 +59,7 @@ if (isset($action)) {
             // echo select("Sub Section", "condtion", "condtion", $branchOptions, isset($_POST['condtion']) ? $_POST['condtion'] : '');
 
             echo $name = field("Name", "text", "fullname", "Enter Your Name", isset($row['name']) ? $row['name'] : '');
-            echo $username = field("Username", "text", "username", "Enter Your Username", isset($row['username']) ? $row['username'] : '');
+            echo $username = field("Username", "text", "username", "Enter Your Username", isset($row['username']) ? $row['username'] : '', 'required', 'readonly');
             echo $password = field("Password", "password", "password", "Enter Your Password", isset($row['password']) ? $row['password'] : '');
             echo '<input type="hidden" name="role" value="' . (isset($row['role']) ? $row['role'] : '') . '" >';
             if (isset($row['role'])) {
@@ -198,10 +198,9 @@ if (isset($action)) {
         echo $Cancel;
         echo $formend;
     } else if ($action == "DEPOSIT" && ($role != "User")) {
-        // echo "Current URL: " . $_SERVER['REQUEST_URI'] . "<br>";
 
-        $title = "Reedem Details";
-        $heading = "Fill in the Redeem Details";
+        $title = "Recharge Details";
+        $heading = "Fill in the Recharge Details";
         $actionUrl = "../App/Logic/creation.php?action=Deposit";
         echo fhead($title, $heading, $actionUrl);
         if (isset($_GET['u'])) {
@@ -416,6 +415,7 @@ if (isset($action)) {
             echo '<div class="form-group"> <label for="active">Active</label> <input type="checkbox" id="active" name="status" value="1" ' . $statusChecked . '> </div>';
 
             $bid = $row['bid'];
+            echo '<input type="hidden" class="form-control" name="bid" value="' . $bid . '">';
 
             echo $Submit;
             echo $Cancel;
@@ -540,6 +540,35 @@ if (isset($action)) {
         echo field("Amount", "number", "amount", "Enter Amount for the free play", '');
         echo select("Platform", "platform", "platform", array_combine($conditionOptions, $conditionOptions));
         echo field("Remark", "text", "remark", "Enter Remark", "", "");
+        echo $Submit;
+        echo $Cancel;
+        echo $formend;
+    } else if ($action == "REDEEM_REQUEST") {
+        $title = "Reedem  Details";
+        $heading = "Enter the Details Correctly";
+        $action = "../App/Logic/creation.php?action=CashOut";
+
+        echo fhead($title, $heading, $action);
+        $depositID = $_SESSION['username'];
+        echo field("Enter the User Name", "text", "username", "Enter the Username", $depositID, "readonly");
+
+        echo field("Reedem Amount", "number", "reedemamount", "Enter the Reedem Amount");
+        $platformOptions = "<option value=''>Select Platform</option>";
+        $result = $conn->query("SELECT name FROM platform where status =1");
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $platformOptions .= "<option value='" . htmlspecialchars($row['name']) . "'>" . htmlspecialchars($row['name']) . "</option>";
+            }
+        }
+        $platformOptions .= "<option value='other'>Other</option>";
+        $option=["Select Type","Deduct From Redeem Amount","Deduct From Platfrom"];
+        echo '<label for="platformname">Platform Name</label>';
+        echo '<select class="form-select" id="platformname" name="platformname" onchange="showOtherField(this, \'platformname-other\')">' . $platformOptions . '</select>';
+        echo '<input type="text" id="platformname-other" name="platformname_other" style="display:none;" placeholder="Enter Platform Name">';
+        echo select("Tip Type", "ttype", "ttype", $option);
+        echo field("Tip", "number", "tip", "Enter the Tip Amount");
+        echo field("Remark", "text", "remark", "Enter the Remark ", "", "");
+
         echo $Submit;
         echo $Cancel;
         echo $formend;

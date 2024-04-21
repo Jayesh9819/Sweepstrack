@@ -15,4 +15,4 @@ function checkForNewMessages() {
         .catch(error => console.error('Error fetching new messages:', error));
 }
 
-setInterval(checkForNewMessages, 1000);
+setInterval(checkForNewMessages, 10000);
