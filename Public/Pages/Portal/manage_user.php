@@ -62,7 +62,7 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
         include './App/db/db_connect.php';
         // include './App/db/db_users.php';
         $role = $_SESSION['role'];
-        if ($role == 'Admin') {
+        if ($role == 'Admin' ||$role == 'Manager' ||$role == 'Supervisor' ) {
             $sql = "SELECT * FROM user WHERE Role = 'User'";
         } else {
             $page = $_SESSION['page'];

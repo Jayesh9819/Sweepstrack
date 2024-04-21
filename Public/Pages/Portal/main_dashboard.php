@@ -104,7 +104,7 @@ if (isset($_GET['start_time']) && isset($_GET['end_time'])) {
         $activeUsersQuery = "SELECT COUNT(*) AS active_users FROM user WHERE role='User' AND status = 1 AND 'by' ='$username' ";
     }
     // ... Add more queries as needed
-echo $activeUsersQuery;
+// echo $activeUsersQuery;
     // Execute the queries and fetch the results
     $rechargeResult = $conn->query($rechargeQuery);
     $redeemResult = $conn->query($redeemQuery);
