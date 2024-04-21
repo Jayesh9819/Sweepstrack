@@ -258,6 +258,8 @@
                                         <th>Timestamp</th>
                                         <th>Username</th>
                                         <th>By</th>
+                                        <th>Remark</th>
+
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -285,6 +287,8 @@
                                             <td><?= $createdAtFormatted ?></td>
                                             <td><?= $row['username'] ?></td>
                                             <td><?= $row['by_u'] ?></td>
+                                            <td><?= $row['remark'] ?></td>
+
                                         </tr>
                                     <?php endforeach; ?>
                                     <?php
