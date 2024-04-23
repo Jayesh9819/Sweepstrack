@@ -146,6 +146,7 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
                                                     <thead>
                                                     <tbody>
                                                         <?php
+
                                                         while ($row = $result->fetch_assoc()) {
                                                             echo "<tr>
                                                     
@@ -157,6 +158,9 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
                     </form>
                 </td>
                                                     <td>{$row['name']}</td>
+                                                    
+                                                    <td>{$row['name']}</td>
+
                                                     <td>{$row['by_u']}</td>
                                                     <td>{$row['created_at']}</td> <!-- Consider if you really want to display passwords -->
                                                    

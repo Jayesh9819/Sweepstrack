@@ -144,6 +144,8 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
                                                     <th scope="col">Full Name</th>
                                                     <th scope="col">Password</th>
                                                     <th scope="col">Role</th>
+                                                    <th scope="col">Branch Name</th>
+
                                                     <th scope="col">Created At</th>
                                                     <th scope="col">Last Login</th>
                                                     </tr>';
@@ -166,6 +168,8 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
                                                             <td>{$row['name']}</td>
                                                             <td>{$row['password']}</td>
                                                             <td>{$row['role']}</td>
+                                                            <td>{$row['branchname']}</td>
+
                                                             <td>{$row['created_at']}</td> <!-- Consider if you really want to display passwords -->
                                                             <td>{$row['last_login']}</td>                                                        
                                                   </tr>";
