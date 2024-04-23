@@ -98,7 +98,7 @@ if (isset($action)) {
                 } elseif ($_POST['role'] == 'Manager') {
 
                     echo '<label for="pagename">Branch Name</label>';
-                    echo '<select class="form-select" id="branchname" name="branch" onchange="showOtherField(this, \'cashAppname-other\')">' . $branchopt . '</select>';
+                    echo '<select class="form-select" id="branchname" name="branchname" onchange="showOtherField(this, \'cashAppname-other\')">' . $branchopt . '</select>';
                 } elseif ($_POST['role'] == 'User') {
                     echo $fbLink = field("Facebook Link", "text", "fb_link", "Enter Your Facebook Link", isset($_POST['fb_link']) ? $_POST['fb_link'] : '');
                     echo '<label for="pagename">Page Name</label>';
