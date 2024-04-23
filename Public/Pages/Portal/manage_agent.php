@@ -149,7 +149,6 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
                                             <th scope="col">Role</th>
                                             <th scope="col">Page Name</th>
                                             <th scope="col">Branch Name</th>
-
                                             <th scope="col">Created At</th>
                                             <th scope="col">Last Login</th>
                                             </tr>';
