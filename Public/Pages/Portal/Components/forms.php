@@ -31,9 +31,9 @@ if (isset($action)) {
         $resultBranch = $conn->query("SELECT * FROM branch where status=1");
         if ($resultBranch->num_rows > 0) {
             while ($row = $resultBranch->fetch_assoc()) {
-                $branchOpt[$row['name']] = $row['name'];
+                // $branchOpt[$row['name']] = $row['name'];
 
-                // $branchopt .= "<option value='" . htmlspecialchars($row['name']) . "'>" . htmlspecialchars($row['name']) . "</option>";
+                $branchopt .= "<option value='" . htmlspecialchars($row['name']) . "'>" . htmlspecialchars($row['name']) . "</option>";
             }
         }
 
@@ -96,8 +96,9 @@ if (isset($action)) {
                     echo '<label for="pagename">Page Name</label>';
                     echo '<select class="form-select" id="pagename" name="page" onchange="showOtherField(this, \'cashAppname-other\')">' . $pageopt . '</select>';
                 } elseif ($_POST['role'] == 'Manager') {
-                    echo '<label for="pagename">Page Name</label>';
-                    echo '<select class="form-select" id="pagename" name="page" onchange="showOtherField(this, \'cashAppname-other\')">' . $pageopt . '</select>';
+
+                    echo '<label for="pagename">Branch Name</label>';
+                    echo '<select class="form-select" id="branchname" name="branch" onchange="showOtherField(this, \'cashAppname-other\')">' . $branchopt . '</select>';
                 } elseif ($_POST['role'] == 'User') {
                     echo $fbLink = field("Facebook Link", "text", "fb_link", "Enter Your Facebook Link", isset($_POST['fb_link']) ? $_POST['fb_link'] : '');
                     echo '<label for="pagename">Page Name</label>';
