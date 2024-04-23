@@ -64,7 +64,11 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
         $role = $_SESSION['role'];
         if ($role == 'Admin' ||$role == 'Manager' ||$role == 'Supervisor' ) {
             $sql = "SELECT * FROM user WHERE Role = 'User'";
-        } else {
+        } elseif($role == 'Manager' ||$role == 'Supervisor' ){
+            $branch = $_SESSION['branch'];
+            $sql = "SELECT * FROM user WHERE Role = 'User' And branchname='$branch'";
+        }
+        else {
             $page = $_SESSION['page'];
             $sql = "SELECT * FROM user WHERE Role = 'User' AND pagename='$page'";
 

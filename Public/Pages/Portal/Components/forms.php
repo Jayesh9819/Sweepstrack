@@ -31,7 +31,9 @@ if (isset($action)) {
         $resultBranch = $conn->query("SELECT * FROM branch where status=1");
         if ($resultBranch->num_rows > 0) {
             while ($row = $resultBranch->fetch_assoc()) {
-                $branchopt .= "<option value='" . htmlspecialchars($row['name']) . "'>" . htmlspecialchars($row['name']) . "</option>";
+                $branchOpt[$row['name']] = $row['name'];
+
+                // $branchopt .= "<option value='" . htmlspecialchars($row['name']) . "'>" . htmlspecialchars($row['name']) . "</option>";
             }
         }
 
@@ -70,10 +72,10 @@ if (isset($action)) {
                 }
             }
             if (isset($row['role'])) {
-                if ($row['role'] == 'Supervisor' || $row['role'] == 'Agent') {
+                if ($row['role'] == 'User' || $row['role'] == 'Agent') {
                     echo select("Page name", "page", "page", $branchOptions, isset($row['pagename']) ? $row['pagename'] : '');
-                } elseif ($row['role'] == 'Manager' || $row['role'] == 'User') {
-                    echo select("Page name", "page", "page", $branchOptions, isset($row['pagename']) ? $row['pagename'] : '');
+                } elseif ($row['role'] == 'Manager' || $row['role'] == 'Supervisor') {
+                    echo select("Branch name", "branch", "branch", $branchOpt, isset($row['pagename']) ? $row['pagename'] : '');
                 } else {
                     echo "Invalid attempt";
                 }
