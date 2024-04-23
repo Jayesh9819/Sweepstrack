@@ -146,7 +146,10 @@
 
 
                                 <button type="button" class="btn btn-success rounded-pill mt-2">Activate</button>
+                                <a href="./Chat_Screen?user=<?php echo $username; ?>" style="text-decoration: none;">
                                 <button type="button" class="btn btn-secondary rounded-pill mt-2">Chat History</button>
+                                </a>
+
                             </div>
                         </div>
                     </div>
