@@ -77,17 +77,20 @@
                         <?php
 
                         include './App/db/db_connect.php';
+                        $branch=$_SESSION['branch1'];
+                        $page=$_SESSION['page1'];
+
                         if ($role === 'Admin') {
                             $sql = "SELECT * FROM user";
                             // No parameters needed for Admin
                         } elseif ($role === 'Manager') {
-                            $sql = "SELECT * FROM user WHERE Role IN ('Agent', 'User', 'Supervisor')";
+                            $sql = "SELECT * FROM user WHERE Role IN ('Agent', 'User', 'Supervisor') AND branchname='$branch'";
                             $params = [];
                         } elseif ($role === 'Supervisor') {
-                            $sql = "SELECT * FROM user WHERE Role IN ('Agent', 'User')";
+                            $sql = "SELECT * FROM user WHERE Role IN ('Agent', 'User') AND branchname='$branch' ";
                             $params = [];
                         } elseif ($role === 'Agent') {
-                            $sql = "SELECT * FROM user WHERE Role = 'User'";
+                            $sql = "SELECT * FROM user WHERE Role = 'User' AND pagename='$page'";
                             $params = [];
                         }
 
