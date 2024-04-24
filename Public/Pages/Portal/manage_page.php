@@ -63,7 +63,21 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
         <?php
         include './App/db/db_connect.php';
         // include './App/db/db_users.php';
-        $sql = "SELECT * FROM page ";
+        $role = $_SESSION['role'];
+        if ($role == 'Admin' ) {
+            $sql = "SELECT * FROM page ";
+        } 
+        else {
+            $branch = $_SESSION['branch1'];
+            $sql = "SELECT branch.*
+            FROM branch
+            JOIN page ON page.bid = branch.bid
+            WHERE branch.name = '$branch'
+            LIMIT 1;
+            ";
+        }
+
+        // $sql = "SELECT * FROM page ";
 
         $result = $conn->query($sql);
 
