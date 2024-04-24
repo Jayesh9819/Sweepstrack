@@ -149,7 +149,10 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
                                             <th scope="col">ID</th>
                                             <th scope="col">Update</th>
                                             <th scope="col">Page Name</th>
+                                            <th scope="col">Branch Name</th>
+
                                             <th scope="col">Added By</th>
+
                                             <th scope="col">Created At</th>
                                             </tr>';
                                                     ?>
@@ -169,7 +172,7 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
                 </td>
                                                     <td>{$row['name']}</td>
                                                     
-                                                    <td>{$row['name']}</td>
+                                                    <td>{$row['bname']}</td>
 
                                                     <td>{$row['by_u']}</td>
                                                     <td>{$row['created_at']}</td> <!-- Consider if you really want to display passwords -->
