@@ -65,7 +65,7 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
         if ($role == 'Admin' ||$role == 'Manager' ||$role == 'Supervisor' ) {
             $sql = "SELECT * FROM user WHERE Role = 'User'";
         } elseif($role == 'Manager' ||$role == 'Supervisor' ){
-            $branch = $_SESSION['branch'];
+            $branch = $_SESSION['branch1'];
             $sql = "SELECT * FROM user WHERE Role = 'User' And branchname='$branch'";
         }
         else {

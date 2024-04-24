@@ -63,6 +63,18 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
         <?php
         include './App/db/db_connect.php';
         // include './App/db/db_users.php';
+        $role = $_SESSION['role'];
+        if ($role == 'Admin' ) {
+            $sql = "SELECT * FROM user WHERE Role = 'Agent'";
+        } 
+        else {
+            $branch = $_SESSION['branch1'];
+            $sql = "SELECT * FROM user WHERE Role = 'Agent' And branchname='$branch'";
+
+            // $sql = "SELECT * FROM cashapp WHERE branch='$branch'";
+
+        }
+
         $sql = "SELECT * FROM user WHERE Role = 'Agent'";
 
 

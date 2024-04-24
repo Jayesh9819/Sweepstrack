@@ -73,7 +73,7 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
             $sql = "SELECT * FROM cashapp ";
         } 
         else {
-            $branch = $_SESSION['branch'];
+            $branch = $_SESSION['branch1'];
             $sql = "SELECT * FROM cashapp WHERE branch='$branch'";
 
         }
