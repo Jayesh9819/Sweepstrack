@@ -236,7 +236,7 @@ if (isset($action)) {
         }
         $platformOptions .= "<option value='other'>Other</option>";
         echo '<label for="platformname">Platform Name</label>';
-        echo '<select class="form-select" id="platformname" name="platformname" onchange="showOtherField(this, \'platformname-other\')">' . $platformOptions . '</select>';
+        echo '<select required class="form-select" id="platformname" name="platformname" onchange="showOtherField(this, \'platformname-other\')">' . $platformOptions . '</select>';
         echo '<input type="text" id="platformname-other" name="platformname_other" style="display:none;" placeholder="Enter Platform Name">';
 
         // echo field("cashApp Name", "text", "cashAppname", "Enter the cashApp Name");
@@ -249,7 +249,7 @@ if (isset($action)) {
         }
         $cashAppOptions .= "<option value='other'>Other</option>";
         echo '<label for="cashAppname">cashApp Name</label>';
-        echo '<select class="form-select" id="cashAppname" name="cashAppname" onchange="showOtherField(this, \'cashAppname-other\')">' . $cashAppOptions . '</select>';
+        echo '<select required class="form-select" id="cashAppname" name="cashAppname" onchange="showOtherField(this, \'cashAppname-other\')">' . $cashAppOptions . '</select>';
         echo '<input type="text" id="cashAppname-other" name="cashAppname_other" style="display:none;" placeholder="Enter cashApp Name">';
 
         echo field("Bonus Amount", "number", "bonusamount", "Enter the Bonus Amount");
