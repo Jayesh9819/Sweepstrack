@@ -13,6 +13,7 @@ if (isset($action)) {
     global $title;
     $heading = "Fill the details";
     $role = $_SESSION['role'];
+    $branch = $_SESSION['branchname'];
     // echo $role;
     // Assuming you have defined or included your functions like fhead, field, select, etc.
     // ...
@@ -38,7 +39,7 @@ if (isset($action)) {
         }
 
         $pageopt = "<option value=''>Select Page Name</option>";
-        $resultPage = $conn->query("SELECT * FROM page where status=1");
+        $resultPage = $conn->query("SELECT branch.name AS bname,page.* FROM branch JOIN page ON page.bid = branch.bid WHERE branch.name = '$branch' And page.status=1");
         if ($resultPage->num_rows > 0) {
             while ($row = $resultPage->fetch_assoc()) {
                 $pageopt .= "<option value='" . htmlspecialchars($row['name']) . "'>" . htmlspecialchars($row['name']) . "</option>";
@@ -564,7 +565,7 @@ if (isset($action)) {
             }
         }
         $platformOptions .= "<option value='other'>Other</option>";
-        $option=["Select Type","Deduct From Redeem Amount","Deduct From Platfrom"];
+        $option = ["Select Type", "Deduct From Redeem Amount", "Deduct From Platfrom"];
         echo '<label for="platformname">Platform Name</label>';
         echo '<select class="form-select" id="platformname" name="platformname" onchange="showOtherField(this, \'platformname-other\')">' . $platformOptions . '</select>';
         echo '<input type="text" id="platformname-other" name="platformname_other" style="display:none;" placeholder="Enter Platform Name">';
