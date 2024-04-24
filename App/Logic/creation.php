@@ -346,6 +346,9 @@ class Creation
 
                 $_SESSION['toast'] = ['type' => 'error', 'message' => 'Please fill in all required fields.'];
                 header("Location: " . $_SERVER['REQUEST_URI']);
+                echo "Validation failed. Redirecting...<br>";
+                echo "Current URL: " . $_SERVER['REQUEST_URI'] . "<br>";
+
                 exit();
             }
             $username = $this->conn->real_escape_string($_POST['username']);
