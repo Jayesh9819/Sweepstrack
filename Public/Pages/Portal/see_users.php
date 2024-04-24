@@ -112,7 +112,8 @@
                                             <th scope="col">Full Name</th>
                                             <th scope="col">Password</th>
                                             <th scope="col">Fb-Link</th>
-
+                                            <th scope="col">Page Name</th>
+                                            <th scope="col">Branch Name</th>
                                             <th scope="col">Role</th>
                                             <th scope="col">Created At</th>
                                             <th scope="col">Last Login</th>
@@ -138,6 +139,9 @@
                 <td>{$row['name']}</td>
                 <td>{$row['password']}</td> <!-- Consider hashing passwords and not displaying them directly -->
                 <td><a href='{$fbLink}' target='_blank'>Link</a></td>
+                <td>{$row['pagename']}</td>
+                <td>{$row['branchname']}</td>
+
                 <td>{$row['role']}</td>
                 <td>{$row['created_at']}</td>
                 <td>{$row['last_login']}</td>

@@ -75,7 +75,6 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
         else {
             $branch = $_SESSION['branch1'];
             $sql = "SELECT * FROM cashapp WHERE branch='$branch'";
-
         }
 
 
