@@ -13,7 +13,7 @@ if (isset($action)) {
     global $title;
     $heading = "Fill the details";
     $role = $_SESSION['role'];
-    $branch = $_SESSION['branchname'];
+    $branch = $_SESSION['branch1'];
     // echo $role;
     // Assuming you have defined or included your functions like fhead, field, select, etc.
     // ...
