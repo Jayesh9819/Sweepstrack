@@ -62,7 +62,17 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
         include './App/db/db_connect.php';
         // include './App/db/db_users.php';
 
-        $sql = "SELECT * FROM platform ";
+        $role = $_SESSION['role'];
+        if ($role == 'Admin' ) {
+            $sql = "SELECT * FROM platform WHERE Role = 'User'";
+        } 
+        else {
+            $branch = $_SESSION['branch'];
+            $sql = "SELECT * FROM platform WHERE branch='$branch'";
+
+        }
+
+        // $sql = "SELECT * FROM platform ";
 
         $result = $conn->query($sql);
 
