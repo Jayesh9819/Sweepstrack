@@ -348,7 +348,6 @@ class Creation
                 header("Location: " . $_SERVER['REQUEST_URI']);
                 exit();
             }
-
             $username = $this->conn->real_escape_string($_POST['username']);
             $recharge = $this->conn->real_escape_string($_POST['depositamount']);
             $pageId = 1;
@@ -387,6 +386,8 @@ class Creation
                 } else {
                     echo "Error adding transaction details: " . $stmt->error . "<br>";
                     $_SESSION['toast'] = ['type' => 'error', 'message' => 'Error adding transaction details: ' . $stmt->error];
+                    header("Location: ../../index.php/Portal_User_Management");
+
                 }
                 $stmt->close();
             } else {
