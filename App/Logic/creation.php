@@ -67,13 +67,14 @@ class Creation
             $currentBalance = $this->conn->real_escape_string($_POST['currentbalance']);
             $addedBy = $this->susername;
             $data=$this->getUserDataByUsername($addedBy);
-            print_r($data);
-            exit();
+            // print_r($data);
+            // exit();
+            $branch=$data['branchname'];
 
-            $sql = "INSERT INTO platform (name, status, current_balance, by_u, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(), NOW())";
+            $sql = "INSERT INTO platform (name, status, current_balance, by_u, created_at, updated_at,branch) VALUES (?, ?, ?, ?, NOW(), NOW(),?)";
 
             if ($stmt = $this->conn->prepare($sql)) {
-                $stmt->bind_param("sids", $platformName, $status, $currentBalance, $addedBy);
+                $stmt->bind_param("sidss", $platformName, $status, $currentBalance, $addedBy,$branch);
 
                 if ($stmt->execute()) {
                     $this->createRecord("platformRecord", "platform", $platformName, $currentBalance, "Recharge", $addedBy, "", 0, $currentBalance, "");
