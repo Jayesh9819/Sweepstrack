@@ -583,10 +583,10 @@ class Creation
             $name = $this->conn->real_escape_string($_POST['name']);
             $status = isset($_POST['status']) ? 1 : 0; // Assuming 'status' is a checkbox
             $addby = $this->susername;
-            $sql = "INSERT INTO branch (name, status,by_name, created_at, updated_at) VALUES (?, ?, ?,?,NOW(), NOW())";
+            $sql = "INSERT INTO branch (name, status,by_name, created_at, updated_at) VALUES (?, ?, ?,NOW(), NOW())";
 
             if ($stmt = $this->conn->prepare($sql)) {
-                $stmt->bind_param("siss", $name, $status,$addby);
+                $stmt->bind_param("sis", $name, $status,$addby);
 
                 if ($stmt->execute()) {
                     // Success: Redirect or display a success message
