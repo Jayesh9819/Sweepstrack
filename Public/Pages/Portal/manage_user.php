@@ -62,7 +62,7 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
         include './App/db/db_connect.php';
         // include './App/db/db_users.php';
         $role = $_SESSION['role'];
-        if ($role == 'Admin' ||$role == 'Manager' ||$role == 'Supervisor' ) {
+        if ($role == 'Admin' ) {
             $sql = "SELECT * FROM user WHERE Role = 'User'";
         } elseif($role == 'Manager' ||$role == 'Supervisor' ){
             $branch = $_SESSION['branch1'];
