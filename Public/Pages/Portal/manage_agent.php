@@ -75,7 +75,7 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
 
         }
 
-        $sql = "SELECT * FROM user WHERE Role = 'Agent'";
+        // $sql = "SELECT * FROM user WHERE Role = 'Agent'";
 
 
         $result = $conn->query($sql);
