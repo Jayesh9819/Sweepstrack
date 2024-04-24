@@ -159,6 +159,9 @@
 
                     <?php
                     include "./App/db/db_connect.php";
+                    $role = $_SESSION['role'];
+                    $bra = $_SESSION['branch1'];
+                    $pag = $_SESSION['page1'];
                     if (isset($_SESSION['page']) && $_SESSION['page'] !== "") {
                         $u = $_SESSION['page'];
                         $sql = "SELECT * FROM transaction WHERE page='$u'";
@@ -178,7 +181,13 @@
                     }
                     $sql .= " AND redeem_status = 1 AND cashout_status = 1";
                     $sumSql .= " AND redeem_status = 1 AND cashout_status = 1";
-
+                    if ($role == 'Manager' || $role == 'Supervisor') {
+                        $sql .= "And branch='$bra' ";
+                        $sumSql .= " And branch='$bra'";
+                    } elseif ($role == 'Agent') {
+                        $sql .= "And page='$pag' ";
+                        $sumSql .= " And page='$pag'";
+                    }
 
                     if (isset($_SESSION['start_date']) && isset($_SESSION['end_date']) && $_SESSION['start_date'] !== '' && $_SESSION['end_date'] !== '') {
                         // Both start and end dates are provided
