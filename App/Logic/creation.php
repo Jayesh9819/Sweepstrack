@@ -199,14 +199,16 @@ class Creation
             $email = $this->conn->real_escape_string($_POST['email']);
             $remark = $this->conn->real_escape_string($_POST['remark']);
             $addedBy = $this->susername;
+            $data=$this->getUserDataByUsername($addedBy);
+            $branch=$data['branchname'];
 
 
             $status = isset($_POST['active']) ? 1 : 0;
 
-            $sql = "INSERT INTO cashapp (name, cashtag,start,email, current_balance,remark, status, created_at, updated_at) VALUES (?, ?,NOW(), ?,?,?, ?, NOW(), NOW())";
+            $sql = "INSERT INTO cashapp (name, cashtag,start,email, current_balance,remark, status,by_name,branch, created_at, updated_at) VALUES (?, ?,NOW(), ?,?,?, ?,?,?, NOW(), NOW())";
 
             if ($stmt = $this->conn->prepare($sql)) {
-                $stmt->bind_param("sssdsi", $name, $cashtag, $email, $currentBalance, $remark, $status);
+                $stmt->bind_param("sssdsiss", $name, $cashtag, $email, $currentBalance, $remark, $status,$addedBy,$branch);
 
                 if ($stmt->execute()) {
                     $this->createRecord("cashappRecord", "name", $name, $currentBalance, "Recharge", $addedBy, "", 0, $currentBalance, $remark);
@@ -581,15 +583,10 @@ class Creation
             $name = $this->conn->real_escape_string($_POST['name']);
             $status = isset($_POST['status']) ? 1 : 0; // Assuming 'status' is a checkbox
             $addby = $this->susername;
-            $data = $this->getUserDataByUsername($addby);
-            $branch = $data['branchname'];
-            $sql = "INSERT INTO branch (name, status,by_name,branch, created_at, updated_at) VALUES (?, ?, ?,?,NOW(), NOW())";
-print_r($data);
-echo $branch;
-            exit();
+            $sql = "INSERT INTO branch (name, status,by_name, created_at, updated_at) VALUES (?, ?, ?,?,NOW(), NOW())";
 
             if ($stmt = $this->conn->prepare($sql)) {
-                $stmt->bind_param("siss", $name, $status,$addby,$branch);
+                $stmt->bind_param("siss", $name, $status,$addby);
 
                 if ($stmt->execute()) {
                     // Success: Redirect or display a success message
