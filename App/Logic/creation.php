@@ -66,15 +66,15 @@ class Creation
             $status = isset($_POST['status']) ? 1 : 0;
             $currentBalance = $this->conn->real_escape_string($_POST['currentbalance']);
             $addedBy = $this->susername;
-            $data=$this->getUserDataByUsername($addedBy);
+            $data = $this->getUserDataByUsername($addedBy);
             // print_r($data);
             // exit();
-            $branch=$data['branchname'];
+            $branch = $data['branchname'];
 
             $sql = "INSERT INTO platform (name, status, current_balance, by_u, created_at, updated_at,branch) VALUES (?, ?, ?, ?, NOW(), NOW(),?)";
 
             if ($stmt = $this->conn->prepare($sql)) {
-                $stmt->bind_param("sidss", $platformName, $status, $currentBalance, $addedBy,$branch);
+                $stmt->bind_param("sidss", $platformName, $status, $currentBalance, $addedBy, $branch);
 
                 if ($stmt->execute()) {
                     $this->createRecord("platformRecord", "platform", $platformName, $currentBalance, "Recharge", $addedBy, "", 0, $currentBalance, "");
@@ -314,10 +314,9 @@ class Creation
                     $_SESSION['toast'] = ['type' => 'success', 'message' => 'Reedem Added Sucessfully '];
                     $this->updateBalances($type, $cashoutamount, $platformName, $cashupName, $username, $by_username);
                     echo "Transaction added successfully. Redirecting...<br>";
-                    if($by_role=='User'){
+                    if ($by_role == 'User') {
                         header("Location: ../../index.php");
-
-                    }else{
+                    } else {
 
                         header("Location: ../../index.php/Portal_User_Management");
                     }
@@ -363,8 +362,8 @@ class Creation
             $branchId = $userData['branchname'];
             $pagename = $userData['pagename'];
             $byrole = $this->srole;
-            $redeem_status=1;
-            $cashapp_statu=1;
+            $redeem_status = 1;
+            $cashapp_statu = 1;
 
 
 
@@ -374,7 +373,7 @@ class Creation
                     VALUES (?, ?, ?, ?, ?, ?,?, ?, ?,?,?, ?, ?,?,?, NOW(), NOW())";
 
             if ($stmt = $this->conn->prepare($sql)) {
-                $stmt->bind_param("sssssssssssssss", $username, $recharge, $pageId, $pagename, $platform, $branchId, $cashName, $bonus, $remark, $byId, $byrole, $byUsername, $type,$redeem_status,$cashapp_statu);
+                $stmt->bind_param("sssssssssssssss", $username, $recharge, $pageId, $pagename, $platform, $branchId, $cashName, $bonus, $remark, $byId, $byrole, $byUsername, $type, $redeem_status, $cashapp_statu);
 
                 if ($stmt->execute()) {
                     $_SESSION['toast'] = ['type' => 'success', 'message' => 'Recharge Added Sucessfully '];
@@ -581,11 +580,13 @@ class Creation
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $name = $this->conn->real_escape_string($_POST['name']);
             $status = isset($_POST['status']) ? 1 : 0; // Assuming 'status' is a checkbox
-
-            $sql = "INSERT INTO branch (name, status, created_at, updated_at) VALUES (?, ?, NOW(), NOW())";
+            $addby = $this->susername;
+            $data = $this->getUserDataByUsername($addby);
+            $branch = $data['branchname'];
+            $sql = "INSERT INTO branch (name, status,by_name,branch, created_at, updated_at) VALUES (?, ?, ?,?,NOW(), NOW())";
 
             if ($stmt = $this->conn->prepare($sql)) {
-                $stmt->bind_param("si", $name, $status);
+                $stmt->bind_param("siss", $name, $status,$addby,$branch);
 
                 if ($stmt->execute()) {
                     // Success: Redirect or display a success message
