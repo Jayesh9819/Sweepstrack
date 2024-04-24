@@ -584,6 +584,9 @@ class Creation
             $data = $this->getUserDataByUsername($addby);
             $branch = $data['branchname'];
             $sql = "INSERT INTO branch (name, status,by_name,branch, created_at, updated_at) VALUES (?, ?, ?,?,NOW(), NOW())";
+print_r($data);
+echo $branch;
+            exit();
 
             if ($stmt = $this->conn->prepare($sql)) {
                 $stmt->bind_param("siss", $name, $status,$addby,$branch);
