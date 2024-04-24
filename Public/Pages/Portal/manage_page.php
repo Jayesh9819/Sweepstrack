@@ -69,12 +69,8 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
         } 
         else {
             $branch = $_SESSION['branch1'];
-            $sql = "SELECT branch.*
-            FROM branch
-            JOIN page ON page.bid = branch.bid
-            WHERE branch.name = '$branch'
-            LIMIT 1;
-            ";
+            $sql = "SELECT branch.name AS bname,page.* FROM branch JOIN page ON page.bid = branch.bid WHERE branch.name = '$branch'";
+
         }
 
         // $sql = "SELECT * FROM page ";
