@@ -66,6 +66,9 @@ class Creation
             $status = isset($_POST['status']) ? 1 : 0;
             $currentBalance = $this->conn->real_escape_string($_POST['currentbalance']);
             $addedBy = $this->susername;
+            $data=$this->getUserDataByUsername($addedBy);
+            print_r($data);
+            exit();
 
             $sql = "INSERT INTO platform (name, status, current_balance, by_u, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(), NOW())";
 
