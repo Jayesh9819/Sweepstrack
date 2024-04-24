@@ -107,6 +107,8 @@
                                             <tr class="bg-white">
                                                 <?php
                                                 echo '<tr>
+                                                <th scope="col">Created At</th>
+
                                             <th scope="col">ID</th>
                                             <th scope="col">Name</th>
                                             <th scope="col">Full Name</th>
@@ -115,7 +117,6 @@
                                             <th scope="col">Page Name</th>
                                             <th scope="col">Branch Name</th>
                                             <th scope="col">Role</th>
-                                            <th scope="col">Created At</th>
                                             <th scope="col">Last Login</th>
                                             </tr>';
                                                 ?>
@@ -134,6 +135,8 @@
                                                 }
 
                                                 echo "<tr>
+                                                <td>{$row['created_at']}</td>
+
                 <td>{$row['id']}</td>
                 <td>{$row['username']}</td>
                 <td>{$row['name']}</td>
@@ -143,7 +146,6 @@
                 <td>{$row['branchname']}</td>
 
                 <td>{$row['role']}</td>
-                <td>{$row['created_at']}</td>
                 <td>{$row['last_login']}</td>
               </tr>";
                                             }
