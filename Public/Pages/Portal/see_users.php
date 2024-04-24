@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en" dir="ltr">
 
@@ -77,8 +76,8 @@
                         <?php
 
                         include './App/db/db_connect.php';
-                        $branch=$_SESSION['branch1'];
-                        $page=$_SESSION['page1'];
+                        $branch = $_SESSION['branch1'];
+                        $page = $_SESSION['page1'];
 
                         if ($role === 'Admin') {
                             $sql = "SELECT * FROM user";
@@ -107,8 +106,6 @@
                                             <tr class="bg-white">
                                                 <?php
                                                 echo '<tr>
-                                                <th scope="col">Created At</th>
-
                                             <th scope="col">ID</th>
                                             <th scope="col">Name</th>
                                             <th scope="col">Full Name</th>
@@ -117,6 +114,7 @@
                                             <th scope="col">Page Name</th>
                                             <th scope="col">Branch Name</th>
                                             <th scope="col">Role</th>
+                                            <th scope="col">Created At</th>
                                             <th scope="col">Last Login</th>
                                             </tr>';
                                                 ?>
@@ -135,8 +133,6 @@
                                                 }
 
                                                 echo "<tr>
-                                                <td>{$row['created_at']}</td>
-
                 <td>{$row['id']}</td>
                 <td>{$row['username']}</td>
                 <td>{$row['name']}</td>
@@ -146,6 +142,7 @@
                 <td>{$row['branchname']}</td>
 
                 <td>{$row['role']}</td>
+                <td>{$row['created_at']}</td>
                 <td>{$row['last_login']}</td>
               </tr>";
                                             }
@@ -185,6 +182,21 @@
         ?>
 
     </main>
+    <script>
+        $(document).ready(function() {
+            $('#example').DataTable({
+                "order": [
+                    [9, "desc"]
+                ],
+                dom: 'Bfrtip', // Add the Bfrtip option to enable buttons
+
+                buttons: [
+                    'copy', 'excel', 'pdf'
+                ]
+            });
+        });
+    </script>
+
     <!-- Wrapper End-->
     <!-- Live Customizer start -->
     <!-- Setting offcanvas start here -->
