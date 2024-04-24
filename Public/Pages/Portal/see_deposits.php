@@ -74,7 +74,18 @@
                         </div>
                         <?php
                         include './App/db/db_connect.php';
-                        $sql = "SELECT * FROM transaction where type='Debit'";
+                        $branch=$_SESSION['branch1'];
+                        $page=$_SESSION['page1'];
+                        $role=$_SESSION['role'];
+                        if($role == 'Manager' || $role =='Supervisor'){
+                            $sql = "SELECT * FROM transaction where type='Debit' AND branch='$branch'";
+                        }elseif($role=='Agent'){
+                            $sql = "SELECT * FROM transaction where type='Debit' AND page='$page'";
+                        }elseif($role=='Admin'){
+                            $sql = "SELECT * FROM transaction where type='Debit'";
+                        }
+
+                        // $sql = "SELECT * FROM transaction where type='Debit'";
 
                         $result = $conn->query($sql);
 
