@@ -13,7 +13,7 @@ if (isset($action)) {
     global $title;
     $heading = "Fill the details";
     $role = $_SESSION['role'];
-    $branch = $_SESSION['branch1'];
+    $gbranch = $_SESSION['branch1'];
     // echo $role;
     // Assuming you have defined or included your functions like fhead, field, select, etc.
     // ...
@@ -39,7 +39,7 @@ if (isset($action)) {
         }
 
         $pageopt = "<option value=''>Select Page Name</option>";
-        $resultPage = $conn->query("SELECT branch.name AS bname,page.* FROM branch JOIN page ON page.bid = branch.bid WHERE branch.name = '$branch' And page.status=1");
+        $resultPage = $conn->query("SELECT branch.name AS bname,page.* FROM branch JOIN page ON page.bid = branch.bid WHERE branch.name = '$gbranch' And page.status=1");
         if ($resultPage->num_rows > 0) {
             while ($row = $resultPage->fetch_assoc()) {
                 $pageopt .= "<option value='" . htmlspecialchars($row['name']) . "'>" . htmlspecialchars($row['name']) . "</option>";
@@ -228,7 +228,7 @@ if (isset($action)) {
 
         // echo field("page ID", "text", "fbid", "Enter the Facebook ID");
         $platformOptions = "<option value=''>Select Platform</option>";
-        $result = $conn->query("SELECT name FROM platform where status=1");
+        $result = $conn->query("SELECT name FROM platform where status=1 And branch='$branch'");
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 $platformOptions .= "<option value='" . htmlspecialchars($row['name']) . "'>" . htmlspecialchars($row['name']) . "</option>";
@@ -241,7 +241,7 @@ if (isset($action)) {
 
         // echo field("cashApp Name", "text", "cashAppname", "Enter the cashApp Name");
         $cashAppOptions = "<option value=''>Select cashApp</option>";
-        $result = $conn->query("SELECT * FROM cashapp where status=1");
+        $result = $conn->query("SELECT * FROM cashapp where status=1 And branch='$branch'");
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 $cashAppOptions .= "<option value='" . htmlspecialchars($row['name']) . "'>" . htmlspecialchars($row['name']) . "</option>";
