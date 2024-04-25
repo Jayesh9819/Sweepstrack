@@ -266,7 +266,7 @@ if (isset($action)) {
 
         echo fhead($title, $heading, $actionUrl);
 
-        // Fields for Platform Details
+        // Fields for Platform Detailss
         echo field("Platform Name", "text", "platformname", "Enter the Platform Name");
         // echo field("Status", "checkbox", "status", "Active");
 
