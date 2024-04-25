@@ -84,7 +84,7 @@ if (isset($_GET['start_time']) && isset($_GET['end_time'])) {
     $role = $_SESSION['role'];
     $username = $_SESSION['username'];
     $page=$_SESSION['page1'];
-    $barnch=$_SESSION['branch'];
+    $barnch=$_SESSION['branch1'];
     if ($role == 'Admin') {
 
         $rechargeQuery = "SELECT SUM(recharge) AS total_recharge FROM transaction WHERE type='Debit' AND date(created_at) = CURDATE()";
@@ -95,8 +95,8 @@ if (isset($_GET['start_time']) && isset($_GET['end_time'])) {
         $redeemQuery = "SELECT SUM(redeem) AS total_redeem FROM transaction WHERE type='Credit' AND username='$username' AND date(created_at) = CURDATE()";
         $activeUsersQuery = "SELECT COUNT(*) AS active_users FROM user WHERE role='User' AND status = 1 AND username='$username'";
     } else if ($role == 'Manager' || $role == 'Supervisor') {
-        $rechargeQuery = "SELECT SUM(recharge) AS total_recharge FROM transaction WHERE type='Debit' AND page='$page' AND date(created_at) = CURDATE()";
-        $redeemQuery = "SELECT SUM(redeem) AS total_redeem FROM transaction WHERE type='Credit' AND page='$page' AND date(created_at) = CURDATE()";
+        $rechargeQuery = "SELECT SUM(recharge) AS total_recharge FROM transaction WHERE type='Debit' AND branch='$branch' AND date(created_at) = CURDATE()";
+        $redeemQuery = "SELECT SUM(redeem) AS total_redeem FROM transaction WHERE type='Credit' AND branch='$branch' AND date(created_at) = CURDATE()";
         $activeUsersQuery = "SELECT COUNT(*) AS active_users FROM user WHERE role='User' AND status = 1 AND branchname='$barnch'";
     } else {
         $rechargeQuery = "SELECT SUM(recharge) AS total_recharge FROM transaction WHERE type='Debit' AND by_u='$username' AND date(created_at) = CURDATE()";
