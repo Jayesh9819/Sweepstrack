@@ -182,11 +182,11 @@
                     $sql .= " AND redeem_status = 1 AND cashout_status = 1";
                     $sumSql .= " AND redeem_status = 1 AND cashout_status = 1";
                     if ($role == 'Manager' || $role == 'Supervisor') {
-                        $sql .= "And branch='$bra' ";
-                        $sumSql .= " And branch='$bra'";
+                        $sql .= " AND branch='$bra' ";
+                        $sumSql .= " AND branch='$bra'";
                     } elseif ($role == 'Agent') {
-                        $sql .= "And page='$pag' ";
-                        $sumSql .= " And page='$pag'";
+                        $sql .= " AND page='$pag' ";
+                        $sumSql .= " AND page='$pag'";
                     }
 
                     if (isset($_SESSION['start_date']) && isset($_SESSION['end_date']) && $_SESSION['start_date'] !== '' && $_SESSION['end_date'] !== '') {
