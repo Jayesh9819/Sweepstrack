@@ -307,11 +307,18 @@ class Creation
             $userData = $this->getUserDataByUsername($username);
             $branchId = $userData['branchname'];
             $pagename = $userData['pagename'];
+            if($by_role!='User'){
+                $redstat=1;
+                $cashstat=1;
+            }else{
+                $redstat=0;
+                $cashstat=0;
+            }
 
 
-            $sql = "Insert into transaction (username,redeem,page,branch,excess,cashapp,platform,tip,type,remark,by_u,by_role) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+            $sql = "Insert into transaction (username,redeem,redeem_status,cashout_status,page,branch,excess,cashapp,platform,tip,type,remark,by_u,by_role) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             if ($stmt = mysqli_prepare($this->conn, $sql)) {
-                mysqli_stmt_bind_param($stmt, "sississsssss", $username, $cashoutamount, $pagename, $branchId, $accessamount, $cashupName, $platformName, $tip, $type, $remark, $by_username, $by_role);
+                mysqli_stmt_bind_param($stmt, "sissssisssssss", $username, $cashoutamount,$redstat,$cashstat, $pagename, $branchId, $accessamount, $cashupName, $platformName, $tip, $type, $remark, $by_username, $by_role);
                 if ($stmt->execute()) {
                     $_SESSION['toast'] = ['type' => 'success', 'message' => 'Reedem Added Sucessfully '];
                     $this->updateBalances($type, $cashoutamount, $platformName, $cashupName, $username, $by_username);
