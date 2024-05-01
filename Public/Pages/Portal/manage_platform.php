@@ -64,7 +64,7 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
 
         $role = $_SESSION['role'];
         if ($role == 'Admin' ) {
-            $sql = "SELECT * FROM platform WHERE Role = 'User'";
+            $sql = "SELECT * FROM platform ";
         } 
         else {
             $branch = $_SESSION['branch1'];
