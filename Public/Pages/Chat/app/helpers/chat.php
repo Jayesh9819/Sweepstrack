@@ -22,11 +22,15 @@ function getChats($id_1, $id_2, $conn)
         $params = [$id_2, $id_2];
 
     } else {
-        $sql = "SELECT * FROM chats
-                WHERE (from_id = ? AND to_id = ?)
-                OR    (to_id = ? AND from_id = ?)
-                ORDER BY chat_id ASC";
-        $params = [$id_1, $id_2, $id_1, $id_2];
+        $sql = "SELECT chats.*, 
+        sender.username AS sender_username, 
+        receiver.username AS receiver_username
+        FROM chats
+        LEFT JOIN user AS sender ON chats.from_id = sender.id
+        LEFT JOIN user AS receiver ON chats.to_id = receiver.id
+        WHERE (chats.from_id = ? OR chats.to_id = ?)
+        ORDER BY chats.chat_id ASC";
+$params = [$id_1, $id_1];
     }
     // Prepare and execute SQL statement
     $stmt = $conn->prepare($sql);

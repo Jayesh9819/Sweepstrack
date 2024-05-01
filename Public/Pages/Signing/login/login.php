@@ -45,7 +45,7 @@
     <div id="loading">
         <div class="loader simple-loader">
             <div class="loader-body ">
-                <img src="../assets/images/CustCountFinal.png" style="height: 25%;" alt="loader" class="image-loader img-fluid ">
+                <img src="<?php echo $settings['loader']; ?>" style="height: 25%;" alt="loader" class="image-loader img-fluid ">
             </div>
         </div>
     </div>
@@ -59,9 +59,9 @@
                         <div style="position: relative ; left: 100px;" class="col-md-12 col-lg-6 align-self-center">
                             <a href="#" class="navbar-brand d-flex align-items-center mb-3 justify-content-center text-primary">
                                 <div class="logo-normal">
-                                    <img src="../assets/images/CustCountFinal.png" style="height: 100px; " alt="">
+                                    <img src="<?php echo $settings['logo']; ?>" style="height: 100px; " alt="">
                                 </div>
-                                <h1 style="font-family: 'Times New Roman', Times, serif; color:#2fe082; font-size: 3em; font-weight: bold; " class="logo-title ms-3 mb-0">Sweepstrack</h1>
+                                <h1 style="font-family: 'Times New Roman', Times, serif; color:<?php echo $settings['color']; ?>; font-size: 3em; font-weight: bold; " class="logo-title ms-3 mb-0"><?php echo $settings['name']; ?></h1>
 
                                 <h5 style=" text-decoration:double; position: relative; right: 180px; top: 40px; color: #ffbb00; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;" class="logo-title ms-3 mb-0"></h5>
 
@@ -112,10 +112,10 @@
                                                     </ul>
                                                 </div>
                                                 <p class="mt-3 text-center">
-                                                    <button onclick="window.location.href='https://storage.appilix.com/uploads/app-apk-660a6ec0b839b-1711959744.apk'" class="btn btn-primary">Download for Android</button>
+                                                    <button onclick="window.location.href='<?php echo $settings['androidlink']; ?>'" class="btn btn-primary">Download for Android</button>
 
 <!-- For iOS -->
-<button onclick="window.location.href='https://warehouse.appilix.com/uploads/app-ipa-660a6f91c5ea7-1711959953.ipa'" class="btn btn-primary">Download for iOS</button>
+<button onclick="window.location.href='<?php echo $settings['ioslink']; ?>'" class="btn btn-primary">Download for iOS</button>
                                                 <p class="mt-3 text-center">
     For iOS Install using Scarlet or AltStore or similar tools
                                                     <!-- Don’t have an account? <a href="./Register_to_CustCount" class="text-underline">Click here to sign up.</a> -->
@@ -129,7 +129,7 @@
                     </div>
                     </div>
                     <div class="col-lg-6 d-lg-block d-none p-0 overflow-hidden" style="position: relative; right: 80px; background-color: #39DFE5;">
-                        <img src="../assets/images/cccc.webp" class="img-fluid gradient-main" alt="images" loop autoplay muted></img>
+                        <img src="<?php echo $settings['banner']; ?>" class="img-fluid gradient-main" alt="images" loop autoplay muted></img>
                     </div>
                 </div>
         </section>

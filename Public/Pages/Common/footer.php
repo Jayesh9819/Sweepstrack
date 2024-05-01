@@ -7,7 +7,7 @@
         <div class="right-panel">
             ©<script>
                 2022
-            </script> <span data-setting="">CustCount</span>, Made with
+            </script> <span data-setting=""><?php echo $settings['name']; ?></span>, Made with
             <span class="text-gray">
             </span> by <a href="#" target="_blank">Weblux Digi</a>.
         </div>

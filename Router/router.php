@@ -14,6 +14,7 @@ if ($uri == $firstparam || $uri == $secondparam) {
 } else {
     $prefix = $thirdparam;
     $root = $fourthparam;
+
     $routes = [
 
 
@@ -71,12 +72,14 @@ if ($uri == $firstparam || $uri == $secondparam) {
         $prefix . $root . '/Add_User'                         => './Public/Pages/Portal/temp.php',
         $prefix . $root . '/Add_CashApp'                         => './Public/Pages/Portal/temp.php',
         $prefix . $root . '/Add_Refer'                         => './Public/Pages/Portal/add_refer.php',
+        $prefix . $root . '/WebSet'                         => './Public/Pages/Portal/webset.php',
 
 
         //Edit Fields
         $prefix . $root . '/Edit_User'                         => './Public/Pages/Portal/temp.php',
         $prefix . $root . '/Edit_Cashapp'                         => './Public/Pages/Portal/temp.php',
         $prefix . $root . '/Edit_Branch'                         => './Public/Pages/Portal/temp.php',
+        $prefix . $root . '/Show_Profile'                         => './Public/Pages/Portal/show_profile.php',
 
 
         $prefix . $root . '/See_Reports'                          => './Public/Pages/Portal/temp.php',

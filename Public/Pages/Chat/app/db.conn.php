@@ -2,19 +2,17 @@
 ob_start();
 
 # server name
-$sName = "199.231.187.146";
-# user name
-$uName = "sweepstrac";
-# password
-$pass = "12345678";
-$db_name = "sweepstrac";
+$servername = "66.45.252.210"; // or your server name
+$username = "QC";
+$password = "12345678";
+$dbname = "quickchat";
 
 #creating database connection
 try {
   $conn = new PDO(
-    "mysql:host=$sName;dbname=$db_name",
-    $uName,
-    $pass
+    "mysql:host=$servername;dbname=$dbname",
+    $username,
+    $password
   );
   $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {

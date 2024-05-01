@@ -1,13 +1,17 @@
+<?php 
+include "./App/Logic/webset.php"
+?>
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>SweepsTrac</title>
+<title><?php echo $settings['name']; ?></title>
 <meta name="description" content="">
 <meta name="keywords" content="">
 <meta name="author" content="Weblux Digi">
 <meta name="DC.title" content="CustCount">
 
 <!-- Favicon -->
-<link rel="shortcut icon" href="../assets/images/CustCountLogo.png">
+<link rel="shortcut icon" href="../assets/images/<?php echo $settings['logo']; ?>">
 <link rel="manifest" href="./Public/Pages/Common/manifest.json">
 
 <!-- Library / Plugin Css Build -->
@@ -51,7 +55,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 <!-- <script src=". vanillaEmojiPicker.js"></script> -->
-
 
 <!-- Include Toastr CSS -->
 <script>

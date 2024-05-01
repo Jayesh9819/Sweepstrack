@@ -185,8 +185,16 @@
                         $sql .= " AND branch='$bra' ";
                         $sumSql .= " AND branch='$bra'";
                     } elseif ($role == 'Agent') {
-                        $sql .= " AND page='$pag' ";
-                        $sumSql .= " AND page='$pag'";
+                        $page = $_SESSION['page1'];
+                        $pagesArray = explode(", ", $page);
+                        $quotedPages = [];
+                        foreach ($pagesArray as $pageName) {
+                            $quotedPages[] = "'" . mysqli_real_escape_string($conn, $pageName) . "'";
+                        }
+                        $whereClause = "page IN (" . implode(", ", $quotedPages) . ")";
+            
+                        $sql .= " AND $whereClause ";
+                        $sumSql .= " AND $whereClause";
                     }
 
                     if (isset($_SESSION['start_date']) && isset($_SESSION['end_date']) && $_SESSION['start_date'] !== '' && $_SESSION['end_date'] !== '') {

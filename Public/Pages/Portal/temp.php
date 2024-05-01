@@ -35,7 +35,7 @@
 <body class="  ">
     <!-- loader Start -->
     <?php
-    // include("./Public/Pages/Common/loader.php");
+    //  include("./Public/Pages/Common/loader.php");
 
     ?>
     <!-- loader END -->

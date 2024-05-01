@@ -58,11 +58,25 @@
                     <?php
                     include "./App/db/db_connect.php";
                     $role = $_SESSION['role'];
-                    $page='';
+                    $page = '';
                     $page = $_SESSION['page1'];
+                    $branch = $_SESSION['branch1'];
+
 
                     if ($role == 'Admin') {
                         $sql = "SELECT * FROM transaction WHERE Redeem != 0 AND Redeem IS NOT NULL AND (redeem_status = 0 OR cashout_status = 0)";
+                    } elseif ($role == "Agent") {
+                        $pagesArray = explode(", ", $page);
+                        $quotedPages = [];
+                        foreach ($pagesArray as $pageName) {
+                            $quotedPages[] = "'" . mysqli_real_escape_string($conn, $pageName) . "'";
+                        }
+                        $whereClause = "page IN (" . implode(", ", $quotedPages) . ")";
+                        // $sql = "SELECT * FROM user WHERE Role = 'User' AND $whereClause";
+            
+                        $sql = "SELECT * FROM transaction WHERE Redeem != 0 AND Redeem IS NOT NULL AND (redeem_status = 0 OR cashout_status = 0) AND $whereClause AND approval_status=0 ";
+                    } elseif ($role == "Manager" || $role == "Supervisor") {
+                        $sql = "SELECT * FROM transaction WHERE Redeem != 0 AND Redeem IS NOT NULL AND (redeem_status = 0 OR cashout_status = 0) AND branch='$branch' AND approval_status=1";
                     } else {
                         $sql = "SELECT * FROM transaction WHERE Redeem != 0 AND Redeem IS NOT NULL AND (redeem_status = 0 OR cashout_status = 0) AND page='$page'";
                     }
@@ -95,49 +109,82 @@
                                         <th>Amount</th>
                                         <th>Platform Name</th>
                                         <th>Page Name</th>
-                                        <th>By</th>
-                                        <th>Platform Redeem</th>
-                                        <th>CashOut</th>
-
+                                        <?php
+                                        if ($role == 'Admin') {
+                                            echo '
+                      <th>Approval</th>
+                      <th>Approved By</th>
+                      <th>Platform Redeem</th>
+                      <th>Redeem By</th> 
+                      <th>Cash Out</th>
+                      <th>Cashout By</th>';
+                                        } elseif ($role == 'Manager' || $role == 'Supervisor') {
+                                            echo '<th>Approved By</th><th>Platform Redeem</th>
+                      <th>Redeem By</th> 
+                      <th>Cash Out</th>
+                      <th>Cashout By</th><th>Message</th>';
+                                        } elseif ($role == 'Agent') {
+                                            echo '<th>Approve</th>
+                      <th>Reject</th>';
+                                        }
+                                        ?>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($results as $row) :
                                         $createdAt = new DateTime($row['created_at'], new DateTimeZone('UTC'));
                                         $createdAtFormatted = $createdAt->format('Y-m-d H:i:s');
-                                        $platformRedeemStatus = $row['redeem_status'];
-                                        $cashOutStatus = $row['cashout_status'];
-                                        $id = $row['tid']
-
-
+                                        $id = $row['tid'];
                                     ?>
-
                                         <tr>
                                             <td><?= $createdAtFormatted ?></td>
-                                            <td><?= $row['username'] ?></td>
-                                            <td><?= $row['redeem'] ?></td>
-                                            <td><?= $row['platform'] ?></td>
-                                            <td><?= $row['page'] ?></td>
-                                            <td><?= $row['by_u'] ?></td>
-                                            <td>
-                                                <?php if ($platformRedeemStatus == 0) : ?>
-                                                    <button class="btn btn-warning" onclick="status(<?php echo $id; ?>, 'transaction', 'redeem_status','tid')">Pending</button>
-                                                <?php elseif ($platformRedeemStatus == 1) : ?>
-                                                    <button class="btn btn-success">Done</button>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td>
-                                                <?php if ($cashOutStatus == 0) : ?>
-                                                    <button class="btn btn-warning" onclick="cashapp(<?php echo $id; ?>, 'transaction', 'redeem_status','tid')">Pending</button>
-                                                <?php elseif ($cashOutStatus == 1) : ?>
-                                                    <button class="btn btn-success">Done</button>
-                                                <?php endif; ?>
-                                            </td>
+                                            <td><?= htmlspecialchars($row['username']) ?></td>
+                                            <td><?= htmlspecialchars($row['redeem']) ?></td>
+                                            <td><?= htmlspecialchars($row['platform']) ?></td>
+                                            <td><?= htmlspecialchars($row['page']) ?></td>
 
+                                            <?php if ($role == 'Admin') : ?>
+                                                <td>
+                                                    <?php if ($row['approval_status'] == 0) : ?>
+                                                        <button class="btn btn-warning" onclick="status(<?= $id; ?>, 'transaction', 'approval_status', 'tid','approved_by')">Pending</button>
+                                                    <?php elseif ($row['approval_status'] == 1) : ?>
+                                                        <button class="btn btn-success">Approved</button>
+                                                    <?php elseif ($row['approval_status'] == 2) : ?>
+                                                        <button class="btn btn-danger">Rejected</button>
+                                                    <?php endif; ?>
+                                                </td>
+                                            <?php endif; ?>
+
+                                            <?php if ($role == 'Admin' || $role == 'Manager' || $role == 'Supervisor') : ?>
+                                                <td><?= htmlspecialchars($row['approved_by']) ?></td>
+
+                                                <td><?= htmlspecialchars($row['redeem_by']) ?></td>
+                                                <td>
+                                                    <button class="btn btn-<?= $row['redeem_status'] == 0 ? 'warning' : 'success' ?>" onclick="status(<?= $id; ?>, 'transaction', 'redeem_status', 'tid','redeem_by')">
+                                                        <?= $row['redeem_status'] == 0 ? 'Pending' : 'Done' ?>
+                                                    </button>
+                                                </td>
+                                                <td><?= htmlspecialchars($row['cashout_by']) ?></td>
+                                                <td>
+                                                    <button class="btn btn-<?= $row['cashout_status'] == 0 ? 'warning' : 'success' ?>" onclick="cashapp(<?= $id; ?>, 'transaction', 'cashout_status', 'tid','cashout_by')">
+                                                        <?= $row['cashout_status'] == 0 ? 'Pending' : 'Done' ?>
+                                                    </button>
+                                                </td>
+                                                <td><?= !empty($row['Reject_msg']) ? htmlspecialchars($row['Reject_msg']) : ' ' ?></td>
+
+                                            <?php elseif ($role == 'Agent') : ?>
+                                                <td>
+                                                    <button class="btn btn-primary" onclick="status(<?= $id; ?>, 'transaction', 'approval_status', 'tid','approved_by')">Approve</button>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-danger" onclick="Reject(<?= $id; ?>, 'transaction', 'approval_status', 'tid','approved_by')">Reject</button>
+                                                </td>
+                                            <?php endif; ?>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
                             </table>
+
 
                         <?php
                     }
@@ -161,16 +208,16 @@
         ?>
     </main>
     <script>
-        function status(product_id, table, field, id) {
-            if (confirm("Are you sure you want to Activate or Deactivate?")) {
+        function status(product_id, table, field, id,where) {
+            if (confirm("Are you sure you want to Chnage the Status?")) {
                 const xhr = new XMLHttpRequest();
-                xhr.open("POST", "../App/Logic/commonf.php?action=status", true);
+                xhr.open("POST", "../App/Logic/commonf.php?action=Approval", true);
 
                 // Set the Content-Type header
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
                 // Include additional parameters in the data sent to the server
-                const data = "id=" + product_id + "&table=" + table + "&field=" + field + "&cid=" + id;
+                const data = "id=" + product_id + "&table=" + table + "&field=" + field + "&cid=" + id+"&where="+where;
 
                 // Log the data being sent
                 console.log("Data sent to server:", data);
@@ -220,10 +267,10 @@
             }
         }
 
-        function cashapp(product_id, table, field, id) {
+        function cashapp(product_id, table, field, id,cashout_by) {
             const cashAppName = prompt("Please enter the cashapp name:");
 
-            if (confirm("Are you sure you want to Activate or Deactivate?")) {
+            if (confirm("Are you sure you want to Chnage the Status?")) {
                 const xhr = new XMLHttpRequest();
                 xhr.open("POST", "../App/Logic/commonf.php?action=cashapp", true);
 
@@ -231,7 +278,67 @@
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
                 // Include additional parameters in the data sent to the server
-                const data = "id=" + product_id + "&table=" + table + "&field=" + field + "&cid=" + id + "&cashapp=" + cashAppName;
+                const data = "id=" + product_id + "&table=" + table + "&field=" + field + "&cid=" + id + "&cashapp=" + cashAppName ;
+
+                // Log the data being sent
+                console.log("Data sent to server:", data);
+
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        console.log("XHR status:", xhr.status);
+
+                        if (xhr.status === 200) {
+                            console.log("Response received:", xhr.responseText);
+
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+
+                                if (response) {
+                                    console.log("Parsed JSON response:", response);
+
+                                    if (response.success) {
+                                        alert("Done successfully!");
+                                        location.reload();
+                                    } else {
+                                        alert("Error : " + response.message);
+                                    }
+                                } else {
+                                    console.error("Invalid JSON response:", xhr.responseText);
+                                    alert("Invalid JSON response from the server.");
+                                }
+                            } catch (error) {
+                                console.error("Error parsing JSON:", error);
+                                alert("Error parsing JSON response from the server.");
+                            }
+                        } else {
+                            console.error("HTTP request failed:", xhr.statusText);
+                            alert("Error: " + xhr.statusText);
+                        }
+                    }
+                };
+
+                // Log any network errors
+                xhr.onerror = function() {
+                    console.error("Network error occurred.");
+                    alert("Network error occurred. Please try again.");
+                };
+
+                // Send the request
+                xhr.send(data);
+            }
+        }
+        function Reject(tid, table, field, id) {
+            const msg = prompt("Enter the Reason to Reject");
+
+            if (confirm("Are you sure you want to Reject?")) {
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", "../App/Logic/commonf.php?action=Reject", true);
+
+                // Set the Content-Type header
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                // Include additional parameters in the data sent to the server
+                const data = "id=" + tid + "&table=" + table + "&field=" + field + "&cid=" + id + "&msg=" + msg;
 
                 // Log the data being sent
                 console.log("Data sent to server:", data);

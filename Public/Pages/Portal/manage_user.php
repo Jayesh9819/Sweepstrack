@@ -27,10 +27,12 @@ if (isset($_SESSION['login_error'])) {
     unset($_SESSION['login_error']); // Clear the error message
 }
 
+
 ?>
 
 <?php
 $role = $_SESSION['role'];
+
 if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
     // The user is a manager, let them stay on the page
     // You can continue to load the rest of the page here
@@ -69,9 +71,17 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
             $sql = "SELECT * FROM user WHERE Role = 'User' And branchname='$branch'";
         }
         else {
-            $page = $_SESSION['page'];
-            $sql = "SELECT * FROM user WHERE Role = 'User' AND pagename='$page'";
+            $page = $_SESSION['page1'];
 
+            $pagesArray = explode(", ", $page);
+            $quotedPages = [];
+            foreach ($pagesArray as $pageName) {
+                $quotedPages[] = "'" . mysqli_real_escape_string($conn, $pageName) . "'";
+            }
+            $whereClause = "pagename IN (" . implode(", ", $quotedPages) . ")";
+            $sql = "SELECT * FROM user WHERE Role = 'User' AND $whereClause";
+            
+            
         }
         $result = $conn->query($sql);
 

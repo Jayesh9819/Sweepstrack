@@ -89,7 +89,15 @@
                             $sql = "SELECT * FROM user WHERE Role IN ('Agent', 'User') AND branchname='$branch' ";
                             $params = [];
                         } elseif ($role === 'Agent') {
-                            $sql = "SELECT * FROM user WHERE Role = 'User' AND pagename='$page'";
+                            $page = $_SESSION['page1'];
+
+                            $pagesArray = explode(", ", $page);
+                            $quotedPages = [];
+                            foreach ($pagesArray as $pageName) {
+                                $quotedPages[] = "'" . mysqli_real_escape_string($conn, $pageName) . "'";
+                            }
+                            $whereClause = "pagename IN (" . implode(", ", $quotedPages) . ")";
+                            $sql = "SELECT * FROM user WHERE Role = 'User' AND $whereClause";
                             $params = [];
                         }
 

@@ -34,8 +34,8 @@ function select($label, $id, $name, $options, $selectedOption = null)
                 <select class="form-select" id="' . $id . '" name="' . $name . '">';
 
     foreach ($options as $option) {
-        $selected = ($option == $selectedOption) ? 'selected' : '';
-        $html .= '<option ' . $selected . ' >' . $option . '</option>';
+        $selected = ($option == $selectedOption) ? 'selected="selected"' : ''; // Check if option is selected
+        $html .= '<option value="' . $option . '" ' . $selected . '>' . $option . '</option>';
     }
 
     $html .= '</select>
@@ -43,6 +43,159 @@ function select($label, $id, $name, $options, $selectedOption = null)
 
     return $html;
 }
+
+function selectMult($label, $id, $name, $options, $selectedOptions = [])
+{
+    // Starting the HTML for the multi-select dropdown
+    $html = '<div class="form-group">
+                <label class="form-label" for="' . $id . '">' . $label . '</label>
+                <select class="form-select" id="' . $id . '" multiple>';
+
+    // Adding options to the dropdown
+    foreach ($options as $option) {
+        $html .= '<option value="' . htmlspecialchars($option) . '">' . htmlspecialchars($option) . '</option>';
+    }
+
+    // Closing the select element and adding a visible input to display selections
+    $html .= '</select>
+              <input name='.$name.' type="text" id="' . $id . '_visible_input" class="form-control mt-2" readonly>
+            </div>';
+
+    // Adding the script to handle the select change event
+    $html .= '<script>
+                var selectedValues_' . $id . ' = [];
+
+                document.getElementById("' . $id . '").addEventListener("change", function(e) {
+                    var visibleInput = document.getElementById("' . $id . '_visible_input");
+                    var select = e.target;
+                    if (select.value) {
+                      // Add the selected value to the array and update the input field
+                      selectedValues_' . $id . '.push(select.value);
+                      visibleInput.value = selectedValues_' . $id . '.join(", ");
+                      
+                      // Remove the selected option from the dropdown
+                      select.remove(select.selectedIndex);
+                    }
+                });
+
+                document.getElementById("' . $id . '_visible_input").addEventListener("click", function() {
+                    var visibleInput = this;
+                    var select = document.getElementById("' . $id . '");
+                    var currentValues = visibleInput.value.split(", ");
+                    
+                    // Resetting the input field and dropdown selections
+                    visibleInput.value = "";
+                    selectedValues_' . $id . ' = [];
+                    
+                    // Add back the removed options to the dropdown
+                    currentValues.forEach(function(value) {
+                        var option = document.createElement("option");
+                        option.value = value;
+                        option.text = value;
+                        select.appendChild(option);
+                    });
+                });
+              </script>';
+
+    return $html;
+}
+function generateCheckboxes($values, $name) {
+    foreach ($values as $value) {
+        echo '<label>';
+        echo '<input type="checkbox" name="' . $name . '[]" value="' . htmlspecialchars($value) . '">';
+        echo htmlspecialchars($value);
+        echo '</label><br>';
+    }
+}
+function generateRadioButtons($values, $name) {
+    foreach ($values as $value) {
+        echo '<label>';
+        echo '<input type="radio" name="' . $name . '" value="' . htmlspecialchars($value) . '">';
+        echo htmlspecialchars($value);
+        echo '</label><br>';
+    }
+}
+
+function generateDynamicCheckboxScript($branchDropdownId, $checkboxContainerId, $pagesData, $serializedSelectedValues) {
+    // Unserialize the selected values
+    // $selectedValues = unserialize($serializedSelectedValues);
+
+    $script = "<script>
+        const branchSelect = document.getElementById('$branchDropdownId');
+        const checkboxContainer = document.getElementById('$checkboxContainerId');
+        const pagesData = " . json_encode($pagesData) . ";
+        const selectedValues = " . json_encode($serializedSelectedValues) . ";
+
+        // Function to update checkbox options based on selected branch
+        function updateCheckboxOptions() {
+            const selectedBranch = branchSelect.value;
+            // Clear previous checkboxes
+            checkboxContainer.innerHTML = '';
+            // Populate checkboxes based on selected branch
+            pagesData.forEach(page => {
+                if (page.bname === selectedBranch) {
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.name = 'selectedPages[]';
+                    checkbox.value = page.name;
+                    checkbox.id = page.name; // Optional: Assigning an ID for labels to work
+                    const label = document.createElement('label');
+                    label.textContent = page.name;
+                    label.setAttribute('for', page.name); // Associating label with checkbox
+                    // Check if page name is in selected values array
+                    if (selectedValues.includes(page.name)) {
+                        checkbox.checked = true;
+                    }
+                    checkboxContainer.appendChild(checkbox);
+                    checkboxContainer.appendChild(label);
+                    checkboxContainer.appendChild(document.createElement('br'));
+                }
+            });
+        }
+
+        // Event listener for branch selection change
+        branchSelect.addEventListener('change', updateCheckboxOptions);
+
+        // Initial call to populate checkboxes based on default selected branch
+        updateCheckboxOptions();
+    </script>";
+
+    return $script;
+}
+
+
+function generateDynamicDropdownScript($branchDropdownId, $pageDropdownId, $pagesData) {
+    $script = "<script>
+        const branchSelect = document.getElementById('$branchDropdownId');
+        const pageSelect = document.getElementById('$pageDropdownId');
+        const pagesData = " . json_encode($pagesData) . ";
+
+        // Function to update page options based on selected branch
+        function updatePageOptions() {
+            const selectedBranch = branchSelect.value;
+            // Clear previous options
+            pageSelect.innerHTML = '<option value=\"\">Select Page</option>';
+            // Populate options based on selected branch
+            pagesData.forEach(page => {
+                if (page.bname === selectedBranch) {
+                    const option = document.createElement('option');
+                    option.value = page.name;
+                    option.textContent = page.name;
+                    pageSelect.appendChild(option);
+                }
+            });
+        }
+
+        // Event listener for branch selection change
+        branchSelect.addEventListener('change', updatePageOptions);
+
+        // Initial call to populate page options based on default selected branch
+        updatePageOptions();
+    </script>";
+
+    return $script;
+}
+
 function cfield($label, $id, $name, $value, $isChecked = false)
 {
     $checkedAttribute = $isChecked ? 'checked' : '';

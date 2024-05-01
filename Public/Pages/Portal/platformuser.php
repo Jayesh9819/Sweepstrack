@@ -32,7 +32,7 @@
         $platformuserid = $conn->real_escape_string($_POST['username']);
         $platfromname = $conn->real_escape_string($_POST['platform']);
         // Assuming $username comes from a session or another source
-        $username = $_SESSION['username'] ?? 'defaultUsername'; // Fallback if not set
+        $username = $_POST['user'] ?? 'defaultUsername'; // Fallback if not set
         $by_add = $_SESSION['username'];
 
         // Use prepared statements to insert safely into the database
@@ -63,6 +63,58 @@
     ?>
 
 
+    <style>
+        .container {
+            max-width: 1200px;
+            /* Adjust the maximum width of the container */
+            margin: 2rem auto;
+            /* Center the container */
+        }
+
+        .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Soft shadow for depth */
+            border-radius: 10px;
+            /* Rounded corners for a modern look */
+            transition: transform 0.3s ease-in-out;
+            /* Smooth transform on hover */
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            /* Slight lift effect on hover */
+        }
+
+        .card-body {
+            padding: 1.5rem;
+            /* Spacious padding inside the card */
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            /* Bootstrap primary blue */
+            border: none;
+            border-radius: 5px;
+            /* Slight rounding on buttons */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            /* Subtle shadow for buttons */
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            /* Darker shade on hover */
+        }
+
+        .row {
+            margin-right: 0;
+            margin-left: 0;
+        }
+
+        .col-md-4 {
+            padding: 15px;
+            /* Spacing between columns */
+        }
+    </style>
 
 </head>
 
@@ -88,8 +140,12 @@
 
         <div class="content-inner container-fluid pb-0" id="page_layout">
             <div class="container mt-5">
-                <h2>Register</h2>
+                <h2>Map The User And its Platform</h2>
                 <form method="post">
+                    <?php if (isset($_GET['u'])) {
+                        echo    '<input type="hidden" name="user" value="' . $_GET['u'] . '">';
+                    } ?>
+                    <input type="hidden" value="">
                     <div class="form-group">
                         <label for="username">Username</label>
                         <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username" required>
@@ -108,9 +164,12 @@
             <?php
             // Assuming $conn is your database connection from include './App/db/db_connect.php';
             include './App/db/db_connect.php';
-
-            $sql = "SELECT * FROM PlatformUser where username='$username'"; // Replace 'other_user_info' with other columns you might want to display
-            $result = $conn->query($sql);
+            $username = $_GET['u'];
+           $sql= "SELECT Platformuser.*, user.id AS uid
+            FROM Platformuser
+            JOIN user ON Platformuser.username = user.username
+            WHERE Platformuser.username = '$username'";
+                        $result = $conn->query($sql);
             ?>
 
             <div class="container mt-5">
@@ -118,18 +177,22 @@
                     <?php if ($result->num_rows > 0) : ?>
                         <?php while ($user = $result->fetch_assoc()) : ?>
                             <div class="col-md-4">
-                                <div class="card" style="width: 18rem;">
+                                <div class="card" style="width: 100%;">
                                     <div class="card-body">
                                         <h5 class="card-title"><?= htmlspecialchars($user['username']) ?></h5>
-                                        <p class="card-text">Some info about the user here.</p>
-                                        <!-- Use additional user info if needed -->
-                                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                                        <h6 class="card-text">Platform User ID: <?= htmlspecialchars($user['platformuserid']) ?></h6>
+                                        <h6 class="card-text">Platform Name: <?= htmlspecialchars($user['platfromname']) ?></h6>
+                                        <a href="./Show_Profile?u=<?php echo $user['uid']; ?>" class="btn btn-primary">View Profile</a>
+                                        <!-- Delete button -->
+                                        <a href="" class="btn btn-danger" onclick="delete1(<?php echo $user['id']; ?>, 'Platformuser','id')">Delete</a>
                                     </div>
                                 </div>
                             </div>
                         <?php endwhile; ?>
                     <?php else : ?>
-                        <p>No users found.</p>
+                        <div class="col-12">
+                            <p class="text-center">No users found.</p>
+                        </div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -150,6 +213,67 @@
         ?>
 
     </main>
+    <script>
+                function delete1(product_id, table, field) {
+            if (confirm("Are you sure you want to Delete")) {
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", "../App/Logic/commonf.php?action=delete", true);
+
+                // Set the Content-Type header
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                // Include additional parameters in the data sent to the server
+                const data = "id=" + product_id + "&table=" + table + "&field=" + field;
+
+                // Log the data being sent
+                console.log("Data sent to server:", data);
+
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        console.log("XHR status:", xhr.status);
+
+                        if (xhr.status === 200) {
+                            console.log("Response received:", xhr.responseText);
+
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+
+                                if (response) {
+                                    console.log("Parsed JSON response:", response);
+
+                                    if (response.success) {
+                                        alert("Done successfully!");
+                                        location.reload();
+                                    } else {
+                                        alert("Error : " + response.message);
+                                    }
+                                } else {
+                                    console.error("Invalid JSON response:", xhr.responseText);
+                                    alert("Invalid JSON response from the server.");
+                                }
+                            } catch (error) {
+                                console.error("Error parsing JSON:", error);
+                                alert("Error parsing JSON response from the server.");
+                            }
+                        } else {
+                            console.error("HTTP request failed:", xhr.statusText);
+                            alert("Error: " + xhr.statusText);
+                        }
+                    }
+                };
+
+                // Log any network errors
+                xhr.onerror = function() {
+                    console.error("Network error occurred.");
+                    alert("Network error occurred. Please try again.");
+                };
+
+                // Send the request
+                xhr.send(data);
+            }
+        }
+
+    </script>
     <!-- Wrapper End-->
     <!-- Live Customizer start -->
     <!-- Setting offcanvas start here -->

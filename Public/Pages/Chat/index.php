@@ -38,11 +38,12 @@
 		if ($_SESSION['role'] == 'User') {
 			// Fetch online agents in the same page
 			$pagename = $_SESSION['page'];
-			$sql = "SELECT * FROM user WHERE role = 'Agent' AND last_seen(last_seen) COLLATE utf8mb4_unicode_ci  = 'Active' AND pagename = ? COLLATE utf8mb4_unicode_ci";
-			$stmt = $conn->prepare($sql);
-			$stmt->execute([$pagename]);
-			$agents = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			$sql = "SELECT * FROM user WHERE role = 'Agent' AND last_seen(last_seen) COLLATE utf8mb4_unicode_ci  = 'Active' AND pagename LIKE '%$pagename%' ";
+			echo $sql;
 
+			$stmt = $conn->prepare($sql);
+			$stmt->execute();
+			$agents = $stmt->fetchAll(PDO::FETCH_ASSOC);
 			$user = getUser($_SESSION['username'], $conn);
 
 			// Getting User conversations
@@ -52,6 +53,17 @@
 
 			# Getting User conversations
 			$conversations = getConversation($user['id'], $conn);
+		}
+		if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+			// This is an AJAX request
+			if (isset($_SESSION['user_id'])) {
+				$user_id = $_SESSION['user_id'];
+				$conversations1 = getConversation($user_id, $conn);
+				echo json_encode($conversations1);  // Return data in JSON format
+			} else {
+				echo json_encode([]); // No user session, return empty array
+			}
+			exit; // Prevent further execution
 		}
 	}
 
@@ -239,9 +251,10 @@
 	</style>
 
 
+
 </head>
 
-<body class="  ">
+<body>
 	<!-- loader Start -->
 	<?php
 	// include("./Public/Pages/Common/loader.php");
@@ -277,15 +290,9 @@
 										<img src="../uploads/profile/<?= !empty($chatWith['p_p']) ? $chatWith['p_p'] : '07.png' ?>" class="w-15 rounded-circle">
 										<h3 class="fs-xs m-2">
 											<?= $agent['username'] ?><br>
-											<small>
-
-												<?php
-												// echo lastChat($_SESSION['user_id'], $conversation['id'], $conn);
-												?>
-											</small>
 										</h3>
 									</div>
-
+									</li>
 								<?php } ?>
 						</ul>
 					</div>
@@ -381,8 +388,11 @@
 											<h6 style="color: #010011; font-size: 14px; display: block;"><?= lastChat($_SESSION['user_id'], $conversation['id'], $conn); ?></h6>
 										</div>
 										<?php if ($hasUnread) { ?>
-											<span class="badge badge-primary" style="background-color: #007bff; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px;"><?= $conversation['unread_messages']; ?></span>
+											<span class="badge badge-primary unread-badge" data-conversation-id="<?= $conversation['id']; ?>" style="background-color: #007bff; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px;">
+												<?= $conversation['unread_messages']; ?>
+											</span>
 										<?php } ?>
+
 										<?= $statusDot; ?>
 									</a>
 								</li>
@@ -400,7 +410,32 @@
 
 
 			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+			<script>
+				function fetchConversations() {
+					$.ajax({
+						url: 'index.php', // Making an AJAX request to the same file
+						type: 'GET',
+						dataType: 'json',
+						success: function(data) {
+							console.log(data); // Process and display the conversations
+							// Update the HTML based on returned data
+							var html = '';
+							data.forEach(function(conv) {
+								html += '<div>' + conv.username + ' - Unread messages: ' + conv.unread_messages + '</div>';
+							});
+							document.getElementById('conversation-list').innerHTML = html;
+						},
+						error: function() {
+							console.error('Error fetching conversations.');
+						}
+					});
+				}
 
+				// Fetch conversations every 5 seconds
+				setInterval(fetchConversations, 1000);
+				// Also fetch them immediately on page load
+				fetchConversations();
+			</script>
 			<script>
 				$(document).ready(function() {
 
@@ -427,6 +462,8 @@
 								$("#chatList").html(data);
 							});
 					});
+
+
 
 
 					/** 

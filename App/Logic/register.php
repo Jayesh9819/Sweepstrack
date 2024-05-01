@@ -16,33 +16,50 @@ $redirectTo = '../../index.php/Register_to_CustCount';
 $action = $_GET['action'];
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST" && $action == "register") {
-    // print_r($_POST);
+    print_r($_POST);
     // Retrieve and sanitize form data
     $fullname = trim($_POST['fullname']);
     $username = trim($_POST['username']);
     $password = trim($_POST['password']);
     $ref = isset($_POST['rfc']) ? $_POST['rfc'] : null;
     $refercode = generateReferralCode($fullname, $conn);
-    
+
     $role = trim($_POST['role']);
-    $referby=getUsernameByReferralCode($conn,$ref);
+    $referby = getUsernameByReferralCode($conn, $ref);
 
     $termsAccepted = isset($_POST['terms']) && $_POST['terms'] == 'on';
 
     // Additional fields
     $fbLink = isset($_POST['fb_link']) ? $_POST['fb_link'] : null;
-    $pageId = isset($_POST['page']) ? $_POST['page'] : null;
-    // $branchname = trim($_POST['branchname']);
+    $selectedPages = isset($_POST['selectedPages']) ? $_POST['selectedPages'] : [];
+    // Check if $selectedPages is not an array
+    if (!is_array($selectedPages)) {
+        // Convert it to an array with the single element
+        $selectedPages = [$selectedPages];
+    }
+    
+    print_r($selectedPages);
+    $serialized = serialize($selectedPages);
+    $array = unserialize($serialized);
+    $pageId = implode(", ", $array);    // echo $string;
+
     $by_u = $_SESSION['username'];
     $branchId = "";
-    if (isset($_POST['branchname']) && $_POST['branchname'] !== '') {
-        // If branchname is provided, sanitize and set the branchId
-        $branchId = $_POST['branchname'];
+    if (isset($_POST['branch']) && $_POST['branch'] !== '') {
+        $branchId = $_POST['branch'];
     } else {
-        // If branchname is not provided, fetch the branchId based on pageId
         $creationInstance = new Creation($conn);
-        $branchId = $creationInstance->getBranchNameByPageName($pageId, $conn);
+        if (is_array($array) && !empty($array)) {
+            $firstPageId = reset($array);
+            echo $firstPageId;
+            $branchId = $creationInstance->getBranchNameByPageName($firstPageId, $conn);
+        } else {
+            $branchId = $creationInstance->getBranchNameByPageName($pageId, $conn);
+            echo 'this is executed ';
+        }
+        // $branchId = $branchId ?? 'default_page_id';
     }
+    echo 'this is an branch '. $branchId;
     $ipAddress = $_SERVER['REMOTE_ADDR'];
 
     // Validate inputs are not empty
@@ -86,12 +103,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $action == "register") {
             VALUES (?, ?, ?, ?, ?,?, ?,?, ?, ?, ?, ?, NOW(), NOW(), NOW())";
 
     if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param("ssssssssssss", $fullname, $username, $fbLink,$referby, $pageId, $branchId, $ipAddress, $password, $refercode, $status, $role, $by_u);
+        $stmt->bind_param("ssssssssssss", $fullname, $username, $fbLink, $referby, $pageId, $branchId, $ipAddress, $password, $refercode, $status, $role, $by_u);
 
         if ($stmt->execute()) {
             setToast('success', 'New record created successfully.');
-            if($role=='User'){
-            processReferralCode($conn,$username,$ref);}
+            if ($role == 'User') {
+                processReferralCode($conn, $username, $ref);
+            }
 
             $redirectTo = '../../index.php/Portal'; // Success: Redirect to the home page or dashboard
         } else {
@@ -116,16 +134,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $action == "register") {
     $pageId = trim($_POST['page']);
     // $branchname = trim($_POST['branchname']);
     $by_u = $_SESSION['username'];
+    $selectedPages = isset($_POST['selectedPages']) ? $_POST['selectedPages'] : [];
+    $serialized = serialize($selectedPages);
+    $array = unserialize($serialized);
+    $pageId = implode(", ", $array);
 
-    if (isset($_POST['branchname']) && $_POST['branchname'] !== '') {
-        // If branchname is provided, sanitize and set the branchId
-        $branchId = $_POST['branchname'];
+    if (isset($_POST['branch']) && $_POST['branch'] !== '') {
+        $branchId = $_POST['branch'];
     } else {
-        // If branchname is not provided, fetch the branchId based on pageId
         $creationInstance = new Creation($conn);
-        $branchId = $creationInstance->getBranchNameByPageName($pageId, $conn);
+        if (is_array($pageId) && !empty($pageId)) {
+            $firstPageId = reset($pageId);
+            $branchId = $creationInstance->getBranchNameByPageName($firstPageId, $conn);
+        } else {
+            $branchId = $creationInstance->getBranchNameByPageName($pageId, $conn);
+        }
+        $branchId = $branchId ?? 'default_page_id';
     }
-    // Get the user's IP address
     $ipAddress = $_SERVER['REMOTE_ADDR'];
     $condition_value = $username;
 
@@ -204,7 +229,8 @@ function getUsernameByReferralCode($conn, $referralCode)
     }
 }
 
-function processReferralCode($conn, $name, $referralCode) {
+function processReferralCode($conn, $name, $referralCode)
+{
     // Fetch the username of the person who is registering
     $userName = mysqli_real_escape_string($conn, $name);
 
@@ -216,7 +242,7 @@ function processReferralCode($conn, $name, $referralCode) {
         $affiliateQuery = "SELECT refered_by FROM refferal WHERE name = '$referredByUserName'";
         $affiliateResult = mysqli_query($conn, $affiliateQuery);
         $affiliateUserName = null; // Default to null if no affiliate exists
-        
+
         if ($affiliateRow = mysqli_fetch_assoc($affiliateResult)) {
             $affiliateUserName = $affiliateRow['refered_by'];
         }

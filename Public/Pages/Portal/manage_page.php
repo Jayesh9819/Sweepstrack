@@ -65,7 +65,7 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
         // include './App/db/db_users.php';
         $role = $_SESSION['role'];
         if ($role == 'Admin' ) {
-            $sql = "SELECT * FROM page ";
+            $sql = "SELECT branch.name AS bname,page.* FROM branch JOIN page ON page.bid = branch.bid ";
         } 
         else {
             $branch = $_SESSION['branch1'];
@@ -76,9 +76,6 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
         // $sql = "SELECT * FROM page ";
 
         $result = $conn->query($sql);
-
-        // Check if there are results
-
         if ($result->num_rows > 0) {
 
         ?>
@@ -161,6 +158,8 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
                                                         <?php
 
                                                         while ($row = $result->fetch_assoc()) {
+                                                            $bname = !empty($row['bname']) ? htmlspecialchars($row['bname']) : 'Not Available';  // Display 'Not Available' if bname is empty
+
                                                             echo "<tr>
                                                     
                                                     <td>{$row['pid']}</td>
@@ -172,7 +171,7 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
                 </td>
                                                     <td>{$row['name']}</td>
                                                     
-                                                    <td>{$row['bname']}</td>
+                                                    <td>{$bname}</td>
 
                                                     <td>{$row['by_u']}</td>
                                                     <td>{$row['created_at']}</td> <!-- Consider if you really want to display passwords -->

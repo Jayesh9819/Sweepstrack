@@ -80,7 +80,17 @@
                         if($role == 'Manager' || $role =='Supervisor'){
                             $sql = "SELECT * FROM transaction where type='Debit' AND branch='$branch'";
                         }elseif($role=='Agent'){
-                            $sql = "SELECT * FROM transaction where type='Debit' AND page='$page'";
+                            $page = $_SESSION['page1'];
+
+                            $pagesArray = explode(", ", $page);
+                            $quotedPages = [];
+                            foreach ($pagesArray as $pageName) {
+                                $quotedPages[] = "'" . mysqli_real_escape_string($conn, $pageName) . "'";
+                            }
+                            $whereClause = "page IN (" . implode(", ", $quotedPages) . ")";
+                            // $sql = "SELECT * FROM user WHERE Role = 'User' AND $whereClause";
+                
+                            $sql = "SELECT * FROM transaction where type='Debit' AND $whereClause";
                         }elseif($role=='Admin'){
                             $sql = "SELECT * FROM transaction where type='Debit'";
                         }
