@@ -78,7 +78,7 @@ if (isset($action)) {
                         echo '<div id="checkboxContainer"></div>';
                         echo generateDynamicCheckboxScript('branch', 'checkboxContainer', $page, $row['pagename']);
                     } else {
-                        echo selectMult("Page name", "page", "page", $pageopt, isset($row['pagename']) ? $row['pagename'] : '');
+                        echo generateCheckboxes($pageopt, 'selectedPages');
                     }
                 } elseif ($row['role'] == 'Manager' || $row['role'] == 'Supervisor') {
                     echo select("Branch name", "branch", "branch", $branchOpt, isset($row['pagename']) ? $row['pagename'] : '');
