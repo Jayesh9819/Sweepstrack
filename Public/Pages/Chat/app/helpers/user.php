@@ -16,7 +16,7 @@ function getUser($username, $conn)
         $stmt = $conn->prepare($sql);
         $stmt->execute([$username]);
 
-        if ($stmt->rowCount() === 1) {
+        if ($stmt->rowCount() >= 1) {
             $user = $stmt->fetch();
             return $user;
         } else {
