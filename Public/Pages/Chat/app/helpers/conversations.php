@@ -26,8 +26,12 @@ function getConversation($user_id, $conn) {
       $other_user_id = ($conversation['user_1'] == $user_id) ? $conversation['user_2'] : $conversation['user_1'];
       
       // Fetch the other user's details
-      $sql2  = "SELECT * FROM user WHERE id=?";
-      $stmt2 = $conn->prepare($sql2);
+      if (substr($other_user_id, 0, 2) === 'UT') {
+        $sql2 = "SELECT * FROM unknown_users WHERE id = ?";
+    } else {
+        $sql2 = "SELECT * FROM user WHERE id = ?";
+    }
+          $stmt2 = $conn->prepare($sql2);
       $stmt2->execute([$other_user_id]);
       
       if ($stmt2->rowCount() > 0) {

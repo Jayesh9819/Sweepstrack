@@ -47,12 +47,8 @@
 			$conversations = getConversation($user['id'], $conn);
 		} else {
 			$user = getUser($_SESSION['username'], $conn);
-			if ($role == 'query') {
-				$conversations = getConversation($_SESSION['id'], $conn);
-			}else{
 
-				$conversations = getConversation($user['id'], $conn);
-			}
+			$conversations = getConversation($user['id'], $conn);
 		}
 		if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
 			// This is an AJAX request
