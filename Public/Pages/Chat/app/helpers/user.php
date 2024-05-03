@@ -2,18 +2,28 @@
 
 function getUser($username, $conn)
 {
-        $sql = "SELECT * FROM user
-           WHERE username=?";
+    // Check if the user exists in the 'user' table
+    $sql = "SELECT * FROM user WHERE username=?";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute([$username]);
+
+    if ($stmt->rowCount() === 1) {
+        $user = $stmt->fetch();
+        return $user;
+    } else {
+        // If user not found in 'user' table, fetch from 'unknown_users'
+        $sql = "SELECT * FROM unknown_users WHERE username=?";
         $stmt = $conn->prepare($sql);
         $stmt->execute([$username]);
 
         if ($stmt->rowCount() === 1) {
-                $user = $stmt->fetch();
-                return $user;
+            $user = $stmt->fetch();
+            return $user;
         } else {
-                $user = [];
-                return $user;
+            // If user not found in either table, return an empty array
+            return [];
         }
+    }
 }
 function getPage($username, $conn)
 {
