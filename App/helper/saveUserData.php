@@ -8,11 +8,11 @@ $name = $_POST['name'];
 $referCode = $_POST['refercode'] ?? null; // Using null coalescing operator for optional field
 
 // Generate random 3-digit number
-$randomNumber = rand(100, 999);
-
+$randomNumber = rand(1000, 99999);
+$id='UT'.$randomNumber;
 // SQL to insert data
-$stmt = $conn->prepare("INSERT INTO unknown_users (username, Refer) VALUES (?, ?)");
-$stmt->bind_param("ss", $name, $referCode);
+$stmt = $conn->prepare("INSERT INTO unknown_users (username, Refer,user_id) VALUES (?, ?,?)");
+$stmt->bind_param("sss", $name, $referCode,$id);
 $result = $stmt->execute();
 
 if ($result) {
@@ -20,8 +20,8 @@ if ($result) {
     $_SESSION['loggedin'] = true;
     $_SESSION['username'] = $name;
     $_SESSION['role'] = 'query';
-    $_SESSION['user_id'] = $randomNumber;
-    $_SESSION['id'] = $randomNumber;
+    $_SESSION['user_id'] = $id;
+    $_SESSION['id'] = $id;
     $_SESSION['username'] = $name;
 
     // Store the random number in session
