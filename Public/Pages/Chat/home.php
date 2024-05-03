@@ -49,10 +49,10 @@
 		# Getting User data data
 		$chatWith = getUser($_GET['user'], $conn);
 
-		if (empty($chatWith)) {
-			header("Location: ./Chat_l");
-			exit;
-		}
+		// if (empty($chatWith)) {
+		// 	header("Location: ./Chat_l");
+		// 	exit;
+		// }
 
 		$chats = getChats($_SESSION['user_id'], $chatWith['id'], $conn);
 		opened($chatWith['id'], $conn, $chats);
