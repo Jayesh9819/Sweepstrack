@@ -12,8 +12,6 @@
 	{
 		echo "<script type='text/javascript'>document.addEventListener('DOMContentLoaded', function() { toastr['$type']('$message'); });</script>";
 	}
-
-
 	if (isset($_SESSION['toast'])) {
 		$toast = $_SESSION['toast'];
 		echoToastScript($toast['type'], $toast['message']);
@@ -40,7 +38,6 @@
 			$pagename = $_SESSION['page'];
 			$sql = "SELECT * FROM user WHERE role = 'Agent' AND last_seen(last_seen) COLLATE utf8mb4_unicode_ci  = 'Active' AND pagename LIKE '%$pagename%' ";
 
-			
 			$stmt = $conn->prepare($sql);
 			$stmt->execute();
 			$agents = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -50,9 +47,12 @@
 			$conversations = getConversation($user['id'], $conn);
 		} else {
 			$user = getUser($_SESSION['username'], $conn);
+			if ($role == 'query') {
+				$conversations = getConversation($_SESSION['id'], $conn);
+			}else{
 
-			# Getting User conversations
-			$conversations = getConversation($user['id'], $conn);
+				$conversations = getConversation($user['id'], $conn);
+			}
 		}
 		if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
 			// This is an AJAX request
