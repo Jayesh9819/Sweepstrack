@@ -5,12 +5,14 @@ $password = "Jayesh8169";
 $dbname = "cc";
 
 // Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
 
 // Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-} else {
-    return $conn;
-    // echo "success";
-}
+
+echo '<a href="test.php" style="text-decoration: none;">
+<button type="button" class="btn btn-danger rounded-pill mt-2">Redeem CashApp</button>
+</a>';
+include'test.php';
+
+
+
+?>

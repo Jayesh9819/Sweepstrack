@@ -216,6 +216,13 @@
 
 		}
 
+		.active-message {
+			background-color: #059e59;
+			/* Example: a yellow background for active message */
+			border-color: #ffecb3;
+		}
+
+
 
 		.emoji-picker {
 			position: relative;
@@ -245,24 +252,25 @@
 			padding: 5px;
 		}
 
-.pageNameheader{
-	position: relative;
-	right: 16px;
-}
-.redeemChatButton{
-	position: absolute;
-	right: 40px;
-	top: 50px;
-	display: none;
-}
+		.pageNameheader {
+			position: relative;
+			right: 16px;
+		}
+
+		.redeemChatButton {
+			position: absolute;
+			right: 40px;
+			top: 50px;
+			display: none;
+		}
 
 		/* Base styles */
 		.chat-box {
 			overflow-y: auto;
 		}
 
-		@media  (min-width: 768px) {
-			.redeemChatButton{
+		@media (min-width: 768px) {
+			.redeemChatButton {
 				display: block;
 			}
 		}
@@ -275,7 +283,6 @@
 			}
 
 
-
 			.fs-sm,
 			.display-4 {
 				font-size: 1rem;
@@ -285,24 +292,18 @@
 			.emoji-picker {
 				grid-template-columns: repeat(4, 1fr);
 			}
+			.shprofile{
+				display: none;
+			}
+			.replyButtonsss{
+				position: relative;
+				top: -10px;
+			}
 
 		}
 
 		/* Small devices (phones, 600px and down) */
 		@media (max-width: 600px) {
-
-			/* .w-400,
-			.w-10{
-				width: 100%;
-			}
-			.w-15 {
-				width: 50%;
-				/* Full width 
-			} */
-
-
-
-
 
 			.fs-big,
 			.fs-xs,
@@ -327,14 +328,7 @@
 </head>
 
 <body class="  ">
-	<!-- loader Start -->
-	<?php
-	// include("./Public/Pages/Common/loader.php");
 
-	?>
-	<!-- loader END -->
-
-	<!-- sidebar  -->
 	<?php
 	include("./Public/Pages/Common/sidebar.php");
 
@@ -345,7 +339,7 @@
 		// include("./Public/Pages/Common/main_content.php");
 		?>
 		<div class="content-inner container-fluid pb-0" id="page_layout">
-			<div class="w-400 shadow p-4 rounded" style="height:90vh;">
+			<div class="w-800 shadow p-4 rounded" style="height:90vh;">
 
 				<div class="chat-header" style=" width: 100%; padding: 10px; display: flex; align-items: center;">
 
@@ -357,7 +351,22 @@
 						<h1 style="margin-bottom: 0; font-size: 16px; color: white; font-weight: bold;">
 							<?= $chatWith['username'] ?>
 						</h1>
-						
+						<?php
+						if ($chatWith['role'] == 'User') {
+							echo '<h1 class="" style="margin-bottom: 0; font-size: 16px; color: white; font-weight: bold;">
+            				Page Name:- ' . $chatWith['pagename'] . '
+       								 </h1>';
+						} elseif ($chatWith['role'] == 'Agent') {
+							echo '<h1 class="" style="margin-bottom: 0; font-size: 16px; color: white; font-weight: bold;">
+						Page Name:- ' . $chatWith['pagename'] . '
+									</h1>';
+						} elseif ($chatWith['role'] == 'Manager' || $chatWith['role'] == 'Supervisor') {
+							echo '<h1 class="" style="margin-bottom: 0; font-size: 16px; color: white; font-weight: bold;">
+						Branch Name:- ' . $chatWith['branchname'] . '
+									</h1>';
+						}
+
+						?>
 
 						<div title="online">
 							<?php if (last_seen($chatWith['last_seen']) == "Active") { ?>
@@ -370,15 +379,15 @@
 							<?php } ?>
 						</div>
 					</div>
-
 					<?php
-						if ($chatWith['role'] == 'User' || $chatWith['role'] == 'Agent') {
-							echo '<h1 class="pageNameheader" style="margin-bottom: 0; font-size: 16px; color: white; font-weight: bold;">
-            				Page Name:- ' . $chatWith['pagename'] . '
-       								 </h1>';
-							echo '<a name="" id="" class="btn btn-primary" href="./Show_Profile?u=' . $chatWith['id'] . '" role="button">Show Profile</a>';
-						}
-						?>
+					if ($chatWith['role'] == 'User') {
+						echo '<a name="" id="" class="btn btn-primary shprofile" href="./Show_Profile?u=' . $chatWith['id'] . '" role="button">Show Profile</a>';
+						echo '				<a name="" id="" class="btn btn-secondary shprofile" href="./cash_out?u=' . $chatWith['id'] . '" role="button">Redeem </a>
+					<a name="" id="" class="btn btn-danger shprofile" href="./deposit?u=' . $chatWith['id'] . '" role="button">Recharge </a>';
+					}
+					?>
+
+
 				</div>
 
 
@@ -399,16 +408,26 @@
 
 						<?php if (!empty($chats)) : foreach ($chats as $chat) : ?>
 
-								<div class="message <?= ($chat['from_id'] == $_SESSION['user_id']) ? 'sent' : 'received' ?>" style="text-align: <?= ($chat['from_id'] == $_SESSION['user_id'])  ? 'right' : 'left'; ?>;">
-									<button onclick="setReplyTo(<?= $chat['chat_id'] ?>, '<?= addslashes(htmlspecialchars($chat['message'])) ?>')">Reply</button>
+								<div class="message <?= ($chat['from_id'] == $_SESSION['user_id']) ? 'sent' : 'received' ?>" id="msg_<?= $chat['chat_id'] ?>" style="text-align: <?= ($chat['from_id'] == $_SESSION['user_id']) ? 'right' : 'left'; ?>">
 
-									<div class="message-box" style="display: inline-block; background-color: <?= ($chat['from_id'] == $_SESSION['user_id']) ? '#dcf8c6' : '#e9e9eb'; ?>; padding: 10px; border-radius: 10px; margin: 5px;">
+
+									<button class="replyButtonsss" style="background: none; border: none; cursor: pointer; position:relative; bottom:30px;" onclick="setReplyTo(<?= $chat['chat_id'] ?>, '<?= addslashes(htmlspecialchars($chat['message'])) ?>')">
+										<img src="../uploads/reply.png" style="width:50px;" alt="Reply" style="display: block;">
+									</button>
+
+
+									<div class="message-box <?= !empty($chat['reply_id']) ? 'replied-message-box' : '' ?>" style="background-color: <?= ($chat['from_id'] == $_SESSION['user_id']) ? '#dcf8c6' : '#e9e9eb'; ?>; padding: 10px; display: inline-block; border-radius: 10px; margin: 5px;">
 										<?php if (isset($chat['sender_username']) && !empty($chat['sender_username'])) : ?>
 											<h3 style="display: block; color: #666; font-size: smaller;"><?= htmlspecialchars($chat['sender_username']) ?></h3>
 										<?php endif; ?>
 
-										<p style="margin: 0;"><?= linkify($chat['message']) ?></p>
+										<?php if (!empty($chat['reply_id'])) : ?>
+											<?php $repliedMessage = getMessageById($chat['reply_id'], $conn); ?>
+											<div class="replied-message" onclick="activateOriginalMessage('msg_<?= $repliedMessage['chat_id'] ?>');">
+												<em>Replied to: <?= htmlspecialchars($repliedMessage['message']) ?></em>
+											</div>
 
+										<?php endif; ?>
 										<?php
 										$attachmentHTML = '';
 										if (!empty($chat['attachment'])) {
@@ -422,23 +441,29 @@
 												case 'png':
 												case 'gif':
 													$attachmentHTML = "<div><a href='{$file}' target='_blank'><img src='{$file}' alt='Image' style='max-width: 100%; max-height: 200px; display: block;'></a></div>";
-													$attachmentHTML .= "<a href='{$file}' download class='btn btn-link' style='text-decoration: none; color: #333;'>Download</a>";
+													$attachmentHTML .= "<a href='{$file}' download class='btn btn-link' style='text-decoration: none; color: white; background-color: #4CAF50; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; transition: background-color 0.3s;'>Download</a>";
+													$attachmentHTML .= "<style>.btn:hover { background-color: #45a049; }</style>";
 													break;
 												case 'mp4':
 													$attachmentHTML = "<div><video controls style='max-width: 100%; max-height: 200px;'><source src='{$file}' type='video/mp4'>Your browser does not support the video tag.</video></div>";
-													$attachmentHTML .= "<a href='{$file}' download class='btn btn-link' style='text-decoration: none; color: #333;'>Download</a>";
+													$attachmentHTML .= "<a href='{$file}' download class='btn btn-link' style='text-decoration: none; color: white; background-color: #4CAF50; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; transition: background-color 0.3s;'>Download</a>";
+													$attachmentHTML .= "<style>.btn:hover { background-color: #45a049; }</style>";
 													break;
 												case 'pdf':
 													$attachmentHTML = "<a href='{$file}' target='_blank' class='btn btn-link' style='text-decoration: none; color: #333;'>Open PDF</a>";
-													$attachmentHTML .= "<a href='{$file}' download class='btn btn-link' style='text-decoration: none; color: #333;'>Download</a>";
+													$attachmentHTML .= "<a href='{$file}' download class='btn btn-link' style='text-decoration: none; color: white; background-color: #4CAF50; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; transition: background-color 0.3s;'>Download</a>";
+													$attachmentHTML .= "<style>.btn:hover { background-color: #45a049; }</style>";
 													break;
 												default:
-													$attachmentHTML = "<p>Unsupported file format</p>";
+													$attachmentHTML .= "<a href='{$file}' download class='btn btn-link' style='text-decoration: none; color: white; background-color: #4CAF50; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; transition: background-color 0.3s;'>Download</a>";
+													$attachmentHTML .= "<style>.btn:hover { background-color: #45a049; }</style>";
 													break;
 											}
 										}
 										echo $attachmentHTML;
 										?>
+
+										<p style="margin: 0;"><?= linkify($chat['message']) ?></p>
 
 										<small style="display: block; color: #666; font-size: smaller;"><?= date('M d, Y h:i A', strtotime($chat['created_at'])) ?></small>
 										<?php if (isset($chat['sender_username']) && !empty($chat['sender_username'])) : ?>
@@ -457,7 +482,7 @@
 					</div>
 
 				</div>
-				
+
 				<div id="replyIndicator" style="display: none; background-color: #f0f0f0; padding: 5px; border-radius: 5px; margin-bottom: 5px;">
 					<button onclick="clearReply()" style="float: right;">&times;</button>
 				</div>
@@ -470,31 +495,19 @@
 
 					<button class="btn btn-outline-secondary emoji-picker-button" type="button" style="flex: 0 0 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 5px; background-color: white;">😊</button>
 					<textarea id="message" class="form-control" style="flex-grow: 1; height: 100%; resize: none; padding: 8px; border-radius: 25px; margin-right: 5px; background-color: white; border: 1px solid #ced4da;" rows="1"></textarea>
-					<button class="btn btn-primary" id="sendBtn" style="margin-left: 10px; position:relative;top:2px ;flex: 0 0 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: #007bff; color: white;">
-						<i class="fas fa-paper-plane" style="width: 20px; height: 20px;"></i>
+					<button class="btn btn-primary" id="sendBtn" style="border: none; background: none; padding: 0; outline: none; margin-left: 10px; position:relative;top:2px ;flex: 0 0 40px; height: 40px;  display: flex; align-items: center; justify-content: center;">
+						<!-- <i class="fas fa-paper-plane" style="width: 20px; height: 20px;"></i> -->
+						<img src="../uploads/Qbutton.png" style="width: 60px; height: 60px;" alt="">
 					</button>
 				</div>
 				<div id="emojiPicker" class="emoji-picker" style="display: none;"></div>
-
-
-
-
-
 				<audio id="chatNotificationSound" src="../uploads/notification.wav" preload="auto"></audio>
 
 			</div>
 
-			<div class=" shadow p-4 rounded redeemChatButton" style="height:85vh; width:400px; ">
-				<a name="" id="" class="btn btn-secondary" href="./cash_out?u=<?= $chatWith['username'] ?>" role="button">Redeem Button</a>
-				<a name="" id="" class="btn btn-danger" href="./deposit?u=<?= $chatWith['username'] ?>" role="button">Recharge Button</a>
-
-			</div>
-			
-			
 
 		</div>
 
-		<script src="timezone_detect.js"></script>
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -507,20 +520,71 @@
 			});
 
 			$(document).ready(function() {
-				// Your existing $(document).ready setup
-				// Including the setInterval for fetchMessages
-
-				// Example: Request permission for Notifications
 				if ("Notification" in window) {
 					Notification.requestPermission();
 				}
 			});
 
+			function activateMessage(msgId) {
+				// Remove active class from all messages
+				document.querySelectorAll('.message-box').forEach(box => {
+					box.classList.remove('active-message');
+				});
+
+				// Add active class to the clicked message
+				const messageElement = document.getElementById(msgId);
+				if (messageElement) {
+					messageElement.classList.add('active-message');
+					messageElement.scrollIntoView({
+						behavior: 'smooth',
+						block: 'center'
+					});
+
+					// Optional: Clear active state after a few seconds or on another action
+					setTimeout(() => {
+						messageElement.classList.remove('active-message');
+					}, 3000); // Removes the active class after 3 seconds
+				}
+			}
+
+			function activateOriginalMessage(msgId) {
+				// Remove active class from all messages
+				document.querySelectorAll('.message-box').forEach(box => {
+					box.classList.remove('active-message');
+				});
+
+				// Add active class to the original message
+				const originalMessage = document.getElementById(msgId);
+				if (originalMessage) {
+					originalMessage.classList.add('active-message');
+					originalMessage.scrollIntoView({
+						behavior: 'smooth',
+						block: 'center'
+					});
+					setTimeout(() => {
+						originalMessage.classList.remove('active-message');
+					}, 3000);
+				}
+
+
+			}
+
+
+
+			function scrollToMessage(msgId) {
+				const messageElement = document.getElementById(msgId);
+				if (messageElement) {
+					messageElement.scrollIntoView({
+						behavior: 'smooth',
+						block: 'center'
+					});
+				}
+			}
+
+
 			function onNewMessageReceived() {
 				var chatSound = document.getElementById('chatNotificationSound');
 				chatSound.play();
-
-				// Show a notification if the tab is not active
 				if (document.hidden && Notification.permission === "granted") {
 					new Notification("New message", {
 						body: "You have received a new message.",
@@ -528,9 +592,6 @@
 					});
 				}
 			}
-
-			// Modify your fetchMessages function or its success callback to call onNewMessageReceived appropriately
-
 
 			document.getElementById('attachmentBtn').addEventListener('click', function() {
 				document.getElementById('fileInput').click(); // Simulate click on the file input when attachment button is clicked
@@ -566,106 +627,65 @@
 				messageInput.focus(); // Optional: Focus the text area again after clearing
 				console.log("Reply cleared and message input reset."); // Debug: Confirmation of reset
 			}
+			// Assuming you receive `originalMessage` as part of the AJAX response for replies
 
-			// Modify the sendMessage function to send the replyToId
-			function sendMessage() {
-				const message = document.getElementById('message').value.trim();
-				const fileInput = document.getElementById('fileInput');
-				const formData = new FormData();
 
-				formData.append('message', message);
-				console.log("Message content:", message); // Debug: Log the message content
-
-				if (fileInput.files[0]) {
-					formData.append('attachment', fileInput.files[0]);
-					console.log("Attachment added:", fileInput.files[0].name); // Debug: Log the file name of the attachment
-				}
-
-				const toId = <?= json_encode($chatWith['id']) ?>;
-				formData.append('to_id', toId); // Adjust to ensure correct variable handling
-				console.log("Sending message to user ID:", toId); // Debug: Log the recipient user ID
-
-				if (replyToId !== null) {
-					formData.append('reply_to_id', replyToId); // Include the reply_to_id if set
-					console.log("Replying to message ID:", replyToId); // Debug: Log the reply to message ID
-				}
-
-				// AJAX call to send the message
-				$.ajax({
-					url: "../Public/Pages/Chat/app/ajax/insert.php",
-					type: "POST",
-					data: formData,
-					processData: false, // Prevent jQuery from automatically transforming the data into a query string
-					contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-					success: function(data) {
-						console.log("Message sent successfully, server response:", data); // Debug: Log server response
-						document.getElementById('message').value = ""; // Clear the message input field
-						document.getElementById('fileInput').value = ""; // Reset the file input
-						replyToId = null; // Reset the replyToId
-						$("#chatBox").append(data); // Assuming you want to append the message to the chat box
-						scrollDown(); // Ensure the chat box scrolls to the latest message
-					},
-					error: function(xhr, status, error) {
-						console.error("Error sending message:", xhr.responseText); // Debug: Log AJAX error
-					}
-				});
-			}
-			// function sendMessage() {
-			// 	const message = document.getElementById('message').value.trim();
-			// 	const fileInput = document.getElementById('fileInput');
-			// 	const formData = new FormData();
-
-			// 	formData.append('message', message);
-			// 	if (fileInput.files[0]) {
-			// 		formData.append('attachment', fileInput.files[0]);
-			// 	}
-
-			// 	formData.append('to_id', <?= json_encode($chatWith['id']) ?>); // Adjust to ensure correct variable handling
-
-			// 	// Make the AJAX call using formData
-			// 	$.ajax({
-			// 		url: "../Public/Pages/Chat/app/ajax/insert.php",
-			// 		type: "POST",
-			// 		data: formData,
-			// 		processData: false, // Prevent jQuery from automatically transforming the data into a query string
-			// 		contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-			// 		success: function(data) {
-			// 			document.getElementById('message').value = ""; // Clear the message input field
-			// 			document.getElementById('fileInput').value = ""; // Reset the file input
-			// 			$("#chatBox").append(data); // Assuming you want to append the message to the chat box
-			// 			scrollDown(); // Ensure the chat box scrolls to the latest message
-			// 		}
-			// 	});
-			// }
 
 			document.addEventListener('DOMContentLoaded', function() {
+
 				const textarea = document.getElementById('message');
 				const sendBtn = document.getElementById('sendBtn'); // Reference to the send button
-
-				// Function to send the message
+				// Ensure sendMessage incorporates replyToId
 				function sendMessage() {
-					const message = textarea.value.trim();
-					console.log(message);
-					if (message !== '') {
-						// Perform AJAX call to insert.php
-						$.post("../Public/Pages/Chat/app/ajax/insert.php", {
-								message: message,
-								to_id: <?= json_encode($chatWith['id']) ?> // Ensure PHP variable is correctly encoded for JavaScript
-							},
-							function(data, status) {
-								$("#message").val(""); // Clear the textarea after sending
-								$("#chatBox").append(data); // Assuming you want to append the message to the chat box
-								scrollDown(); // Ensure the chat box scrolls to the latest message
-							});
+					console.log("this is exexcuting");
+					const message = document.getElementById('message').value.trim();
+					const fileInput = document.getElementById('fileInput');
+					const formData = new FormData();
+
+					formData.append('message', message);
+					if (fileInput.files.length > 0) {
+						formData.append('attachment', fileInput.files[0]);
 					}
+
+					formData.append('to_id', <?= json_encode($chatWith['id']) ?>);
+
+					if (replyToId !== null) {
+						formData.append('reply_to_id', replyToId);
+					}
+
+					$.ajax({
+						url: "../Public/Pages/Chat/app/ajax/insert.php",
+						type: "POST",
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function(response) {
+							const data = JSON.parse(response);
+							console.log(data);
+							if (data.status === "success") {
+								console.log("Message sent successfully:", data.message, data.html, data.data);
+								$("#chatBox").append(data.html); // Assuming the server responds with HTML to append
+
+								document.getElementById('message').value = "";
+								document.getElementById('fileInput').value = "";
+								replyToId = null;
+								clearReply(); // Call clearReply to reset the reply reference
+								$("#chatBox").append(data); // Append the message to the chat box
+
+								scrollDown();
+							} else {
+								console.error("Error in response:", data.message);
+							}
+						},
+						error: function(xhr, status, error) {
+							console.error("Error sending message:", xhr.responseText);
+						}
+					});
 				}
 
-				// Event listener for the send button
 				sendBtn.addEventListener('click', function() {
 					sendMessage();
 				});
-
-				// Event listener for the Enter key in the textarea
 				textarea.addEventListener('keydown', function(event) {
 					if (event.key === "Enter" && !event.shiftKey) {
 						event.preventDefault(); // Prevent new line
@@ -681,69 +701,55 @@
 
 			scrollDown();
 
-			$(document).ready(function() {
-
-				// 	$("#sendBtn").on('click', function() {
-				// 		message = $("#message").val();
-				// 		if (message == "") return;
-
-				// 		$.post("../Public/Pages/Chat/app/ajax/insert.php", {
-				// 				message: message,
-				// 				to_id: <?= $chatWith['id'] ?>
-				// 			},
-				// 			function(data, status) {
-				// 				$("#message").val("");
-				// 				$("#chatBox").append(data);
-				// 				scrollDown();
-				// 			});
-				// 	});
-
-				/** 
-				auto update last seen 
-				for logged in user
-				**/
+			document.addEventListener('DOMContentLoaded', function() {
+				// Function to update last seen status
 				let lastSeenUpdate = function() {
 					$.get("../Public/Pages/Chat/app/ajax/update_last_seen.php");
-				}
-				lastSeenUpdate();
-				/** 
-				auto update last seen 
-				every 10 sec
-				**/
+				};
+				lastSeenUpdate(); // Call immediately when the document is ready
+
+				// Interval for updating last seen status every 10 seconds
 				setInterval(lastSeenUpdate, 10000);
 
+				// Function to fetch new messages
+				let fetchData = function() {
+					let formData = new FormData(); // Initialize FormData object
+					formData.append('id_2', <?= $chatWith['id'] ?>); // Append the user ID with whom the chat is happening
 
+					$.ajax({
+						url: "../Public/Pages/Chat/app/ajax/getMessage.php",
+						type: "POST",
+						data: formData,
+						processData: false, // Prevent jQuery from automatically transforming the data into a query string
+						contentType: false, // Set the content type of the request to false to let the browser set it
+						success: function(response) {
+							const data = JSON.parse(response);
 
-				// auto refresh / reload
-				let fechData = function() {
-					$.post("../Public/Pages/Chat/app/ajax/getMessage.php", {
-							id_2: <?= $chatWith['id'] ?>
+							if (data.status === "success") {
+								if (data.html.trim().length > 0) {
+									$("#chatBox").append(data.html)
+
+									scrollDown();
+								}
+							} else {
+								console.error("Error in response:", data.message);
+							}
 						},
-						function(data, status) {
-							$("#chatBox").append(data);
-							if (data != "") scrollDown();
-							if (data != "") onNewMessageReceived();
+						error: function(xhr, status, error) {
+							console.error("Error sending message:", xhr.responseText);
+						}
+					});
+				};
 
-						});
-				}
-
-				fechData();
-				/** 
-				auto update last seen 
-				every 0.5 sec
-				**/
-				setInterval(fechData, 500);
-
+				// Set interval to fetch new data every 500 milliseconds
+				setInterval(fetchData, 500);
 			});
+
 			document.addEventListener('DOMContentLoaded', function() {
 				const emojiPicker = document.getElementById('emojiPicker');
 				const toggleButton = document.querySelector('.emoji-picker-button');
 				const textarea = document.getElementById('message');
-
-				// Emoji list example, add more as needed
 				const emojis = ['👍', '👎', '😀', '😁', '😂', '🤣', '😃', '😄', '😅', '😆', '😉', '😊', '😋', '😎', '😍', '😘', '🥰', '😗', '😙', '😚', '🙂', '🤗', '🤩', '😇', '🥳', '😏', '😌', '😒', '😞', '😔', '😟', '😕', '🙃', '🤔', '🤨', '😳', '😬', '🥺', '😠', '😡', '🤯', '😭', '😱', '😤', '😪', '😷', '🤒', '🤕', '🤢', '🤮', '🤧', '😴', '😈', '👿', '👹', '👺', '💀', '👻', '👽', '🤖', '💩', '😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾', '🙈', '🙉', '🙊', '💋', '💌', '💘', '💝', '💖', '💗', '💓', '💞', '💕', '💟', '❣️', '💔', '❤️', '🧡', '💛', '💚', '💙', '💜', '🤎', '🖤', '🤍'];
-
-				// Populate the emoji picker
 				emojis.forEach(emoji => {
 					const button = document.createElement('button');
 					button.textContent = emoji;
@@ -752,12 +758,9 @@
 					button.style.cursor = 'pointer';
 					button.onclick = function() {
 						textarea.value += emoji;
-						// emojiPicker.style.display = 'none'; // Hide picker after selection
 					};
 					emojiPicker.appendChild(button);
 				});
-
-				// Toggle emoji picker display
 				toggleButton.addEventListener('click', function() {
 					const isDisplayed = window.getComputedStyle(emojiPicker).display !== 'none';
 					emojiPicker.style.display = isDisplayed ? 'none' : 'block';
@@ -769,8 +772,6 @@
 						emojiPicker.style.display = 'none';
 					}
 				});
-
-				// Send message on Enter key press
 				textarea.addEventListener('keypress', function(event) {
 					if (event.key === "Enter" && !event.shiftKey) {
 						event.preventDefault(); // Prevent new line in textarea
@@ -778,7 +779,6 @@
 					}
 				});
 
-				// Function to send the message
 				function sendMessage() {
 					const message = textarea.value.trim();
 					if (message !== '') {
@@ -790,27 +790,17 @@
 		</script>
 		<?
 		include("./Public/Pages/Common/footer.php");
-
 		?>
 
 	</main>
-	<!-- Wrapper End-->
-	<!-- Live Customizer start -->
-	<!-- Setting offcanvas start here -->
 	<?php
 	include("./Public/Pages/Common/theme_custom.php");
 
 	?>
-
-	<!-- Settings sidebar end here -->
-
 	<?php
 	include("./Public/Pages/Common/settings_link.php");
 
 	?>
-	<!-- Live Customizer end -->
-
-	<!-- Library Bundle Script -->
 	<?php
 	include("./Public/Pages/Common/scripts.php");
 

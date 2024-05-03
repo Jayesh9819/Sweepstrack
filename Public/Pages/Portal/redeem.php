@@ -109,6 +109,8 @@
                                         <th>Amount</th>
                                         <th>Platform Name</th>
                                         <th>Page Name</th>
+                                        <th>Cash Tag</th>
+
                                         <?php
                                         if ($role == 'Admin') {
                                             echo '
@@ -142,6 +144,7 @@
                                             <td><?= htmlspecialchars($row['redeem']) ?></td>
                                             <td><?= htmlspecialchars($row['platform']) ?></td>
                                             <td><?= htmlspecialchars($row['page']) ?></td>
+                                            <td><?= htmlspecialchars($row['cashtag']) ?></td>
 
                                             <?php if ($role == 'Admin') : ?>
                                                 <td>

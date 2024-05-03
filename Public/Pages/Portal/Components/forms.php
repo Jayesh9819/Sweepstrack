@@ -14,10 +14,25 @@ if (isset($action)) {
     $heading = "Fill the details";
     $role = $_SESSION['role'];
     $gbranch = $_SESSION['branch1'];
-    $username=$_SESSION['username'];
-    // echo $role;
-    // Assuming you have defined or included your functions like fhead, field, select, etc.
-    // ...
+    $username = $_SESSION['username'];
+
+    // Page List 
+    $page = [];
+    $pageopt = []; // Array to hold page options
+    if ($role == 'Admin') {
+        $resultPage = $conn->query("SELECT branch.name AS bname, page.name FROM branch JOIN page ON page.bid = branch.bid WHERE page.status = 1");
+    } else if ($role == 'Agent') {
+        $resultPage = $conn->query("SELECT pagename  as name from user where username='$username'");
+    } else {
+        $resultPage = $conn->query("SELECT branch.name AS bname, page.name FROM branch JOIN page ON page.bid = branch.bid WHERE branch.name = '$gbranch' AND page.status = 1");
+    }
+    if ($resultPage->num_rows > 0) {
+        while ($row = $resultPage->fetch_assoc()) {
+            $page[] = $row;
+            $pageopt[] = htmlspecialchars($row['name']); // Add each page name to the array
+        }
+    }
+
 
     if ($action == 'ADD_USER' || $action == 'EDIT_USER') {
         if (isset($_POST['role'])) {
@@ -36,29 +51,13 @@ if (isset($action)) {
                 $branchOpt[] = htmlspecialchars($row['name']);
             }
         }
-        $page = [];
-        $pageopt = []; // Array to hold page options
-        if ($role == 'Admin') {
-            $resultPage = $conn->query("SELECT branch.name AS bname, page.name FROM branch JOIN page ON page.bid = branch.bid WHERE page.status = 1");
-        } else if ($role == 'Agent') {
-            $resultPage = $conn->query("SELECT pagename  as name from user where username='$username'");
-        } else {
-            $resultPage = $conn->query("SELECT branch.name AS bname, page.name FROM branch JOIN page ON page.bid = branch.bid WHERE branch.name = '$gbranch' AND page.status = 1");
-        }
-        if ($resultPage->num_rows > 0) {
-            while ($row = $resultPage->fetch_assoc()) {
-                $page[] = $row;
-                $pageopt[] = htmlspecialchars($row['name']); // Add each page name to the array
-            }
-        }
-        $selectedOptions = isset($row['selected_pages']) ? explode(',', $row['selected_pages']) : [];
-
         if ($action == 'EDIT_USER') {
             $username = $_GET['u'];
             $sql = "Select * from user where username='$username'";
             $result = $conn->query($sql);
             $row = $result->fetch_assoc();
             $r = isset($row['role']);
+            $selectedOptions = isset($row['pagename']) ? explode(',', $row['pagename']) : [];
 
             echo $name = field("Name", "text", "fullname", "Enter Your Name", isset($row['name']) ? $row['name'] : '');
             echo $username = field("Username", "text", "username", "Enter Your Username", isset($row['username']) ? $row['username'] : '', 'required', 'readonly');
@@ -78,7 +77,7 @@ if (isset($action)) {
                         echo '<div id="checkboxContainer"></div>';
                         echo generateDynamicCheckboxScript('branch', 'checkboxContainer', $page, $row['pagename']);
                     } else {
-                        echo generateCheckboxes($pageopt, 'selectedPages');
+                        echo generateCheckboxes($pageopt, 'selectedPages', $selectedOptions);
                     }
                 } elseif ($row['role'] == 'Manager' || $row['role'] == 'Supervisor') {
                     echo select("Branch name", "branch", "branch", $branchOpt, isset($row['pagename']) ? $row['pagename'] : '');
@@ -105,8 +104,8 @@ if (isset($action)) {
                 } elseif ($_POST['role'] == 'User') {
 
                     echo $fbLink = field("Facebook Link", "text", "fb_link", "Enter Your Facebook Link", isset($_POST['fb_link']) ? $_POST['fb_link'] : '');
-                    $array=$pageopt[0];
-                    $pages = explode(", ",$array);
+                    $array = $pageopt[0];
+                    $pages = explode(", ", $array);
 
                     echo generateRadioButtons($pages, 'selectedPages');
                 }
@@ -176,30 +175,30 @@ if (isset($action)) {
         }
 
         echo field("Excess Amount", "number", "excessamount", "Enter the Excess Amount");
-        $platformOptions = "<option value=''>Select Platform</option>";
-        $result = $conn->query("SELECT name FROM platform where status =1 And branch='$gbranch'");
+        $platformNames = array(); // Initialize an empty array to store platform names
+        $result = $conn->query("SELECT platfromname FROM Platformuser WHERE username='$depositID'");
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-                $platformOptions .= "<option value='" . htmlspecialchars($row['name']) . "'>" . htmlspecialchars($row['name']) . "</option>";
+                $platformNames[] = $row['platfromname']; // Add each platform name to the array
             }
         }
-        $platformOptions .= "<option value='other'>Other</option>";
-        echo '<label for="platformname">Platform Name</label>';
-        echo '<select class="form-select" id="platformname" name="platformname" onchange="showOtherField(this, \'platformname-other\')">' . $platformOptions . '</select>';
-        echo '<input type="text" id="platformname-other" name="platformname_other" style="display:none;" placeholder="Enter Platform Name">';
 
-        // echo field("cashApp Name", "text", "cashAppname", "Enter the cashApp Name");
-        $cashAppOptions = "<option value=''>Select cashApp</option>";
-        $result = $conn->query("SELECT * FROM cashapp where status =1 And branch='$gbranch'");
+        // Call the function to generate radio buttons
+        generateHorizontalRadioButtonsWithOther($platformNames, 'platformname', 'Platform Name');
+
+
+        $cashAppOptions = [];
+        $result = $conn->query("SELECT * FROM cashapp where status=1 And branch='$gbranch'");
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-                $cashAppOptions .= "<option value='" . htmlspecialchars($row['name']) . "'>" . htmlspecialchars($row['name']) . "</option>";
+                $cashAppOptions[] = htmlspecialchars($row['name']);
             }
         }
-        $cashAppOptions .= "<option value='other'>Other</option>";
-        echo '<label for="cashAppname">cashApp Name</label>';
-        echo '<select class="form-select" id="cashAppname" name="cashAppname" onchange="showOtherField(this, \'cashAppname-other\')">' . $cashAppOptions . '</select>';
-        echo '<input type="text" id="cashAppname-other" name="cashAppname_other" style="display:none;" placeholder="Enter cashApp Name">';
+
+        // Generate horizontal radio buttons with 'Other' option
+        generateHorizontalRadioButtonsWithOther($cashAppOptions, 'cashAppname', 'cashApp Name');
+        echo field("Cash Tag", "text", "ctag", "Enter the Cash Tag");
+
         echo field("Tip", "number", "tip", "Enter the Tip Amount");
         echo field("Remark", "text", "remark", "Enter the Remark ", "", "");
 
@@ -232,30 +231,28 @@ if (isset($action)) {
         // echo '<input type="text" id="platformname-other" name="platformname_other" style="display:none;" placeholder="Enter Platform Name">';
 
         // echo field("page ID", "text", "fbid", "Enter the Facebook ID");
-        $platformOptions = "<option value=''>Select Platform</option>";
-        $result = $conn->query("SELECT platfromname FROM Platformuser where username='$depositID'");
+        $platformNames = array(); // Initialize an empty array to store platform names
+        $result = $conn->query("SELECT platfromname FROM Platformuser WHERE username='$depositID'");
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-                $platformOptions .= "<option value='" . htmlspecialchars($row['platfromname']) . "'>" . htmlspecialchars($row['platfromname']) . "</option>";
+                $platformNames[] = $row['platfromname']; // Add each platform name to the array
             }
         }
-        $platformOptions .= "<option value='other'>Other</option>";
-        echo '<label for="platformname">Platform Name</label>';
-        echo '<select required class="form-select" id="platformname" name="platformname" onchange="showOtherField(this, \'platformname-other\')">' . $platformOptions . '</select>';
-        echo '<input type="text" id="platformname-other" name="platformname_other" style="display:none;" placeholder="Enter Platform Name">';
+
+        // Call the function to generate radio buttons
+        generateHorizontalRadioButtonsWithOther($platformNames, 'platformname', 'Platform Name');
 
         // echo field("cashApp Name", "text", "cashAppname", "Enter the cashApp Name");
-        $cashAppOptions = "<option value=''>Select cashApp</option>";
+        $cashAppOptions = [];
         $result = $conn->query("SELECT * FROM cashapp where status=1 And branch='$gbranch'");
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-                $cashAppOptions .= "<option value='" . htmlspecialchars($row['name']) . "'>" . htmlspecialchars($row['name']) . "</option>";
+                $cashAppOptions[] = htmlspecialchars($row['name']);
             }
         }
-        $cashAppOptions .= "<option value='other'>Other</option>";
-        echo '<label for="cashAppname">cashApp Name</label>';
-        echo '<select required class="form-select" id="cashAppname" name="cashAppname" onchange="showOtherField(this, \'cashAppname-other\')">' . $cashAppOptions . '</select>';
-        echo '<input type="text" id="cashAppname-other" name="cashAppname_other" style="display:none;" placeholder="Enter cashApp Name">';
+
+        // Generate horizontal radio buttons with 'Other' option
+        generateHorizontalRadioButtonsWithOther($cashAppOptions, 'cashAppname', 'cashApp Name');
 
         echo field("Bonus Amount", "number", "bonusamount", "Enter the Bonus Amount");
         echo field("Remark", "text", "remark", "Enter the Remark ", "", "");
@@ -534,20 +531,22 @@ if (isset($action)) {
         $title = "Free Play";
         $heading = "Fill in the details for Free Play";
         $postUrl = "../App/Logic/creation.php?action=Free_Play";
-        $conditionQuery = "SELECT name FROM platform WHERE status = 1";
-        $conditionResult = $conn->query($conditionQuery);
-        if ($conditionResult) {
-            while ($conditionRow = $conditionResult->fetch_assoc()) {
-                $conditionOptions[] = $conditionRow['name'];
-            }
-            $conditionResult->free(); // Free the result set
-        }
 
         echo fhead($title, $heading, $postUrl);
         $name = $_GET['u'];
         echo field("Username", "text", "username", "", $name, "required", "readonly");
         echo field("Amount", "number", "amount", "Enter Amount for the free play", '');
-        echo select("Platform", "platform", "platform", array_combine($conditionOptions, $conditionOptions));
+        $platformNames = array(); // Initialize an empty array to store platform names
+        $result = $conn->query("SELECT platfromname FROM Platformuser WHERE username='$name'");
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $platformNames[] = $row['platfromname']; // Add each platform name to the array
+            }
+        }
+
+        // Call the function to generate radio buttons
+        generateHorizontalRadioButtonsWithOther($platformNames, 'platformname', 'Platform Name');
+
         echo field("Remark", "text", "remark", "Enter Remark", "", "");
         echo $Submit;
         echo $Cancel;
@@ -574,10 +573,67 @@ if (isset($action)) {
         echo '<label for="platformname">Platform Name</label>';
         echo '<select class="form-select" id="platformname" name="platformname" onchange="showOtherField(this, \'platformname-other\')">' . $platformOptions . '</select>';
         echo '<input type="text" id="platformname-other" name="platformname_other" style="display:none;" placeholder="Enter Platform Name">';
+        echo field("Cash Tag", "text", "ctag", "Enter the Cash Tag");
         echo select("Tip Type", "ttype", "ttype", $option);
         echo field("Tip", "number", "tip", "Enter the Tip Amount");
         echo field("Remark", "text", "remark", "Enter the Remark ", "", "");
 
+        echo $Submit;
+        echo $Cancel;
+        echo $formend;
+    } else if ($action == "LINK_PLATFORM") {
+        $title = "Link Page And Platform";
+        $heading = "";
+        $action = "../App/Logic/creation.php?action=link_platform";
+        $platform = $_GET['u'];
+        $page = [];
+        $res = $conn->query("SELECT * FROM platform WHERE pid = $platform");
+        if ($res) {
+            $platformData = $res->fetch_assoc();
+            $name = $platformData['name'];
+        } else {
+            // Handle the case where the platform with the given ID does not exist or an error occurred
+            $name = null; // or any other default value or error handling mechanism
+        }
+        $resultPage = $conn->query("SELECT * from linkplatform where platid='$platform'");
+
+        if ($resultPage->num_rows > 0) {
+            while ($row = $resultPage->fetch_assoc()) {
+                $page[] = htmlspecialchars($row['pagename']); // Add each page name to the array
+            }
+        }
+        echo fhead($title, $heading, $action);
+        echo '<input type="text" name="platfrom" hidden value="' . $name . '">';
+        echo '<label>Select the Pages </label> <br>';
+        echo generateCheckboxes($pageopt, 'selectedPages', $page);
+        echo $Submit;
+        echo $Cancel;
+        echo $formend;
+    } else if ($action == "LINK_CASHAPP") {
+        $title = "Link Page And Platform";
+        $heading = "";
+        $action = "../App/Logic/creation.php?action=link_platform";
+        $platform = $_GET['u'];
+        $page = [];
+        $res = $conn->query("SELECT * FROM cashapp WHERE pid = $platform");
+        if ($res) {
+            $platformData = $res->fetch_assoc();
+            $name = $platformData['name'];
+        } else {
+            // Handle the case where the platform with the given ID does not exist or an error occurred
+            $name = null; // or any other default value or error handling mechanism
+        }
+        $resultPage = $conn->query("SELECT * from linkplatform where platid='$platform'");
+
+        if ($resultPage->num_rows > 0) {
+            while ($row = $resultPage->fetch_assoc()) {
+                $page[] = htmlspecialchars($row['pagename']); // Add each page name to the array
+            }
+        }
+        echo fhead($title, $heading, $action);
+        echo '<input type="text" name="platfrom" hidden value="' . $name . '">';
+        echo '<label>Select the Pages </label> <br>';
+        echo generateCheckboxes($pageopt, 'selectedPages', $page);
         echo $Submit;
         echo $Cancel;
         echo $formend;

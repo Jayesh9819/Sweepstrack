@@ -2,10 +2,10 @@
 ob_start();
 
 # server name
-$servername = "localhost"; // or your server name
-$username = "sweepstrac";
+$servername = "66.45.252.210"; // or your server name
+$username = "QC";
 $password = "12345678";
-$dbname = "sweepstrac";
+$dbname = "quickchat";
 
 #creating database connection
 try {

@@ -361,7 +361,7 @@
 
 
                 <?php endif; ?>
-                <?php if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) : ?>
+                <?php if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin', 'Admin'])) : ?>
                     <li class="nav-item">
                         <a class="nav-link <?php if ($_SERVER['REQUEST_URI'] == '/CustCount/index.php/Portal_Notes') echo 'active';  ?>  " aria-current="page" href="../index.php/Portal_Notes">
                             <i class="icon" data-bs-toggle="tooltip" title="Crypto" data-bs-placement="right">
@@ -411,7 +411,7 @@
                 <?php endif; ?>
 
 
-                <?php if (in_array($role, ['Manager', 'Admin'])) : ?>
+                <?php if (in_array($role, ['Manager', 'Admin', 'Agent'])) : ?>
 
 
                     <li class="nav-item">

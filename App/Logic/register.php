@@ -12,7 +12,7 @@ function setToast($type, $message)
 include '../db/db_connect.php';
 
 // Default redirect location set to the registration page for reattempt
-$redirectTo = '../../index.php/Register_to_CustCount';
+$redirectTo = $_SESSION['previous_url'];
 $action = $_GET['action'];
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST" && $action == "register") {
@@ -59,11 +59,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $action == "register") {
         }
         // $branchId = $branchId ?? 'default_page_id';
     }
-    echo 'this is an branch '. $branchId;
     $ipAddress = $_SERVER['REMOTE_ADDR'];
 
     // Validate inputs are not empty
-    if (empty($fullname) || empty($username) || empty($role)) {
+    if (empty($fullname) || empty($username) || empty($role) ) {
         // Set error message and retain form values
         setToast('error', 'Please fill in all required fields and accept the terms.');
         $_SESSION['form_values'] = $_POST;
@@ -106,12 +105,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $action == "register") {
         $stmt->bind_param("ssssssssssss", $fullname, $username, $fbLink, $referby, $pageId, $branchId, $ipAddress, $password, $refercode, $status, $role, $by_u);
 
         if ($stmt->execute()) {
-            setToast('success', 'New record created successfully.');
             if ($role == 'User') {
+                setToast('success', 'New User created successfully.');
                 processReferralCode($conn, $username, $ref);
+                $redirectTo = '../../index.php/Portal_User_Management'; // Success: Redirect to the home page or dashboard
+            }elseif ($role == 'Agent') {
+                setToast('success', 'New Agent created successfully.');
+                $redirectTo = '../../index.php/Portal_Agent_Management'; // Success: Redirect to the home page or dashboard
+            }elseif ($role == 'Manager') {
+                setToast('success', 'New Manager created successfully.');
+                $redirectTo = '../../index.php/Portal_Manager_Management'; // Success: Redirect to the home page or dashboard
+            }elseif ($role == 'Supervisor') {
+                setToast('success', 'New Supervisor created successfully.');
+                $redirectTo = '../../index.php/Portal_Supervisor_Management'; // Success: Redirect to the home page or dashboard
             }
-
-            $redirectTo = '../../index.php/Portal'; // Success: Redirect to the home page or dashboard
         } else {
             setToast('error', 'Error: ' . $stmt->error);
         }

@@ -14,7 +14,7 @@
 		echo "<script type='text/javascript'>document.addEventListener('DOMContentLoaded', function() { toastr['$type']('$message'); });</script>";
 	}
 
-	
+
 	if (isset($_SESSION['toast'])) {
 		$toast = $_SESSION['toast'];
 		echoToastScript($toast['type'], $toast['message']);
@@ -45,10 +45,15 @@
 
 		# Getting User data data
 		$chatWith = getPage($_GET['user'], $conn);
-
+		if (isset($_GET['user'])) {
+			echo "User parameter is: " . htmlspecialchars($_GET['user']);
+		} else {
+			echo "User parameter is missing.";
+		}
+		
 		if (empty($chatWith)) {
 			// header("Location: ./Chat_l");
-			 exit;
+			exit;
 		}
 
 		$chats = getChatPage($_SESSION['user_id'], $chatWith['name'], $conn);
@@ -314,15 +319,15 @@
 				<a href="./Page_Message" class="btn btn-dark">Back</a>
 
 				<div class="d-flex align-items-center">
-				<img src="../uploads/profile/<?= !empty($chatWith['p_p']) ? $chatWith['p_p'] : '07.png' ?>" class="w-15 rounded-circle">
+					<img src="../uploads/profile/<?= !empty($chatWith['p_p']) ? $chatWith['p_p'] : '07.png' ?>" class="w-15 rounded-circle">
 
 					<h3 class="display-4">
 						<?= $chatWith['name'] ?> <br>
 						<div class="d-flex
                	              align-items-center" title="online">
 							<!-- <?php
-							if (last_seen($chatWith['last_seen']) == "Active") {
-							?>
+									if (last_seen($chatWith['last_seen']) == "Active") {
+									?>
 								<div class="online"></div>
 								<small class="d-block p-1">Online</small>
 							<?php } else { ?>
@@ -478,22 +483,8 @@
 			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 			<script>
-				// function onNewMessageReceived() {
-				// 	var chatSound = document.getElementById('chatNotificationSound');
-				// 	chatSound.play();
-				// }
-				document.addEventListener("visibilitychange", function() {
-					if (!document.hidden) {
-						// The user has switched back to the tab, fetch new messages immediately
-						fetchMessages();
-					}
-				});
 
 				$(document).ready(function() {
-					// Your existing $(document).ready setup
-					// Including the setInterval for fetchMessages
-
-					// Example: Request permission for Notifications
 					if ("Notification" in window) {
 						Notification.requestPermission();
 					}
@@ -523,55 +514,47 @@
 					sendMessage(); // Trigger message send when a file is selected
 				});
 
-				function sendMessage() {
-					const message = document.getElementById('message').value.trim();
-					const fileInput = document.getElementById('fileInput');
-					const formData = new FormData();
-
-					formData.append('message', message);
-					if (fileInput.files[0]) {
-						formData.append('attachment', fileInput.files[0]);
-					}
-
-					formData.append('to_id', <?= json_encode($chatWith['name']) ?>); // Adjust to ensure correct variable handling
-
-					// Make the AJAX call using formData
-					$.ajax({
-						url: "../Public/Pages/Chat/app/ajax/binsert.php",
-						type: "POST",
-						data: formData,
-						processData: false, // Prevent jQuery from automatically transforming the data into a query string
-						contentType: false, // Set content type to false as jQuery will tell the server its a query string request
-						success: function(data) {
-							document.getElementById('message').value = ""; // Clear the message input field
-							document.getElementById('fileInput').value = ""; // Reset the file input
-							$("#chatBox").append(data); // Assuming you want to append the message to the chat box
-							scrollDown(); // Ensure the chat box scrolls to the latest message
-						}
-					});
-				}
-
 				document.addEventListener('DOMContentLoaded', function() {
 					const textarea = document.getElementById('message');
 					const sendBtn = document.getElementById('sendBtn'); // Reference to the send button
 
-					// Function to send the message
 					function sendMessage() {
-						const message = textarea.value.trim();
-						console.log(message);
-						if (message !== '') {
-							// Perform AJAX call to insert.php
-							$.post("../Public/Pages/Chat/app/ajax/binsert.php", {
-									message: message,
-									to_id: <?= json_encode($chatWith['name']) ?> // Ensure PHP variable is correctly encoded for JavaScript
-								},
-								function(data, status) {
-									$("#message").val(""); // Clear the textarea after sending
-									$("#chatBox").append(data); // Assuming you want to append the message to the chat box
-									scrollDown(); // Ensure the chat box scrolls to the latest message
-								});
+						const message = document.getElementById('message').value.trim();
+						console.log('Message:', message); // Debug: Log the message content
+
+						const fileInput = document.getElementById('fileInput');
+						const formData = new FormData();
+
+						formData.append('message', message);
+						if (fileInput.files[0]) {
+							formData.append('attachment', fileInput.files[0]);
+							console.log('File:', fileInput.files[0].name); // Debug: Log the file name
 						}
+
+						const chatWith = <?= json_encode($chatWith['name']) ?>;
+						console.log('Chat with:', chatWith); // Debug: Log the chat partner's name
+						formData.append('to_id', chatWith);
+
+						// Make the AJAX call using formData
+						$.ajax({
+							url: "../Public/Pages/Chat/app/ajax/binsert.php",
+							type: "POST",
+							data: formData,
+							processData: false, // Prevent jQuery from automatically transforming the data into a query string
+							contentType: false,
+							success: function(data) {
+								console.log('Success:', data); // Debug: Log successful data response
+								document.getElementById('message').value = ""; // Clear the message input field
+								document.getElementById('fileInput').value = ""; // Reset the file input
+								$("#chatBox").append(data); // Assuming you want to append the message to the chat box
+								scrollDown(); // Ensure the chat box scrolls to the latest message
+							},
+							error: function(jqXHR, textStatus, errorThrown) {
+								console.error('AJAX error:', textStatus, errorThrown); // Debug: Log AJAX error
+							}
+						});
 					}
+
 
 					// Event listener for the send button
 					sendBtn.addEventListener('click', function() {
@@ -596,33 +579,10 @@
 
 				$(document).ready(function() {
 
-					// 	$("#sendBtn").on('click', function() {
-					// 		message = $("#message").val();
-					// 		if (message == "") return;
-
-					// 		$.post("../Public/Pages/Chat/app/ajax/insert.php", {
-					// 				message: message,
-					// 				to_id: <?= $chatWith['name'] ?>
-					// 			},
-					// 			function(data, status) {
-					// 				$("#message").val("");
-					// 				$("#chatBox").append(data);
-					// 				scrollDown();
-					// 			});
-					// 	});
-
-					/** 
-					auto update last seen 
-					for logged in user
-					**/
 					let lastSeenUpdate = function() {
 						$.get("../Public/Pages/Chat/app/ajax/update_last_seen.php");
 					}
 					lastSeenUpdate();
-					/** 
-					auto update last seen 
-					every 10 sec
-					**/
 					setInterval(lastSeenUpdate, 10000);
 
 
@@ -630,7 +590,7 @@
 					// auto refresh / reload
 					let fechData = function() {
 						$.post("../Public/Pages/Chat/app/ajax/bgetMessage.php", {
-								id_2: <?= $chatWith['name'] ?>
+								id_2: '<?= $chatWith['name'] ?>'
 							},
 							function(data, status) {
 								$("#chatBox").append(data);
@@ -714,7 +674,7 @@
 
 		<?
 		include("./Public/Pages/Common/footer.php");
-		
+
 		?>
 
 	</main>

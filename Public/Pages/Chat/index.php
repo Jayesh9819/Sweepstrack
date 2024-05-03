@@ -39,8 +39,8 @@
 			// Fetch online agents in the same page
 			$pagename = $_SESSION['page'];
 			$sql = "SELECT * FROM user WHERE role = 'Agent' AND last_seen(last_seen) COLLATE utf8mb4_unicode_ci  = 'Active' AND pagename LIKE '%$pagename%' ";
-			echo $sql;
 
+			
 			$stmt = $conn->prepare($sql);
 			$stmt->execute();
 			$agents = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -298,51 +298,6 @@
 					</div>
 					<div>
 						<h3>Chat History</h3>
-
-						<!-- <ul id="chatList" class="list-group mvh-50 overflow-auto" id="chat-box">
-							<?php if (!empty($conversations)) { ?>
-								<?php
-
-								foreach ($conversations as $conversation) { ?>
-									<li class="list-group-item">
-										<a href="./Chat_Screen?user=<?= $conversation['username'] ?>" class="d-flex
-	    				          justify-content-between
-	    				          align-items-center p-2">
-											<div class="d-flex
-	    					            align-items-center">
-												<img src="../uploads/profile/<?= !empty($chatWith['p_p']) ? $chatWith['p_p'] : '07.png' ?>" class="w-15 rounded-circle">
-												<h3 class="fs-xs m-2">
-													<?= $conversation['username'] ?><br>
-
-													<small>
-														<?php
-														echo lastChat($_SESSION['user_id'], $conversation['id'], $conn);
-														?>
-													</small>
-												</h3>
-											</div>
-											<?php if (!empty($conversation['unread_messages']) && $conversation['unread_messages'] > 0) { ?>
-												<div class="unread-messages"><?= $conversation['unread_messages'] ?></div>
-											<?php } ?>
-
-											<?php if (last_seen($conversation['last_seen']) == "Active") { ?>
-												<div title="online">
-													<div class="online"></div>
-												</div>
-											<?php } ?>
-										</a>
-									</li>
-								<?php } ?>
-							<?php } else { ?>
-								<div class="alert alert-info 
-    				            text-center">
-									<i class="fa fa-comments d-block fs-big"></i>
-									No messages yet, Start the conversation
-								</div>
-							<?php }
-							?>
-						</ul> -->
-
 					</div>
 
 
@@ -356,7 +311,7 @@
 							<div class="d-flex
     			            align-items-center">
 								<img src="../uploads/profile/<?= !empty($chatWith['p_p']) ? $chatWith['p_p'] : '07.png' ?>" class="w-15 rounded-circle">
-								<h3 class="fs-xs m-2"><?= $user['username'] ?></h3>
+								<h3 class="fs-xs m-2"><?= $user['username'] ?? $_SESSION['username'] ?></h3>
 							</div>
 						</div>
 

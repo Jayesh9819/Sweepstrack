@@ -6,7 +6,8 @@ function getChats($id_1, $id_2, $conn)
     $data = getUserDataByUsername($id_2, $conn);
     $role = $data['role'];
     $data2=getUserDataByUsername($id_1,$conn);
-    $roleu=$data2['role'];
+// Check if 'role' is set in the array and is not empty, otherwise set to 'temp'
+$roleu = !empty($data2['role']) ? $data2['role'] : 'temp';
 
 
     // Define the initial SQL query and parameters based on the user role
@@ -81,4 +82,21 @@ function getUserDataByUsername($username, $conn)
 
     // Return the user data
     return $userData;
+}
+/**
+ * Fetch a message by its ID.
+ *
+ * @param int $messageId The ID of the message to fetch.
+ * @param PDO $conn Database connection object.
+ * @return array|null Returns the message data as an associative array or null if not found.
+ */
+function getMessageById($messageId, $conn) {
+    try {
+        $stmt = $conn->prepare("SELECT * FROM chats WHERE chat_id = ?");
+        $stmt->execute([$messageId]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);  // Fetch the message as an associative array.
+    } catch (PDOException $e) {
+        error_log("Error fetching message by ID: " . $e->getMessage());
+        return null;  // Return null in case of an error.
+    }
 }

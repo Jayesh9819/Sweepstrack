@@ -276,7 +276,6 @@
                                         <th>Username</th>
                                         <th>By</th>
                                         <th>Remark</th>
-
                                     </tr>
                                 </thead>
                                 <tbody>

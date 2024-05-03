@@ -65,7 +65,7 @@
             $username = $conn->real_escape_string($_POST['state']);
 
             // Prepare the SQL statement
-            $sql = "SELECT * FROM platform WHERE name = '$username'";
+            $sql = "SELECT * FROM platform WHERE pid = '$username'";
 
             // Execute the query
             $result = $conn->query($sql);
@@ -113,6 +113,7 @@
                                             echo "<td>" . $row['created_at'] . "</td>";
                                             $id = $row['pid'];
                                             $status = $row['status'];
+                                            $username=$row['name'];
                                             echo "</tr>";
                                         }
                                         echo "</table>";
@@ -136,6 +137,10 @@
                                 <a href="javascript:void(0);" class="btn btn-outline-info rounded-pill mt-2" onclick="status(<?php echo $id; ?>, 'platform', 'status','pid')">
                                     <i class="fas fa-xmark"><?php echo $status == 1 ? 'DeActivate' : 'Activate'  ?></i>
                                 </a>
+                                <a href="./Link_Platform?u=<?php echo $id ?>">
+                                    <button type="submit" class="btn btn-warning rounded-pill mt-2">Link Page</button>
+                                </a>
+
                                 <!-- <button type="button" class="btn btn-success rounded-pill mt-2">Page is Active</button> -->
                             </div>
                         </div>

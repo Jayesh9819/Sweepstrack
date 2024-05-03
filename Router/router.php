@@ -3,6 +3,7 @@
 ob_start();
 
 $uri = parse_url($_SERVER['REQUEST_URI'])['path'];
+// echo $uri;
 include './Router/initialize.php';
 
 
@@ -71,6 +72,8 @@ if ($uri == $firstparam || $uri == $secondparam) {
         $prefix . $root . '/Scripts'                         => './Public/Pages/Portal/scripts.php',
         $prefix . $root . '/Add_User'                         => './Public/Pages/Portal/temp.php',
         $prefix . $root . '/Add_CashApp'                         => './Public/Pages/Portal/temp.php',
+        $prefix . $root . '/Link_Platform'                         => './Public/Pages/Portal/temp.php',
+
         $prefix . $root . '/Add_Refer'                         => './Public/Pages/Portal/add_refer.php',
         $prefix . $root . '/WebSet'                         => './Public/Pages/Portal/webset.php',
 
@@ -105,6 +108,9 @@ if ($uri == $firstparam || $uri == $secondparam) {
         $prefix . $root . '/Portal_Settings'                      => './Public/Pages/Portal/portal_settings.php',
         $prefix . $root . '/See_All_Reports'                      => './Public/Pages/Portal/see_all_record.php',
         $prefix . $root . '/Portal_Chats'                         => './Public/Pages/Chat/index.php',
+        $prefix . $root . '/unkno'                         => './Public/Pages/Chat/unknow.php',
+        $prefix . $root . '/UNC'                         => './Public/Pages/Chat/unh.php',
+
         $prefix . $root . '/Portal_exchat'                        => './Public/Pages/Portal/portal_exchat.php',
 
 

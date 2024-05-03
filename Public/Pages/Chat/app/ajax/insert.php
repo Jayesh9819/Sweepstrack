@@ -1,100 +1,83 @@
 <?php
 
 session_start();
+require '../db.conn.php'; // Ensures the database connection file is included
+include '../helpers/chat.php';
 function linkify($text)
 {
 	$urlPattern = '/\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]/i';
-	$text = preg_replace($urlPattern, '<a class="rtext" href="$0" target="_blank">$0</a>', $text);
-	return $text;
+	return preg_replace($urlPattern, '<a href="$0" target="_blank">$0</a>', $text);
 }
 
+if (!isset($_SESSION['username'])) {
+	echo json_encode(['status' => 'error', 'message' => 'User not logged in']);
+	exit;
+}
 
-# check if the user is logged in
-if (isset($_SESSION['username'])) {
+if (isset($_POST['message'], $_POST['to_id'])) {
+	$message = htmlspecialchars($_POST['message']);
+	$to_id = $_POST['to_id'];
+	$reply_id = $_POST['reply_to_id'] ?? null;
 
-	if (
-		isset($_POST['message']) &&
-		isset($_POST['to_id'])
-	) {
+	$from_id = $_SESSION['user_id'];
+	$uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/';
 
-		# database connection file
-		include '../db.conn.php';
+	if (!is_dir($uploadDir) && !mkdir($uploadDir, 0777, true)) {
+		echo json_encode(['status' => 'error', 'message' => 'Failed to create upload directory']);
+		exit;
+	}
 
-		# get data from XHR request and store them in var
-		$message = $_POST['message'];
-		$to_id = $_POST['to_id'];
-		$reply=$_POST['reply_to_id'];
-
-		# get the logged in user's username from the SESSION
-		$from_id = $_SESSION['user_id'];
-		// Get the root directory and append the target directory
-		$uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/';
-
-		// Check if the uploads directory exists, if not try to create it
-		if (!is_dir($uploadDir)) {
-			mkdir($uploadDir, 0777, true); // Use true for recursive creation if needed
+	$attachmentPath = null;
+	if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] === UPLOAD_ERR_OK) {
+		$fileName = time() . '-' . basename($_FILES['attachment']['name']);
+		$targetFilePath = $uploadDir . $fileName;
+		if (!move_uploaded_file($_FILES['attachment']['tmp_name'], $targetFilePath)) {
+			echo json_encode(['status' => 'error', 'message' => 'Error uploading file']);
+			exit;
 		}
+		$attachmentPath = $fileName;
+	}
 
-		$attachmentPath = null;
+	$sql = "INSERT INTO chats (from_id, to_id, message, attachment, reply_id) VALUES (?, ?, ?, ?, ?)";
+	$stmt = $conn->prepare($sql);
+	if (!$stmt->execute([$from_id, $to_id, $message, $attachmentPath, $reply_id])) {
+		echo json_encode(['status' => 'error', 'message' => 'Failed to insert message']);
+		exit;
+	}
 
-		if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] === UPLOAD_ERR_OK) {
-			$fileName = time() . '-' . basename($_FILES['attachment']['name']);
-			$targetFilePath = $uploadDir . $fileName;
+	$chat_id = $conn->lastInsertId(); // Assuming PDO, getting the last inserted chat ID
 
-			// Move the uploaded file to the target directory
-			if (move_uploaded_file($_FILES['attachment']['tmp_name'], $targetFilePath)) {
-				$attachmentPath = $fileName; // You might want to save only the file name or a relative path
-			} else {
-				echo "Error uploading file.";
-				exit;
-			}
-		}
+	$formattedMessage = [
+		'html' => linkify($message),
+		'attachment' => $attachmentPath ? "<img src='../uploads/" . htmlspecialchars($attachmentPath) . "' alt='Attachment' style='max-width:100%;display:block;'>" : "",
+		'timestamp' => date("h:i:s a")
+	];
+
+	// Generate the HTML content for the chat message
+	$messageHtml = '<div class="message sent" id="msg_' . $chat_id . '" style="text-align: right; padding-right: 21px;">';
+	// $messageHtml .= '<button onclick="setReplyTo(' . $chat_id . ', \'' . addslashes(htmlspecialchars($message)) . '\')">Reply</button>';
+	$messageHtml .= '<button style="background: none; border: none; cursor: pointer; position:relative; bottom:10px;" onclick="setReplyTo(' . $chat_id . ', \'' . addslashes(htmlspecialchars($message)) . '\')"><img src="../uploads/reply.png" style="width:50px;" alt="Reply"></button>';
 
 
-		$sql = "INSERT INTO 
-	       chats (from_id, to_id, message,attachment,reply_id) 
-	       VALUES (?, ?, ?,?,?)";
-		$stmt = $conn->prepare($sql);
-		$res  = $stmt->execute([$from_id, $to_id, $message, $attachmentPath,$reply]);
-
-		# if the message inserted
-		if ($res) {
-			$sql2 = "SELECT * FROM conversations
-               WHERE (user_1=? AND user_2=?)
-               OR    (user_2=? AND user_1=?)";
-			$stmt2 = $conn->prepare($sql2);
-			$stmt2->execute([$from_id, $to_id, $from_id, $to_id]);
-
-			date_default_timezone_set(str_replace(' ', '', $_SESSION['timezone']));
-			$time = date("h:i:s a");
-
-			if ($stmt2->rowCount() == 0) {
-				# insert them into conversations table 
-				$sql3 = "INSERT INTO 
-			         conversations(user_1, user_2)
-			         VALUES (?,?)";
-				$stmt3 = $conn->prepare($sql3);
-				$stmt3->execute([$from_id, $to_id]);
-			}
-?>
-		<?php
-	echo '<div class="message sent" style="text-align: right;  padding-right: 21px;">'; // Added semicolon here
-	echo '<div class="message-box" style="display: inline-block; background-color: #dcf8c6; padding: 10px; border-radius: 10px; margin: 5px;">';
-	echo '<p style="margin: 0;">';
-	echo linkify($message); // Removed extra semicolon here
+	$messageHtml .= '<div class="message-box" style="display: inline-block; background-color: #dcf8c6; padding: 10px; border-radius: 10px; margin: 5px;">';
+	if ($reply_id) {
+		$repliedMessage = getMessageById($reply_id, $conn); // Fetching the replied message
+		$messageHtml .= '<div class="replied-message" onclick="activateOriginalMessage(\'msg_' . $repliedMessage['chat_id'] . '\');"><em>Replied to: ' . htmlspecialchars($repliedMessage['message']) . '</em></div>';
+	}
 	if ($attachmentPath) {
-		echo '<img src="../uploads/' . htmlspecialchars($attachmentPath) . '" alt="Attachment" style="max-width:100%;display:block;">';
+		$messageHtml .= '<img src="../uploads/' . htmlspecialchars($attachmentPath) . '" alt="Attachment" style="max-width:100%;display:block;">';
 	}
-	echo '</p>';
-	echo '<small style="display: block; color: #666; font-size: smaller;">' . date("h:i:s a") . '</small>';
-	echo '</div>';
-	echo '</div>';
-	
-		}
 
+	$messageHtml .= '<p style="margin: 0;">' . linkify($message);
+	// Corrected Button Code Inside PHP Block
+	$messageHtml .= '</p>';
+	$messageHtml .= '<small style="display: block; color: #666; font-size: smaller;">' . date("h:i:s a") . '</small>';
+	$messageHtml .= '</div>';
+	$messageHtml .= '</div>';
 
-	}
+	// Return JSON including the generated HTML
+	echo json_encode(['status' => 'success', 'message' => 'Message sent successfully', 'html' => $messageHtml, 'data' => $formattedMessage]);
 } else {
-	header("Location: ../../index.php");
+	echo json_encode(['status' => 'error', 'message' => 'Required fields are missing']);
 	exit;
 }

@@ -63,13 +63,21 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
         // include './App/db/db_users.php';
 
         $role = $_SESSION['role'];
-        if ($role == 'Admin' ) {
-            $sql = "SELECT * FROM platform ";
-        } 
-        else {
+        if ($role == 'Admin') {
+            $sql = "SELECT platform.*, GROUP_CONCAT(linkplatform.pagename ORDER BY linkplatform.pagename SEPARATOR ', ') AS pagename
+            FROM platform
+            LEFT JOIN linkplatform ON platform.pid = linkplatform.platid
+            GROUP BY platform.pid
+            ";
+        } else {
             $branch = $_SESSION['branch1'];
-            $sql = "SELECT * FROM platform WHERE branch='$branch'";
-
+            $sql = "SELECT platform.*, GROUP_CONCAT(linkplatform.pagename ORDER BY linkplatform.pagename SEPARATOR ', ') AS pagename
+            FROM platform
+            LEFT JOIN linkplatform ON platform.pid = linkplatform.platid
+            WHERE platform.branch = '$branch'
+            GROUP BY platform.pid;
+            ;
+            ";
         }
 
         // $sql = "SELECT * FROM platform ";
@@ -135,7 +143,7 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
                             ?>
                                 <div class="card-body">
                                     <div class="custom-table-effect table-responsive  border rounded">
-                                    <table class="table mb-0" id="example" >
+                                        <table class="table mb-0" id="example">
                                             <thead>
                                                 <tr class="bg-white">
                                                     <?php
@@ -145,7 +153,7 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
                                             <th scope="col">Update</th>
                                             <th scope="col">Platform Name</th>
                                             <th scope="col">Platform Balance</th>
-
+                                            <th scope="col">Pages Name</th>
                                             <th scope="col">Added By</th>
                                             <th scope="col">Created At</th>
                                             </tr>';
@@ -159,12 +167,13 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
                                                     <td>{$row['pid']}</td>
                                                     <td>
                     <form action=\"./update_platform\" method=\"post\">
-                        <input type=\"hidden\" name=\"state\" value=\"{$row['name']}\">
+                        <input type=\"hidden\" name=\"state\" value=\"{$row['pid']}\">
                         <button type=\"submit\" class=\"btn btn-outline-success rounded-pill mt-2\">Update</button>
                     </form>
                 </td>
                                                     <td>{$row['name']}</td>
                                                     <td>{$row['current_balance']}</td>
+                                                    <td>{$row['pagename']}</td>
 
                                                     <td>{$row['by_u']}</td>
                                                     <td>{$row['created_at']}</td> <!-- Consider if you really want to display passwords -->
@@ -193,7 +202,7 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
             </div>
             <?
             include("./Public/Pages/Common/footer.php");
-            
+
             ?>
     </main>
     <!-- Wrapper End-->

@@ -11,7 +11,7 @@ include "./App/Logic/webset.php"
 <meta name="DC.title" content="CustCount">
 
 <!-- Favicon -->
-<link rel="shortcut icon" href="../assets/images/<?php echo $settings['logo']; ?>">
+<link rel="shortcut icon" href="<?php echo $settings['logo']; ?>">
 <link rel="manifest" href="./Public/Pages/Common/manifest.json">
 
 <!-- Library / Plugin Css Build -->

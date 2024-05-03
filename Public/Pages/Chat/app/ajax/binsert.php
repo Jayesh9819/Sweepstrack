@@ -17,12 +17,8 @@ if (isset($_SESSION['username'])) {
     ) {
         # Database connection file
         include '../db.conn.php';
-
-        # Get data from XHR request and store them in variables
         $message = $_POST['message'];
         $platform = $_POST['to_id'];
-
-        # Get the logged in user's user_id from the SESSION
         $from_id = $_SESSION['user_id'];
 
         $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/';
@@ -104,7 +100,7 @@ if (isset($_SESSION['username'])) {
         $resultBulkMessageLog = $stmtBulkMessageLog->execute([$from_id, $platform, $message, $attachmentPath ?? null]);
 
         echo '<p class="rtext align-self-end border rounded p-2 mb-1">';
-        echo linkify($message);;
+        echo linkify($message);
         if ($attachmentPath) {
             echo '<img src="../uploads/' . htmlspecialchars($attachmentPath) . '" alt="Attachment" style="max-width:100%;display:block;">';
         }

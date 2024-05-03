@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 
     <?php include     "./Public/Pages/Common/header.php";
@@ -21,7 +22,7 @@
         echo "<script type='text/javascript'>document.addEventListener('DOMContentLoaded', function() { toastr['$type']('$message'); });</script>";
     }
 
-  
+
     if (isset($_SESSION['toast'])) {
         $toast = $_SESSION['toast'];
         echoToastScript($toast['type'], $toast['message']);
@@ -36,6 +37,8 @@
         unset($_SESSION['login_error']); // Clear the error message
     }
     ?>
+    <link rel="stylesheet" href="../Public/Pages/Signing/login/style.css">
+
     <title>LOGIN PAGE</title>
 
 </head>
@@ -56,10 +59,10 @@
             <div class="row no-gutters align-items-center bg-white">
                 <div class="col-md-12 col-lg-6 align-self-center">
                     <div class="row justify-content-center">
-                        <div style="position: relative ; left: 100px;" class="col-md-12 col-lg-6 align-self-center">
+                        <div style="position: relative ; left: -50px;" class="col-md-12 col-lg-6 align-self-center">
                             <a href="#" class="navbar-brand d-flex align-items-center mb-3 justify-content-center text-primary">
                                 <div class="logo-normal">
-                                    <img src="<?php echo $settings['logo']; ?>" style="height: 100px; " alt="">
+                                    <img src="<?php echo $settings['logo']; ?>" style="position: relative ; left: 50px; height: 100px; " alt="">
                                 </div>
                                 <h1 style="font-family: 'Times New Roman', Times, serif; color:<?php echo $settings['color']; ?>; font-size: 3em; font-weight: bold; " class="logo-title ms-3 mb-0"><?php echo $settings['name']; ?></h1>
 
@@ -101,7 +104,7 @@
                                                 <p class="text-center my-3">or sign in with other accounts?</p>
                                                 <!-- For Android -->
                                                 </p>
-                                                
+
                                                 <div class="d-flex justify-content-center">
                                                     <ul class="list-group list-group-horizontal list-group-flush">
 
@@ -114,27 +117,43 @@
                                                 <p class="mt-3 text-center">
                                                     <button onclick="window.location.href='<?php echo $settings['androidlink']; ?>'" class="btn btn-primary">Download for Android</button>
 
-<!-- For iOS -->
-<button onclick="window.location.href='<?php echo $settings['ioslink']; ?>'" class="btn btn-primary">Download for iOS</button>
+                                                    <!-- For iOS -->
+                                                    <button onclick="window.location.href='<?php echo $settings['ioslink']; ?>'" class="btn btn-primary">Download for iOS</button>
                                                 <p class="mt-3 text-center">
-    For iOS Install using Scarlet or AltStore or similar tools
-                                                    <!-- Don’t have an account? <a href="./Register_to_CustCount" class="text-underline">Click here to sign up.</a> -->
+                                                    For iOS Install using Scarlet or AltStore or similar tools
                                                 </p>
                                             </form>
-                                  
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                    <div class="col-lg-6 d-lg-block d-none p-0 overflow-hidden" style="position: relative; right: 80px; background-color: #39DFE5;">
-                        <img src="<?php echo $settings['banner']; ?>" class="img-fluid gradient-main" alt="images" loop autoplay muted></img>
                     </div>
                 </div>
+                <div class="col-lg-6 d-lg-block d-none p-0 overflow-hidden" style="position: relative; right: 80px; background-color: #39DFE5;">
+                    <img src="<?php echo $settings['banner']; ?>" class="img-fluid gradient-main" alt="images" loop autoplay muted></img>
+                </div>
+            </div>
+            <div id="chatButton" class="chat-button">
+                Open Chat
+            </div>
+            <div id="userFormModal" class="modal">
+                <div class="modal-content">
+                    <span class="close-button">&times;</span>
+                    <form id="userInfoForm">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" name="name" required>
+                        <label for="refercode">Refer Code (Optional):</label>
+                        <input type="text" id="refercode" name="refercode">
+                        <button type="submit">Start Chat</button>
+                    </form>
+                </div>
+            </div>
+
         </section>
     </div>
 
+    <script src="../Public/Pages/Signing/login/script.js"></script>
 
     <?php include "./Public/Pages/Common/scripts.php" ?>
 
