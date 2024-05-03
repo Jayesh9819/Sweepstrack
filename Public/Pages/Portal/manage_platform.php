@@ -75,8 +75,7 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
             FROM platform
             LEFT JOIN linkplatform ON platform.pid = linkplatform.platid
             WHERE platform.branch = '$branch'
-            GROUP BY platform.pid;
-            ;
+            GROUP BY platform.pid
             ";
         }
 
