@@ -311,13 +311,12 @@ class Creation
             if ($stmt = mysqli_prepare($this->conn, $sql)) {
                 mysqli_stmt_bind_param($stmt, "sisssssisssssss", $username, $cashoutamount,$redstat,$cashstat,$cashtag, $pagename, $branchId, $accessamount, $cashupName, $platformName, $tip, $type, $remark, $by_username, $by_role);
                 if ($stmt->execute()) {
-                    $_SESSION['toast'] = ['type' => 'success', 'message' => 'Reedem Added Sucessfully '];
+                    $_SESSION['toast'] = ['type' => 'success', 'message' => 'Reedem Request Sent Sucessfully '];
                     $this->updateBalances($type, $cashoutamount, $platformName, $cashupName, $username, $by_username);
                     echo "Transaction added successfully. Redirecting...<br>";
                     if ($by_role == 'User') {
                         header("Location: ../../index.php");
                     } else {
-
                         header("Location: ../../index.php/Portal_User_Management");
                     }
                     exit();
