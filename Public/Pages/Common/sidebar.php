@@ -28,7 +28,7 @@
         <div class="sidebar-list">
             <!-- Sidebar Menu Start -->
             <?php
-            $role = $_SESSION['role']; // Assuming role is stored in session
+            $role = $_SESSION['role']; 
             ?>
 
             <nav class="navbar">
@@ -385,7 +385,7 @@
                                     <path d="M21.779 15.1693C21.4316 14.4439 20.593 13.9465 19.3171 13.7022C18.7153 13.5585 17.0852 13.3544 15.5695 13.3831C15.547 13.386 15.5343 13.4013 15.5324 13.4109C15.5294 13.4262 15.5363 13.4492 15.5656 13.4655C16.2662 13.8047 18.9737 15.2804 18.6332 18.3927C18.6185 18.5288 18.729 18.6438 18.867 18.6246C19.5333 18.5317 21.2476 18.1704 21.779 17.0474C22.0735 16.4533 22.0735 15.7634 21.779 15.1693Z" fill="currentColor"></path>
                                 </svg>
                             </i>
-                            <span class="item-name">Set Offers</span>
+                            <span class="item-name">Create Offers</span>
                         </a>
                     </li>
 
@@ -478,7 +478,6 @@
                         <span class="item-name">Settings</span>
                     </a>
                 </li>
-                <?php if (in_array($role, ['Supervisor', 'Manager', 'Admin', 'Agent', 'User'])) : ?>
 
                     <li class="nav-item">
                         <a class="nav-link " aria-current="page" href="../Public/Pages/Common/destroy_session.php">
@@ -501,7 +500,6 @@
                     <li></li>
                     <li></li>
 
-                <?php endif; ?>
         </div>
 
     </div>

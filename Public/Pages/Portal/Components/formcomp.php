@@ -45,6 +45,23 @@ function select($label, $id, $name, $options, $selectedOption = null)
 
     return $html;
 }
+function selectA($label, $id, $name, $options, $selectedOption = null)
+{
+    $html = '<div class="form-group">
+                <label class="form-label" for="' . $id . '">' . $label . '</label>
+                <select class="form-select" id="' . $id . '" name="' . $name . '">';
+
+    foreach ($options as $key => $value) {
+        $selected = ($key == $selectedOption) ? 'selected="selected"' : ''; // Check if this option's key is the selected one
+        $html .= '<option value="' . $key . '" ' . $selected . '>' . $value . '</option>';
+    }
+
+    $html .= '</select>
+            </div>';
+
+    return $html;
+}
+
 
 function selectMult($label, $id, $name, $options, $selectedOptions = [])
 {

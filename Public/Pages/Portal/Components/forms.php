@@ -194,10 +194,12 @@ if (isset($action)) {
                 $cashAppOptions[] = htmlspecialchars($row['name']);
             }
         }
+        $option = ["Select Type","No Tip", "Deduct From Redeem Amount", "Deduct From Platfrom"];
 
         // Generate horizontal radio buttons with 'Other' option
         generateHorizontalRadioButtonsWithOther($cashAppOptions, 'cashAppname', 'cashApp Name');
         echo field("Cash Tag", "text", "ctag", "Enter the Cash Tag");
+        echo selectA("Tip Type", "ttype", "ttype", $option);
 
         echo field("Tip", "number", "tip", "Enter the Tip Amount");
         echo field("Remark", "text", "remark", "Enter the Remark ", "", "");
@@ -569,12 +571,12 @@ if (isset($action)) {
             }
         }
         $platformOptions .= "<option value='other'>Other</option>";
-        $option = ["Select Type", "Deduct From Redeem Amount", "Deduct From Platfrom"];
+        $option = ["Select Type","No Tip", "Deduct From Redeem Amount", "Deduct From Platfrom"];
         echo '<label for="platformname">Platform Name</label>';
         echo '<select class="form-select" id="platformname" name="platformname" onchange="showOtherField(this, \'platformname-other\')">' . $platformOptions . '</select>';
         echo '<input type="text" id="platformname-other" name="platformname_other" style="display:none;" placeholder="Enter Platform Name">';
         echo field("Cash Tag", "text", "ctag", "Enter the Cash Tag");
-        echo select("Tip Type", "ttype", "ttype", $option);
+        echo selectA("Tip Type", "ttype", "ttype", $option);
         echo field("Tip", "number", "tip", "Enter the Tip Amount");
         echo field("Remark", "text", "remark", "Enter the Remark ", "", "");
 
