@@ -355,7 +355,7 @@
 							echo '<h1 class="" style="margin-bottom: 0; font-size: 16px; color: white; font-weight: bold;">
             				Page Name:- ' . $chatWith['pagename'] . '
        								 </h1>';
-						} elseif ($chatWith['role'] == 'Agent' && $_SESSION['role']!=='User') {
+						} elseif ($chatWith['role'] == 'Agent' && $_SESSION['role']!='User') {
 							echo '<h1 class="" style="margin-bottom: 0; font-size: 16px; color: white; font-weight: bold;">
 						Page Name:- ' . $chatWith['pagename'] . '
 									</h1>';
