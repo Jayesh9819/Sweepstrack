@@ -13,7 +13,7 @@ $randomNumber = rand(1000, 99999);
 $id = 'UT' . $randomNumber;
 
 // SQL to insert data
-$stmt = $conn->prepare("INSERT INTO users (username, Refer, id, role, pagename, last_seen) VALUES (?, ?, ?, ?, ?, NOW())");
+$stmt = $conn->prepare("INSERT INTO unknown_users (username,Refer, id, role, pagename, last_seen) VALUES (?, ?, ?, ?, ?, NOW())");
 $stmt->bind_param("sssss", $name, $referCode, $id, $role, $pagename);
 $result = $stmt->execute();
 
