@@ -11,7 +11,7 @@ $referCode = $_POST['refercode'] ?? null; // Using null coalescing operator for 
 $randomNumber = rand(1000, 99999);
 $id='UT'.$randomNumber;
 // SQL to insert data
-$stmt = $conn->prepare("INSERT INTO unknown_users (username, Refer,user_id) VALUES (?, ?,?)");
+$stmt = $conn->prepare("INSERT INTO unknown_users (username, Refer,id) VALUES (?, ?,?)");
 $stmt->bind_param("sss", $name, $referCode,$id);
 $result = $stmt->execute();
 
@@ -23,9 +23,6 @@ if ($result) {
     $_SESSION['user_id'] = $id;
     $_SESSION['id'] = $id;
     $_SESSION['username'] = $name;
-
-    // Store the random number in session
-
     echo json_encode(['success' => true]);
 } else {
     echo json_encode(['success' => false]);
