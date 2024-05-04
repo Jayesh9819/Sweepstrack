@@ -4,6 +4,7 @@
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+	<meta http-equiv="refresh" content="30">
 
 	<?php
 	ob_start();
@@ -291,10 +292,12 @@
 			.emoji-picker {
 				grid-template-columns: repeat(4, 1fr);
 			}
-			.shprofile{
+
+			.shprofile {
 				display: none;
 			}
-			.replyButtonsss{
+
+			.replyButtonsss {
 				position: relative;
 				top: -10px;
 			}
@@ -355,7 +358,7 @@
 							echo '<h1 class="" style="margin-bottom: 0; font-size: 16px; color: white; font-weight: bold;">
             				Page Name:- ' . $chatWith['pagename'] . '
        								 </h1>';
-						} elseif ($chatWith['role'] == 'Agent' && $_SESSION['role']!='User') {
+						} elseif ($chatWith['role'] == 'Agent' && $_SESSION['role'] != 'User') {
 							echo '<h1 class="" style="margin-bottom: 0; font-size: 16px; color: white; font-weight: bold;">
 						Page Name:- ' . $chatWith['pagename'] . '
 									</h1>';
@@ -364,7 +367,6 @@
 						Branch Name:- ' . $chatWith['branchname'] . '
 									</h1>';
 						}
-
 						?>
 
 						<div title="online">
@@ -511,6 +513,7 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 		<script>
+			
 			document.addEventListener("visibilitychange", function() {
 				if (!document.hidden) {
 					// The user has switched back to the tab, fetch new messages immediately
@@ -587,7 +590,7 @@
 				if (document.hidden && Notification.permission === "granted") {
 					new Notification("New message", {
 						body: "You have received a new message.",
-						// icon: "/path/to/an/icon.png", // Optional: Add an icon
+
 					});
 				}
 			}
@@ -597,9 +600,9 @@
 			});
 
 			document.getElementById('fileInput').addEventListener('change', function() {
-				sendMessage(); // Trigger message send when a file is selected
+				sendMessage();
 			});
-			var replyToId = null; // Global variable to track the ID of the message being replied to
+			var replyToId = null;
 
 			function setReplyTo(messageId, messageText) {
 				replyToId = messageId; // Set the reply ID
