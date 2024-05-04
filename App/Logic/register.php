@@ -156,7 +156,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && $action == "register") {
         } else {
             $branchId = $creationInstance->getBranchNameByPageName($pageId, $conn);
         }
-        $branchId = $branchId ?? 'default_page_id';
+        // $branchId = $branchId ?? 'default_page_id';
     }
     $ipAddress = $_SERVER['REMOTE_ADDR'];
     $condition_value = $username;
