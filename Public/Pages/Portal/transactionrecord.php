@@ -118,7 +118,7 @@
                             $stmt->bind_param('s', $u);
                             $stmt->execute();
                             $result = $stmt->get_result();
-                            $results = $result->fetch_assoc();
+                            $results = $result->fetch_all(MYSQLI_ASSOC);
                             $stmt->close();
                         } else {
                             // User not found
