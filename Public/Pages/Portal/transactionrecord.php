@@ -118,7 +118,7 @@
                             $stmt->bind_param('s', $u);
                             $stmt->execute();
                             $result = $stmt->get_result();
-                            $addby_user = $result->fetch_assoc();
+                            $results = $result->fetch_assoc();
                             $stmt->close();
                         } else {
                             // User not found
