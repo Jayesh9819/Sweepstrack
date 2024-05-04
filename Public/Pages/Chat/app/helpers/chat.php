@@ -2,7 +2,6 @@
 
 function getChats($id_1, $id_2, $conn)
 {
-    echo "thisssssssssssssssdctfvgybhujkd5efrgthyuijorfgthyunijmkssss   " . $id_1, "             ", $id_2;
     // Get the role of the second user
     $data = getUserDataByUsername($id_2, $conn);
     $role = $data['role'];

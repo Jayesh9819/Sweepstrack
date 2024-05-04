@@ -347,22 +347,6 @@
 						<h1 style="margin-bottom: 0; font-size: 16px; color: white; font-weight: bold;">
 							<?= $chatWith['username'] ?>
 						</h1>
-						<?php
-						if ($chatWith['role'] == 'User') {
-							echo '<h1 class="" style="margin-bottom: 0; font-size: 16px; color: white; font-weight: bold;">
-            				Page Name:- ' . $chatWith['pagename'] . '
-       								 </h1>';
-						} elseif ($chatWith['role'] == 'Agent') {
-							echo '<h1 class="" style="margin-bottom: 0; font-size: 16px; color: white; font-weight: bold;">
-						Page Name:- ' . $chatWith['pagename'] . '
-									</h1>';
-						} elseif ($chatWith['role'] == 'Manager' || $chatWith['role'] == 'Supervisor') {
-							echo '<h1 class="" style="margin-bottom: 0; font-size: 16px; color: white; font-weight: bold;">
-						Branch Name:- ' . $chatWith['branchname'] . '
-									</h1>';
-						}
-
-						?>
 
 						<div title="online">
 							<?php if (last_seen($chatWith['last_seen']) == "Active") { ?>
