@@ -2,16 +2,17 @@
 
 function getChats($id_1, $id_2, $conn)
 {
+    echo "thisssssssssssssssdctfvgybhujkd5efrgthyuijorfgthyunijmkssss   " . $id_1, "             ", $id_2;
     // Get the role of the second user
     $data = getUserDataByUsername($id_2, $conn);
     $role = $data['role'];
-    $data2=getUserDataByUsername($id_1,$conn);
-// Check if 'role' is set in the array and is not empty, otherwise set to 'temp'
-$roleu = !empty($data2['role']) ? $data2['role'] : 'temp';
+    $data2 = getUserDataByUsername($id_1, $conn);
+    // Check if 'role' is set in the array and is not empty, otherwise set to 'temp'
+    $roleu = !empty($data2['role']) ? $data2['role'] : 'temp';
 
 
     // Define the initial SQL query and parameters based on the user role
-    if ($role == 'User' && $roleu!='User') {
+    if ($role == 'User'  && $roleu != 'User') {
         $sql = "SELECT chats.*, 
                 sender.username AS sender_username, 
                 receiver.username AS receiver_username
@@ -21,7 +22,26 @@ $roleu = !empty($data2['role']) ? $data2['role'] : 'temp';
                 WHERE (chats.from_id = ? OR chats.to_id = ?)
                 ORDER BY chats.chat_id ASC";
         $params = [$id_2, $id_2];
-
+    } elseif ($roleu == 'query') {
+        $sql = "SELECT chats.*, 
+        sender.username AS sender_username, 
+        receiver.username AS receiver_username
+        FROM chats
+        LEFT JOIN user AS sender ON chats.from_id = sender.id
+        LEFT JOIN user AS receiver ON chats.to_id = receiver.id
+        WHERE (chats.from_id = ? OR chats.to_id = ?)
+        ORDER BY chats.chat_id ASC";
+        $params = [$id_1, $id_1];
+    } elseif ($role == 'query') {
+        $sql = "SELECT chats.*, 
+        sender.username AS sender_username, 
+        receiver.username AS receiver_username
+        FROM chats
+        LEFT JOIN user AS sender ON chats.from_id = sender.id
+        LEFT JOIN user AS receiver ON chats.to_id = receiver.id
+        WHERE (chats.from_id = ? OR chats.to_id = ?)
+        ORDER BY chats.chat_id ASC";
+        $params = [$id_2, $id_2];
     } else {
         $sql = "SELECT chats.*, 
         sender.username AS sender_username, 
@@ -31,7 +51,7 @@ $roleu = !empty($data2['role']) ? $data2['role'] : 'temp';
         LEFT JOIN user AS receiver ON chats.to_id = receiver.id
         WHERE (chats.from_id = ? OR chats.to_id = ?)
         ORDER BY chats.chat_id ASC";
-$params = [$id_1, $id_1];
+        $params = [$id_1, $id_1];
     }
     // Prepare and execute SQL statement
     $stmt = $conn->prepare($sql);
@@ -71,7 +91,12 @@ function getUserDataByUsername($username, $conn)
     $username = ($username);
 
     // SQL query to retrieve user data by username
-    $query = "SELECT * FROM user WHERE id = ?"; // Corrected the query with a placeholder
+    // $query = "SELECT * FROM user WHERE id = ?"; // Corrected the query with a placeholder
+    if (substr($username, 0, 2) === 'UT') {
+        $query = "SELECT * FROM unknown_users WHERE id = ?";
+    } else {
+        $query = "SELECT * FROM user WHERE id = ?";
+    }
 
     // Execute the query with bound parameter
     $stmt = $conn->prepare($query);
@@ -90,7 +115,8 @@ function getUserDataByUsername($username, $conn)
  * @param PDO $conn Database connection object.
  * @return array|null Returns the message data as an associative array or null if not found.
  */
-function getMessageById($messageId, $conn) {
+function getMessageById($messageId, $conn)
+{
     try {
         $stmt = $conn->prepare("SELECT * FROM chats WHERE chat_id = ?");
         $stmt->execute([$messageId]);
