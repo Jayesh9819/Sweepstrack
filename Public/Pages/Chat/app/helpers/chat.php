@@ -53,7 +53,6 @@ function getChats($id_1, $id_2, $conn)
         ORDER BY chats.chat_id ASC";
         $params = [$id_1, $id_1];
     }
-    // Prepare and execute SQL statement
     $stmt = $conn->prepare($sql);
     $stmt->execute($params);
 
