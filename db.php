@@ -11,7 +11,7 @@ $dbname = "cc";
 echo '<a href="test.php" style="text-decoration: none;">
 <button type="button" class="btn btn-danger rounded-pill mt-2">Redeem CashApp</button>
 </a>';
-include'test.php';
+include 'test.php';
 
 
 

@@ -117,15 +117,23 @@
                         <input type="date" class="form-control" id="end_date" name="end_date" value="<?php echo isset($_SESSION['end_date']) ? htmlspecialchars($_SESSION['end_date']) : ''; ?>">
                     </div>
                     <label for="timezone">Select Timezone:</label>
-                    <select name="timezone" id="timezone">
-                        <?php
-                        $timezones = DateTimeZone::listIdentifiers();
-                        foreach ($timezones as $timezone) {
-                            $selected = ($_SESSION['timezone'] ?? 'UTC') === $timezone ? ' selected' : '';
-                            echo "<option value=\"$timezone\"$selected>$timezone</option>";
-                        }
-                        ?>
-                    </select>
+                    <select name="timezone" id="timezone" class="form-control">
+                                <?php
+                                $us_timezones = [
+                                    'America/New_York',    // Eastern Time
+                                    'America/Chicago',     // Central Time
+                                    'America/Denver',      // Mountain Time
+                                    'America/Phoenix',     // Arizona Time
+                                    'America/Los_Angeles', // Pacific Time
+                                    'America/Anchorage',   // Alaska Time
+                                    'America/Honolulu'     // Hawaii Time
+                                ];
+                                foreach ($us_timezones as $timezone) {
+                                    $selected = ($_SESSION['timezone'] ?? 'America/New_York') === $timezone ? ' selected' : '';
+                                    echo "<option value=\"$timezone\"$selected>$timezone</option>";
+                                }
+                                ?>
+                            </select>
                     <label for="time_filter">Select Time Filter:</label>
                     <select name="time_filter" id="time_filter">
                         <option value="custom" <?php echo ($_SESSION['time_filter'] == 'custom') ? 'selected' : ''; ?>>ALL</option>

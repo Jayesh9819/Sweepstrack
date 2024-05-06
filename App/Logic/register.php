@@ -12,7 +12,7 @@ function setToast($type, $message)
 include '../db/db_connect.php';
 
 // Default redirect location set to the registration page for reattempt
-$redirectTo = $_SESSION['previous_url'];
+$redirectTo = '?return=1';
 $action = $_GET['action'];
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST" && $action == "register") {

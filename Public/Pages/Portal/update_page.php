@@ -127,6 +127,10 @@
                                 <a href="javascript:void(0);" class="btn btn-outline-info rounded-pill mt-2" onclick="status(<?php echo $id; ?>, 'page', 'status','pid')">
                                     <i class="fas fa-xmark"><?php echo $status == 1 ? 'DeActivate' : 'Activate'  ?></i>
                                 </a>
+                                <a href="javascript:void(0);" class="btn btn-outline-info rounded-pill mt-2" onclick="delete1(<?php echo $id; ?>, 'page','pid')">
+                                        <i class="fas fa-xmark">Delete</i>
+                                    </a>
+
                                 <!-- <button type="button" class="btn btn-success rounded-pill mt-2">Pa</button> -->
                             </div>
                         </div>
@@ -138,6 +142,65 @@
 
 
         <script>
+                        function delete1(product_id, table, field) {
+                if (confirm("Are you sure you want to Delete")) {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open("POST", "../App/Logic/commonf.php?action=delete", true);
+
+                    // Set the Content-Type header
+                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                    // Include additional parameters in the data sent to the server
+                    const data = "id=" + product_id + "&table=" + table + "&field=" + field;
+
+                    // Log the data being sent
+                    console.log("Data sent to server:", data);
+
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === 4) {
+                            console.log("XHR status:", xhr.status);
+
+                            if (xhr.status === 200) {
+                                console.log("Response received:", xhr.responseText);
+
+                                try {
+                                    const response = JSON.parse(xhr.responseText);
+
+                                    if (response) {
+                                        console.log("Parsed JSON response:", response);
+
+                                        if (response.success) {
+                                            alert("Done successfully!");
+                                            window.location.href = "./Portal_Page_Management";
+                                        } else {
+                                            alert("Error : " + response.message);
+                                        }
+                                    } else {
+                                        console.error("Invalid JSON response:", xhr.responseText);
+                                        alert("Invalid JSON response from the server.");
+                                    }
+                                } catch (error) {
+                                    console.error("Error parsing JSON:", error);
+                                    alert("Error parsing JSON response from the server.");
+                                }
+                            } else {
+                                console.error("HTTP request failed:", xhr.statusText);
+                                alert("Error: " + xhr.statusText);
+                            }
+                        }
+                    };
+
+                    // Log any network errors
+                    xhr.onerror = function() {
+                        console.error("Network error occurred.");
+                        alert("Network error occurred. Please try again.");
+                    };
+
+                    // Send the request
+                    xhr.send(data);
+                }
+            }
+
             function status(product_id, table, field, id) {
                 if (confirm("Are you sure you want to Activate or Deactivate?")) {
                     const xhr = new XMLHttpRequest();

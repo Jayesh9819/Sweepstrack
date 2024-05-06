@@ -90,9 +90,8 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
                                         <option value="" disabled hidden>Select Branch</option>
                                         <?php
                                         while ($row = $result->fetch_assoc()) {
-                                            // Use the 'name' field for the dropdown
                                         ?>
-                                            <option value="<?php echo $row['name'] ?>"> <?php echo $row['name'] ?></option>
+                                            <option value="<?php echo $row['bid'] ?>"> <?php echo $row['name'] ?></option>
                                         <?php
                                         }
                                         ?>
@@ -146,7 +145,7 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
                                                     <td>{$row['bid']}</td>
                                                     <td>
                                                         <form action=\"./update_branch\" method=\"post\">
-                                                            <input type=\"hidden\" name=\"state\" value=\"{$row['name']}\">
+                                                            <input type=\"hidden\" name=\"state\" value=\"{$row['bid']}\">
                                                             <button type=\"submit\" class=\"btn btn-outline-success rounded-pill mt-2\">Update</button>
                                                         </form>
                                                     </td>

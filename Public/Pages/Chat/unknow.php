@@ -35,22 +35,22 @@
         include 'app/helpers/conversations.php';
         include 'app/helpers/timeAgo.php';
         include 'app/helpers/last_chat.php';
-            // Fetch online agents in the same page
-            $sql = "SELECT * FROM user WHERE role = 'Agent' AND last_seen(last_seen) COLLATE utf8mb4_unicode_ci  = 'Active' ";
-            $stmt = $conn->prepare($sql);
-            $stmt->execute();
-            $agents = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            // $user = getUser($_SESSION['username'], $conn);
-            $conversations = getConversation($_SESSION['id'], $conn);
+        // Fetch online agents in the same page
+        $sql = "SELECT * FROM user WHERE role = 'Agent' AND last_seen(last_seen) COLLATE utf8mb4_unicode_ci  = 'Active' ";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $agents = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // $user = getUser($_SESSION['username'], $conn);
+        $conversations = getConversation($_SESSION['id'], $conn);
         if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
             if (isset($_SESSION['user_id'])) {
                 $user_id = $_SESSION['user_id'];
                 $conversations1 = getConversation($user_id, $conn);
-                echo json_encode($conversations1);  
+                echo json_encode($conversations1);
             } else {
-                echo json_encode([]); 
+                echo json_encode([]);
             }
-            exit; 
+            exit;
         }
     }
 
@@ -262,24 +262,24 @@
         <div class="content-inner container-fluid pb-0" id="page_layout">
             <div class="p-2 w-100
                 rounded shadow">
-                    <div>
-                        <h3>Online Agents Available for Chat</h3>
-                        <ul>
-                            <?php foreach ($agents as $agent) { ?>
-                                <a href="./UNC?user=<?= $agent['username'] ?>" class="d-flex
+                <div>
+                    <h3>Online Agents Available for Chat</h3>
+                    <ul>
+                        <?php foreach ($agents as $agent) { ?>
+                            <a href="./UNC?user=<?= $agent['username'] ?>" class="d-flex
 	    				          justify-content-between
 	    				          align-items-center p-2">
-                                    <div class="d-flex
+                                <div class="d-flex
 	    					            align-items-center">
-                                        <img src="../uploads/profile/<?= !empty($chatWith['p_p']) ? $chatWith['p_p'] : '07.png' ?>" class="w-15 rounded-circle">
-                                        <h3 class="fs-xs m-2">
-                                            <?= $agent['username'] ?><br>
-                                        </h3>
-                                    </div>
-                                    </li>
-                                <?php } ?>
-                        </ul>
-                    </div>
+                                    <img src="../uploads/profile/<?= !empty($chatWith['p_p']) ? $chatWith['p_p'] : '07.png' ?>" class="w-15 rounded-circle">
+                                    <h3 class="fs-xs m-2">
+                                        <?= $agent['username'] ?><br>
+                                    </h3>
+                                </div>
+                                </li>
+                            <?php } ?>
+                    </ul>
+                </div>
 
                 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
                 <script>

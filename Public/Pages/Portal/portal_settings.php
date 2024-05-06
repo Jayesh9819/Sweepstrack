@@ -20,7 +20,7 @@
         unset($_SESSION['login_error']); // Clear the error message
     }
 
- 
+
     include './App/db/db_connect.php';
     // Check if the form has been submitted
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['time_zone'])) {
@@ -30,8 +30,8 @@
         $sql = "UPDATE user SET timezone = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->execute([$newTimeZone, $userId]);
-        unset($_SESSION['timezone']); 
-        $_SESSION['timezone']=$newTimeZone;
+        unset($_SESSION['timezone']);
+        $_SESSION['timezone'] = $newTimeZone;
 
         $_SESSION['toast'] = ['type' => 'success', 'message' => 'Time zone updated successfully'];
         header("Location: " . $_SERVER['PHP_SELF']);
@@ -85,8 +85,8 @@
         $sql = "UPDATE user SET p_p = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->execute([$profilePicture, $userId]);
-        unset($_SESSION['p_p']); 
-        $_SESSION['p_p']=$profilePicture;
+        unset($_SESSION['p_p']);
+        $_SESSION['p_p'] = $profilePicture;
 
         $_SESSION['toast'] = ['type' => 'success', 'message' => 'Profile picture updated successfully'];
         header("Location: " . $_SERVER['PHP_SELF']);
@@ -135,9 +135,17 @@
                             <label for="time_zone">Select your time zone:</label>
                             <select name="time_zone" id="time_zone" class="form-control">
                                 <?php
-                                $timezones = DateTimeZone::listIdentifiers();
-                                foreach ($timezones as $timezone) {
-                                    $selected = ($_SESSION['timezone'] ?? 'UTC') === $timezone ? ' selected' : '';
+                                $us_timezones = [
+                                    'America/New_York',    // Eastern Time
+                                    'America/Chicago',     // Central Time
+                                    'America/Denver',      // Mountain Time
+                                    'America/Phoenix',     // Arizona Time
+                                    'America/Los_Angeles', // Pacific Time
+                                    'America/Anchorage',   // Alaska Time
+                                    'America/Honolulu'     // Hawaii Time
+                                ];
+                                foreach ($us_timezones as $timezone) {
+                                    $selected = ($_SESSION['timezone'] ?? 'America/New_York') === $timezone ? ' selected' : '';
                                     echo "<option value=\"$timezone\"$selected>$timezone</option>";
                                 }
                                 ?>
@@ -171,7 +179,7 @@
 
         <?
         include("./Public/Pages/Common/footer.php");
-       
+
         ?>
 
     </main>

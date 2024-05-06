@@ -62,14 +62,14 @@
 
 
             $user = $_POST['state'];
-            echo $user;
             $username = $conn->real_escape_string($_POST['state']);
 
             // Prepare the SQL statement
-            $sql = "SELECT * FROM branch WHERE name = '$username'";
+            $sql = "SELECT * FROM branch WHERE bid = '$username'";
 
             // Execute the query
             $result = $conn->query($sql);
+            $row = $result->fetch_assoc();
 
             // Check if query was successful
 
@@ -80,12 +80,12 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="mb-0"><?php echo $user; ?> Details</h4>
+                                <h4 class="mb-0"><?php echo $row['name']; ?> Details</h4>
                             </div>
 
                             <div class="card-body">
                                 <div class="custom-table-effect table-responsive  border rounded">
-                                    <table class="table mb-0" id="datatable" data-toggle="data-table">
+                                <table id="example" class="table table-bordered table-hover display nowrap margin-top-10 w-p100">
                                         <thead>
                                             <tr class="bg-white">
                                                 <th scope="col">Branch ID</th>
@@ -97,7 +97,6 @@
                                         </thead>
                                         <tbody>
                                             <?php
-                                            while ($row = $result->fetch_assoc()) {
 
                                                 echo "<tr>
                                                 <td>{$row['bid']}</td>
@@ -108,7 +107,7 @@
                                                 </tr>";
                                                 $id = $row['bid'];
                                                 $status = $row['status'];
-                                            }
+                                            
                                             ?>
                                         </tbody>
                                     </table>
@@ -122,9 +121,9 @@
                                     <a href="javascript:void(0);" class="btn btn-outline-info rounded-pill mt-2" onclick="status(<?php echo $id; ?>, 'branch', 'status','bid')">
                                         <i class="fas fa-xmark"><?php echo $status == 1 ? 'DeActive' : 'Activate'  ?></i>
                                     </a>
-                                    <!-- <a href="javascript:void(0);" class="btn btn-outline-info rounded-pill mt-2" onclick="delete1(<?php echo $id; ?>, 'branch','bid')">
+                                    <a href="javascript:void(0);" class="btn btn-outline-info rounded-pill mt-2" onclick="delete1(<?php echo $id; ?>, 'branch','bid')">
                                         <i class="fas fa-xmark">Delete</i>
-                                    </a> -->
+                                    </a>
 
 
                                 </div>
@@ -167,7 +166,7 @@
 
                                         if (response.success) {
                                             alert("Done successfully!");
-                                            location.reload();
+                                            window.location.href = "./Portal_Branch_Management";
                                         } else {
                                             alert("Error : " + response.message);
                                         }

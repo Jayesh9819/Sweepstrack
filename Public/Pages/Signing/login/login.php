@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
     <?php include     "./Public/Pages/Common/header.php";
@@ -62,11 +62,11 @@
                         <div style="position: relative ; left: -50px;" class="col-md-12 col-lg-6 align-self-center">
                             <a href="#" class="navbar-brand d-flex align-items-center mb-3 justify-content-center text-primary">
                                 <div class="logo-normal">
-                                    <img src="<?php echo $settings['logo']; ?>" style="position: relative ; left: 50px; height: 100px; " alt="">
+                                    <img src="<?php echo $settings['logo']; ?>" style=" height: 100px; " alt="">
                                 </div>
                                 <h1 style="font-family: 'Times New Roman', Times, serif; color:<?php echo $settings['color']; ?>; font-size: 3em; font-weight: bold; " class="logo-title ms-3 mb-0"><?php echo $settings['name']; ?></h1>
 
-                                <h5 style=" text-decoration:double; position: relative; right: 180px; top: 40px; color: #ffbb00; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;" class="logo-title ms-3 mb-0"></h5>
+                                <h5 style=" text-decoration:double; position: relative; right: 180px; top: 40px; color: <?php echo $settings['color']; ?>; font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;" class="logo-title ms-3 mb-0"><?php echo $settings['slogan']; ?></h5>
 
                             </a>
                         </div>
@@ -74,7 +74,7 @@
                             <div class="col-md-9">
                                 <div class="card  d-flex justify-content-center mb-0 auth-card iq-auth-form">
                                     <div class="card-body">
-                                        <h2 class="mb-2 text-center" style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;"">Sign In</h2>
+                                        <h2 class="mb-2 text-center" style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">Sign In</h2>
                                     <p class=" text-center">Login to stay connected.</p>
                                             <form action="../App/Logic/login.php" method="post">
                                                 <div class="row">
@@ -114,15 +114,15 @@
 
                                                     </ul>
                                                 </div>
-                                                <p class="mt-3 text-center">
-                                                    <button onclick="window.location.href='<?php echo $settings['androidlink']; ?>'" class="btn btn-primary">Download for Android</button>
-
-                                                    <!-- For iOS -->
-                                                    <button onclick="window.location.href='<?php echo $settings['ioslink']; ?>'" class="btn btn-primary">Download for iOS</button>
-                                                <p class="mt-3 text-center">
-                                                    For iOS Install using Scarlet or AltStore or similar tools
-                                                </p>
                                             </form>
+                                            <p class="mt-3 text-center">
+                                                <button onclick="window.location.href='<?php echo $settings['androidlink']; ?>'" class="btn btn-primary">Download for Android</button>
+
+                                                <!-- For iOS -->
+                                                <button onclick="window.location.href='<?php echo $settings['ioslink']; ?>'" class="btn btn-primary">Download for iOS</button>
+                                            <p class="mt-3 text-center">
+                                                For iOS Install using Scarlet or AltStore or similar tools
+                                            </p>
 
                                     </div>
                                 </div>

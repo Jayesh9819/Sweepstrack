@@ -33,7 +33,7 @@ class Commonf
                         $response['message'] = "Error updating status: " . $conn->error;
                     }
                 } elseif ($currentStatus == 0 || $currentStatus == null) {
-                    $updatesql = "UPDATE $table SET $field = 1 WHERE $cid = $id"; // Change 'id' to your actual primary key column name
+                    $updatesql = "UPDATE $table SET $field = 1, WHERE $cid = $id"; // Change 'id' to your actual primary key column name
                     if ($conn->query($updatesql) === TRUE) {
                         $response['success'] = true;
                         $response['message'] = "Item updated successfully!";

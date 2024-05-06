@@ -4,7 +4,6 @@
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-	<meta http-equiv="refresh" content="30">
 
 	<?php
 	ob_start();
@@ -383,8 +382,8 @@
 					<?php
 					if ($chatWith['role'] == 'User') {
 						echo '<a name="" id="" class="btn btn-primary shprofile" href="./Show_Profile?u=' . $chatWith['id'] . '" role="button">Show Profile</a>';
-						echo '				<a name="" id="" class="btn btn-secondary shprofile" href="./cash_out?u=' . $chatWith['id'] . '" role="button">Redeem </a>
-					<a name="" id="" class="btn btn-danger shprofile" href="./deposit?u=' . $chatWith['id'] . '" role="button">Recharge </a>';
+						echo '				<a name="" id="" class="btn btn-secondary shprofile" href="./cash_out?u=' . $chatWith['username'] . '" role="button">Redeem </a>
+					<a name="" id="" class="btn btn-danger shprofile" href="./deposit?u=' . $chatWith['username'] . '" role="button">Recharge </a>';
 					}
 					?>
 
@@ -570,9 +569,6 @@
 
 
 			}
-
-
-
 			function scrollToMessage(msgId) {
 				const messageElement = document.getElementById(msgId);
 				if (messageElement) {

@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en" dir="ltr">
 
@@ -13,7 +12,7 @@
         echo "<script type='text/javascript'>document.addEventListener('DOMContentLoaded', function() { toastr['$type']('$message'); });</script>";
     }
 
-   
+
     if (isset($_SESSION['toast'])) {
         $toast = $_SESSION['toast'];
         echoToastScript($toast['type'], $toast['message']);
@@ -74,12 +73,12 @@
                         </div>
                         <?php
                         include './App/db/db_connect.php';
-                        $branch=$_SESSION['branch1'];
-                        $page=$_SESSION['page1'];
-                        $role=$_SESSION['role'];
-                        if($role == 'Manager' || $role =='Supervisor'){
+                        $branch = $_SESSION['branch1'];
+                        $page = $_SESSION['page1'];
+                        $role = $_SESSION['role'];
+                        if ($role == 'Manager' || $role == 'Supervisor') {
                             $sql = "SELECT * FROM transaction where type='Debit' AND branch='$branch'";
-                        }elseif($role=='Agent'){
+                        } elseif ($role == 'Agent') {
                             $page = $_SESSION['page1'];
 
                             $pagesArray = explode(", ", $page);
@@ -89,9 +88,9 @@
                             }
                             $whereClause = "page IN (" . implode(", ", $quotedPages) . ")";
                             // $sql = "SELECT * FROM user WHERE Role = 'User' AND $whereClause";
-                
+
                             $sql = "SELECT * FROM transaction where type='Debit' AND $whereClause";
-                        }elseif($role=='Admin'){
+                        } elseif ($role == 'Admin') {
                             $sql = "SELECT * FROM transaction where type='Debit'";
                         }
 
@@ -105,7 +104,7 @@
                         ?>
                             <div class="card-body">
                                 <div class="custom-table-effect table-responsive  border rounded">
-                                    <table class="table mb-0" id="example" >
+                                    <table class="table mb-0" id="example">
                                         <thead>
                                             <tr class="bg-white">
                                             <?php
@@ -120,22 +119,30 @@
                                             <th scope="col">By Username</th>
                                             <th scope="col">By Role</th>
                                             <th scope="col">Added Time</th>
-                                            </tr>';
+                                            <th scope="col">Action</th>
+
+                                            </tr></thead><tbody>';
 
                                             while ($row = $result->fetch_assoc()) {
-                                                echo "<thead><tr><tbody>
-                                                    
-                                                    <td>{$row['tid']}</td>
-                                                    <td>{$row['username']}</td>
-                                                    <td>{$row['recharge']}</td>
-                                                    <td>{$row['bonus']}</td>
-                                                    <td>{$row['platform']}</td>
-                                                    <td>{$row['cashapp']}</td>
-                                                    <td>{$row['by_u']}</td>
-                                                    <td>{$row['by_role']}</td>
-                                                    <td>{$row['created_at']}</td>
-                                                  </tr></tbody>";
+                                                echo "
+                                                <tr>
+                                                        <td>{$row['tid']}</td>
+                                                        <td>{$row['username']}</td>
+                                                        <td>{$row['recharge']}</td>
+                                                        <td>{$row['bonus']}</td>
+                                                        <td>{$row['platform']}</td>
+                                                        <td>{$row['cashapp']}</td>
+                                                        <td>{$row['by_u']}</td>
+                                                        <td>{$row['by_role']}</td>
+                                                        <td>{$row['created_at']}</td>
+                                                        <td>
+                                                        <a href='javascript:void(0);' onclick='delete1({$row['tid']}, \"transaction\", \"tid\");'>
+                                                        &#10060; 
+                                                    </a>
+                                                                                            </td>
+                                                      </tr>";
                                             }
+                                            echo '</tbody>';
 
                                             // End table
                                             echo '</table>';
@@ -155,10 +162,70 @@
         </div>
         <?
         include("./Public/Pages/Common/footer.php");
-        
+
         ?>
 
     </main>
+    <script>
+        function delete1(product_id, table, field) {
+            if (confirm("Are you sure you want to Delete")) {
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", "../App/Logic/commonf.php?action=delete", true);
+
+                // Set the Content-Type header
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                // Include additional parameters in the data sent to the server
+                const data = "id=" + product_id + "&table=" + table + "&field=" + field;
+
+                // Log the data being sent
+                console.log("Data sent to server:", data);
+
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        console.log("XHR status:", xhr.status);
+
+                        if (xhr.status === 200) {
+                            console.log("Response received:", xhr.responseText);
+
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+
+                                if (response) {
+                                    console.log("Parsed JSON response:", response);
+
+                                    if (response.success) {
+                                        alert("Done successfully!");
+                                        window.location.reload();
+                                    } else {
+                                        alert("Error : " + response.message);
+                                    }
+                                } else {
+                                    console.error("Invalid JSON response:", xhr.responseText);
+                                    alert("Invalid JSON response from the server.");
+                                }
+                            } catch (error) {
+                                console.error("Error parsing JSON:", error);
+                                alert("Error parsing JSON response from the server.");
+                            }
+                        } else {
+                            console.error("HTTP request failed:", xhr.statusText);
+                            alert("Error: " + xhr.statusText);
+                        }
+                    }
+                };
+
+                // Log any network errors
+                xhr.onerror = function() {
+                    console.error("Network error occurred.");
+                    alert("Network error occurred. Please try again.");
+                };
+
+                // Send the request
+                xhr.send(data);
+            }
+        }
+    </Script>
     <!-- Wrapper End-->
     <!-- Live Customizer start -->
     <!-- Setting offcanvas start here -->

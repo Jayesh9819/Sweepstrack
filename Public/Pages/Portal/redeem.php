@@ -29,6 +29,36 @@
 
 
     ?>
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 100px auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 50%;
+            border-radius: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            cursor: pointer;
+        }
+    </style>
+
 
 </head>
 
@@ -73,7 +103,7 @@
                         }
                         $whereClause = "page IN (" . implode(", ", $quotedPages) . ")";
                         // $sql = "SELECT * FROM user WHERE Role = 'User' AND $whereClause";
-            
+
                         $sql = "SELECT * FROM transaction WHERE Redeem != 0 AND Redeem IS NOT NULL AND (redeem_status = 0 OR cashout_status = 0) AND $whereClause AND approval_status=0 ";
                     } elseif ($role == "Manager" || $role == "Supervisor") {
                         $sql = "SELECT * FROM transaction WHERE Redeem != 0 AND Redeem IS NOT NULL AND (redeem_status = 0 OR cashout_status = 0) AND branch='$branch' AND approval_status=1";
@@ -169,7 +199,7 @@
                                                 </td>
                                                 <td><?= htmlspecialchars($row['cashout_by']) ?></td>
                                                 <td>
-                                                    <button class="btn btn-<?= $row['cashout_status'] == 0 ? 'warning' : 'success' ?>" onclick="cashapp(<?= $id; ?>, 'transaction', 'cashout_status', 'tid','cashout_by')">
+                                                    <button class="btn btn-<?= $row['cashout_status'] == 0 ? 'warning' : 'success' ?>" onclick="openModal(<?= $id; ?>)">
                                                         <?= $row['cashout_status'] == 0 ? 'Pending' : 'Done' ?>
                                                     </button>
                                                 </td>
@@ -210,8 +240,61 @@
         include("./Public/Pages/Common/scripts.php");
         ?>
     </main>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Select from the Dropdown</h2>
+            <form action="javascript:void(0);" onsubmit="submitCashapp()">
+                <?php
+                include './App/db/db_connect.php';
+
+                $sql = "SELECT * FROM cashapp";
+                $result = $conn->query($sql);
+
+                if ($result->num_rows > 0) {
+                    echo '<select id="cashappName">';
+                    while ($row = $result->fetch_assoc()) {
+                        echo '<option value="' . $row['name'] . '">' . htmlspecialchars($row['name']) . '</option>';
+                    }
+                    echo '</select>';
+                } else {
+                    echo "0 results";
+                }
+
+                $conn->close();
+                ?>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+
     <script>
-        function status(product_id, table, field, id,where) {
+        var modal = document.getElementById("myModal");
+        var selectedId;
+
+        function openModal(id) {
+            selectedId = id; // Store ID when modal is opened
+            modal.style.display = "block";
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+        }
+
+        function submitCashapp() {
+            var cashapps = document.getElementById("cashappName").value;
+            console.log(cashapps);
+            closeModal(); // Close the modal
+            cashapp(selectedId, cashapps, 'transaction', 'cashout_status', 'tid', 'cashout_by'); // Call the function with parameters
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        function status(product_id, table, field, id, where) {
             if (confirm("Are you sure you want to Chnage the Status?")) {
                 const xhr = new XMLHttpRequest();
                 xhr.open("POST", "../App/Logic/commonf.php?action=Approval", true);
@@ -220,7 +303,7 @@
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
                 // Include additional parameters in the data sent to the server
-                const data = "id=" + product_id + "&table=" + table + "&field=" + field + "&cid=" + id+"&where="+where;
+                const data = "id=" + product_id + "&table=" + table + "&field=" + field + "&cid=" + id + "&where=" + where;
 
                 // Log the data being sent
                 console.log("Data sent to server:", data);
@@ -270,8 +353,7 @@
             }
         }
 
-        function cashapp(product_id, table, field, id,cashout_by) {
-            const cashAppName = prompt("Please enter the cashapp name:");
+        function cashapp(product_id, cashapps, table, field, id, cashout_by) {
 
             if (confirm("Are you sure you want to Chnage the Status?")) {
                 const xhr = new XMLHttpRequest();
@@ -281,7 +363,7 @@
                 xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
                 // Include additional parameters in the data sent to the server
-                const data = "id=" + product_id + "&table=" + table + "&field=" + field + "&cid=" + id + "&cashapp=" + cashAppName ;
+                const data = "id=" + product_id + "&table=" + table + "&field=" + field + "&cid=" + id + "&cashapp=" + cashapps;
 
                 // Log the data being sent
                 console.log("Data sent to server:", data);
@@ -330,6 +412,7 @@
                 xhr.send(data);
             }
         }
+
         function Reject(tid, table, field, id) {
             const msg = prompt("Enter the Reason to Reject");
 
