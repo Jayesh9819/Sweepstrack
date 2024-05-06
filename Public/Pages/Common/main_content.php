@@ -236,7 +236,7 @@ if (isset($_SESSION['visited_urls']) && count($_SESSION['visited_urls']) > 1) {
    </div> <!-- Nav Header Component End -->
    <!--Nav End-->
 </div>
-<!-- <script>
+<script>
    $(document).ready(function() {
       function fetchNotifications() {
          $.ajax({
@@ -275,7 +275,7 @@ if (isset($_SESSION['visited_urls']) && count($_SESSION['visited_urls']) > 1) {
       fetchNotifications(); // Fetch initially
       setInterval(fetchNotifications, 1000); // Fetch every second
    });
-</script> -->
+</script>
 <!-- Footer Section Start -->
 
 <!-- Footer Section End -->
