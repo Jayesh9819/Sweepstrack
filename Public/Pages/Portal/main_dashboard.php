@@ -58,7 +58,7 @@ if (isset($_GET['start_time']) && isset($_GET['end_time'])) {
     <?php
 
     include("./Public/Pages/Common/header.php");
-    // include "./Public/Pages/Common/auth_user.php";
+    include "./Public/Pages/Common/auth_user.php";
 
     // Function to echo the script for toastr
     function echoToastScript($type, $message)
