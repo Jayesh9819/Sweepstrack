@@ -136,7 +136,6 @@ if (isset($_GET['start_time']) && isset($_GET['end_time'])) {
     // Close the database connection
     $conn->close();
 
-print_r($_SESSION);
     // If here, the script is not in download mode; it should continue to render the page normally.
     ?>
     <style>
