@@ -65,6 +65,7 @@ if (isset($_GET['start_time']) && isset($_GET['end_time'])) {
     {
         echo "<script type='text/javascript'>document.addEventListener('DOMContentLoaded', function() { toastr['$type']('$message'); });</script>";
     }
+    //
 
 
     if (isset($_SESSION['toast'])) {
