@@ -3,11 +3,11 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="manifest" href="../manifest.json">
+    <!-- <link rel="manifest" href="../manifest.json"> -->
 
 
 
-    <?php include     "./Public/Pages/Common/header.php";
+    <?php include  "./Public/Pages/Common/header.php";
 
 
 
@@ -147,9 +147,8 @@
                 @media only screen and (min-width: 600px) {
                     .chat-button{
                     left: 90%;
-                }
+                }}
   
-}
 
 
 

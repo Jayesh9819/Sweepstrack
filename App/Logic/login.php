@@ -2,7 +2,7 @@
 ob_start();
 ini_set('display_errors', '1');
 
-session_start();
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 
 // Include your database connection script
 include '../db/db_connect.php';
