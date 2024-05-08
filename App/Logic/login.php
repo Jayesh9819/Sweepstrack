@@ -11,7 +11,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $conn->real_escape_string($_POST['username']);
     $password = $_POST['password'];
     print_r($_POST);
-exit();
     // Retain the username in session for repopulating the form upon failure
     $_SESSION['login_form_values'] = ['username' => $username];
 
@@ -42,6 +41,8 @@ exit();
                     // Clear retained form values upon successful login
                     unset($_SESSION['login_form_values']);
                     $_SESSION['toast'] = ['type' => 'success', 'message' => 'Successfully logged in'];
+                    print_r($_SESSION);
+                    exit();
                     header("location: ../../index.php/Portal");
                 } else {
                     $_SESSION['toast'] = ['type' => 'error', 'message' => 'Invalid username or password.'];
