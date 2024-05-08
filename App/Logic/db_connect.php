@@ -1,7 +1,7 @@
 <?php
 ob_start();
 
-$servername = "sweepstrac.net"; // or your server name
+$servername = "localhost"; // or your server name
 $username = "sweepstrac";
 $password = "12345678";
 $dbname = "sweepstrac";
