@@ -42,7 +42,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     unset($_SESSION['login_form_values']);
                     $_SESSION['toast'] = ['type' => 'success', 'message' => 'Successfully logged in'];
                     print_r($_SESSION);
-                    exit();
                     header("location: ../../index.php/Portal");
                 } else {
                     $_SESSION['toast'] = ['type' => 'error', 'message' => 'Invalid username or password.'];
