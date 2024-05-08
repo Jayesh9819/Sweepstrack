@@ -1,4 +1,6 @@
 <?php
+ob_start();
+
 if (session_status() !== PHP_SESSION_ACTIVE) session_start();
 // Include code to check user role from your database or another source
 // For example, assuming you have a $userRole variable set somewhere based on user data
