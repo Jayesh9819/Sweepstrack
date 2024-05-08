@@ -41,6 +41,8 @@ if ($uri == $firstparam || $uri == $secondparam) {
 
         $prefix . $root . '/withdrawl'                         => './Public/Pages/Portal/temp.php',
         $prefix . $root . '/platform'                         => './Public/Pages/Portal/temp.php',
+        $prefix . $root . '/referchar'                         => './App/helper/saveUserData.php',
+
         $prefix . $root . '/record'                         => './Public/Pages/Portal/transactionrecord.php',
         $prefix . $root . '/Add_Branch'                         => './Public/Pages/Portal/temp.php',
         $prefix . $root . '/Add_Page'                         => './Public/Pages/Portal/temp.php',
@@ -113,8 +115,6 @@ if ($uri == $firstparam || $uri == $secondparam) {
         $prefix . $root . '/UNC'                         => './Public/Pages/Chat/unh.php',
 
         $prefix . $root . '/Portal_exchat'                        => './Public/Pages/Portal/portal_exchat.php',
-
-
     ];
 
     function routeToController($uri, $routes)

@@ -120,7 +120,7 @@
                                         <button id="installButton" style="display: none;">Install App</button>
 
 <p class="mt-3 text-center">
-    <button onclick="window.location.href='<?php echo $settings['androidlink']; ?>'" class="btn btn-primary">Download for Android</button>
+    <button onclick="window.location.href='<?php echo $settings['androidlink']; ?>'" class="btn btn-primary">Downld for Android</button>
 
     <!-- For iOS -->
     <button onclick="window.location.href='<?php echo $settings['ioslink']; ?>'" class="btn btn-primary">Download for iOS</button>

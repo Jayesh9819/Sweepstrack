@@ -5,7 +5,7 @@
     <?php
     ob_start();
     include("./Public/Pages/Common/header.php");
-    include "./Public/Pages/Common/auth_user.php";
+    // include "./Public/Pages/Common/auth_user.php";
 
     // Function to echo the script for toastr
     function echoToastScript($type, $message)
@@ -52,6 +52,9 @@
             }
             exit;
         }
+    }else{
+        header('Location: ../index.php/Login_to_CustCount'); // Redirect to the login page
+
     }
 
 
@@ -335,13 +338,6 @@
                                 });
                         });
 
-
-
-
-                        /** 
-                        auto update last seen 
-                        for logged in user
-                        **/
                         let lastSeenUpdate = function() {
                             $.get('../Public/Pages/Chat/app/ajax/update_last_seen.php')
                                 .done(function(data) {

@@ -9,7 +9,7 @@ function getChats($id_1, $id_2, $conn)
     // Check if 'role' is set in the array and is not empty, otherwise set to 'temp'
     $roleu = !empty($data2['role']) ? $data2['role'] : 'temp';
 
-
+    $r = ['Agent', 'Supervisor', 'Manager', 'Admin'];
     // Define the initial SQL query and parameters based on the user role
     if ($role == 'User'  && $roleu != 'User') {
         $sql = "SELECT chats.*, 
@@ -26,7 +26,7 @@ function getChats($id_1, $id_2, $conn)
         sender.username AS sender_username, 
         receiver.username AS receiver_username
         FROM chats
-        LEFT JOIN user AS sender ON chats.from_id = sender.id
+        LEFT JOIN unknown_users AS sender ON chats.from_id = sender.id
         LEFT JOIN user AS receiver ON chats.to_id = receiver.id
         WHERE (chats.from_id = ? OR chats.to_id = ?)
         ORDER BY chats.chat_id ASC";
@@ -36,11 +36,21 @@ function getChats($id_1, $id_2, $conn)
         sender.username AS sender_username, 
         receiver.username AS receiver_username
         FROM chats
-        LEFT JOIN user AS sender ON chats.from_id = sender.id
+        LEFT JOIN unknown_users AS sender ON chats.from_id = sender.id
         LEFT JOIN user AS receiver ON chats.to_id = receiver.id
         WHERE (chats.from_id = ? OR chats.to_id = ?)
         ORDER BY chats.chat_id ASC";
         $params = [$id_2, $id_2];
+    } elseif (in_array($role, $r) && in_array($roleu, $r)) {
+        $sql = "SELECT chats.*, 
+        sender.username AS sender_username, 
+        receiver.username AS receiver_username
+        FROM chats
+        LEFT JOIN user AS sender ON chats.from_id = sender.id
+        LEFT JOIN user AS receiver ON chats.to_id = receiver.id
+        WHERE (chats.from_id = ? AND chats.to_id = ?) OR (chats.from_id = ? AND chats.to_id = ?)
+        ORDER BY chats.chat_id ASC";
+        $params = [$id_1, $id_2, $id_2, $id_1];
     } else {
         $sql = "SELECT chats.*, 
         sender.username AS sender_username, 

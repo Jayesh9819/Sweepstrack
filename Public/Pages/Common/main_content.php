@@ -214,7 +214,14 @@ if (isset($_SESSION['visited_urls']) && count($_SESSION['visited_urls']) > 1) {
                <div class="flex-wrap d-flex justify-content-between align-items-center">
                   <div>
                      <h1>Hello <?php echo  $_SESSION["fullname"];  ?>! </h1>
+                     <?php
+                     if ($_SESSION['role'] == 'User') {
+                        echo '<a name="" id="" class="btn btn-primary shprofile" href="./Redeem_Request" role="button">Send Redeem </a>';
+                     }
+                     ?>
+
                      <p>Hey, how are you <?php echo  $_SESSION["role"];  ?>? </p>
+
                   </div>
                   <div>
                      <a href="#" class="btn btn-link btn-soft-light">

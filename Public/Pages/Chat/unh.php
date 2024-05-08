@@ -9,7 +9,7 @@
 	ob_start();
 
 	include("./Public/Pages/Common/header.php");
-	include "./Public/Pages/Common/auth_user.php";
+	// include "./Public/Pages/Common/auth_user.php";
 
 	// Function to echo the script for toastr
 	function echoToastScript($type, $message)
@@ -56,6 +56,9 @@
 
 		$chats = getChats($_SESSION['id'], $chatWith['id'], $conn);
 		opened($chatWith['id'], $conn, $chats);
+	}else{
+		header('Location: ../index.php/Login_to_CustCount'); // Redirect to the login page
+
 	}
 
 
@@ -292,10 +295,12 @@
 			.emoji-picker {
 				grid-template-columns: repeat(4, 1fr);
 			}
-			.shprofile{
+
+			.shprofile {
 				display: none;
 			}
-			.replyButtonsss{
+
+			.replyButtonsss {
 				position: relative;
 				top: -10px;
 			}

@@ -49,6 +49,28 @@
     if (!isset($_SESSION['time_filter']) || $_SESSION['time_filter'] == "") {
         $_SESSION['time_filter'] = "Custom";
     }
+    // Assuming start_date and end_date are being sent to the server
+    $start_date = $_SESSION['start_date'] ?? null;
+    $end_date = $_SESSION['end_date'] ?? null;
+    $selectedTimezone = $_SESSION['timezone'] ?? 'UTC';
+
+    // Convert user input dates from the selected timezone to UTC (for example)
+    function convertToUTC($dateStr, $timezoneStr)
+    {
+        $date = new DateTime($dateStr, new DateTimeZone($timezoneStr));
+        $date->setTimezone(new DateTimeZone('UTC')); // Convert to UTC
+        return $date->format('Y-m-d H:i:s'); // Return the formatted date
+    }
+
+    if ($start_date) {
+        $start_date = convertToUTC($start_date, $selectedTimezone);
+    }
+
+    if ($end_date) {
+        $end_date = convertToUTC($end_date, $selectedTimezone);
+    }
+
+    // Now, $start_date and $end_date are in UTC, ready to be used in your SQL query
 
 
     ?>
@@ -109,46 +131,51 @@
 
                 <div class="form-row align-items-center">
                     <div class="col-auto">
-                        <label for="start_date" class="col-form-label">Start Date:</label>
-                        <input type="date" class="form-control" id="start_date" name="start_date" value="<?php echo isset($_SESSION['start_date']) ? htmlspecialchars($_SESSION['start_date']) : ''; ?>">
+                        <label for="start_date" class="col-form-label">Start Date and Time:</label>
+                        <input type="datetime-local" class="form-control" id="start_date" name="start_date" value="<?php echo isset($_SESSION['start_date']) ? htmlspecialchars(str_replace(' ', 'T', $_SESSION['start_date'])) : ''; ?>">
                     </div>
                     <div class="col-auto">
-                        <label for="end_date" class="col-form-label">End Date:</label>
-                        <input type="date" class="form-control" id="end_date" name="end_date" value="<?php echo isset($_SESSION['end_date']) ? htmlspecialchars($_SESSION['end_date']) : ''; ?>">
+                        <label for="end_date" class="col-form-label">End Date and Time:</label>
+                        <input type="datetime-local" class="form-control" id="end_date" name="end_date" value="<?php echo isset($_SESSION['end_date']) ? htmlspecialchars(str_replace(' ', 'T', $_SESSION['end_date'])) : ''; ?>">
                     </div>
-                    <label for="timezone">Select Timezone:</label>
-                    <select name="timezone" id="timezone" class="form-control">
-                                <?php
-                                $us_timezones = [
-                                    'America/New_York',    // Eastern Time
-                                    'America/Chicago',     // Central Time
-                                    'America/Denver',      // Mountain Time
-                                    'America/Phoenix',     // Arizona Time
-                                    'America/Los_Angeles', // Pacific Time
-                                    'America/Anchorage',   // Alaska Time
-                                    'America/Honolulu'     // Hawaii Time
-                                ];
-                                foreach ($us_timezones as $timezone) {
-                                    $selected = ($_SESSION['timezone'] ?? 'America/New_York') === $timezone ? ' selected' : '';
-                                    echo "<option value=\"$timezone\"$selected>$timezone</option>";
-                                }
-                                ?>
-                            </select>
-                    <label for="time_filter">Select Time Filter:</label>
-                    <select name="time_filter" id="time_filter">
-                        <option value="custom" <?php echo ($_SESSION['time_filter'] == 'custom') ? 'selected' : ''; ?>>ALL</option>
-                        <option value="1" <?php echo ($_SESSION['time_filter'] == '1') ? 'selected' : ''; ?>>1 Hour</option>
-                        <option value="2" <?php echo ($_SESSION['time_filter'] == '2') ? 'selected' : ''; ?>>2 Hours</option>
-                        <option value="24" <?php echo ($_SESSION['time_filter'] == '24') ? 'selected' : ''; ?>>24 Hours</option>
-                    </select>
-
-
+                    <div class="col-auto">
+                        <label for="timezone" class="col-form-label">Select Timezone:</label>
+                        <select name="timezone" id="timezone" class="form-control">
+                            <?php
+                            $timezones = [
+                                'America/New_York',
+                                'America/Chicago',
+                                'America/Denver',
+                                'America/Phoenix',
+                                'America/Los_Angeles',
+                                'America/Anchorage',
+                                'Asia/Kolkata',
+                                'Africa/Cairo',
+                                'Africa/Accra',
+                                'America/Honolulu'
+                            ];
+                            foreach ($timezones as $timezone) {
+                                $selected = ($_SESSION['timezone'] ?? 'America/New_York') === $timezone ? ' selected' : '';
+                                echo "<option value=\"$timezone\"$selected>$timezone</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-auto">
+                        <label for="time_filter" class="col-form-label">Select Time Filter:</label>
+                        <select name="time_filter" id="time_filter" class="form-control">
+                            <option value="custom" <?php echo ($_SESSION['time_filter'] == 'custom') ? 'selected' : ''; ?>>ALL</option>
+                            <option value="1" <?php echo ($_SESSION['time_filter'] == '1') ? 'selected' : ''; ?>>1 Hour</option>
+                            <option value="2" <?php echo ($_SESSION['time_filter'] == '2') ? 'selected' : ''; ?>>2 Hours</option>
+                            <option value="24" <?php echo ($_SESSION['time_filter'] == '24') ? 'selected' : ''; ?>>24 Hours</option>
+                        </select>
+                    </div>
                     <div class="col-auto">
                         <button type="submit" class="btn btn-primary">Filter</button>
                     </div>
-
                 </div>
             </form>
+
 
             <!-- /.box-header -->
             <div class="box-body">
@@ -200,33 +227,38 @@
                             $quotedPages[] = "'" . mysqli_real_escape_string($conn, $pageName) . "'";
                         }
                         $whereClause = "page IN (" . implode(", ", $quotedPages) . ")";
-            
+
                         $sql .= " AND $whereClause ";
                         $sumSql .= " AND $whereClause";
                     }
-
-                    if (isset($_SESSION['start_date']) && isset($_SESSION['end_date']) && $_SESSION['start_date'] !== '' && $_SESSION['end_date'] !== '') {
-                        // Both start and end dates are provided
-                        $start_date = $_SESSION['start_date'];
-                        $end_date = $_SESSION['end_date'];
-                        $sql .= " AND created_at BETWEEN '$start_date 00:00:00' AND '$end_date 23:59:59'";
-                        $sumSql .= " AND created_at BETWEEN '$start_date 00:00:00' AND '$end_date 23:59:59'";
-                    } elseif (isset($_SESSION['start_date']) && !isset($_SESSION['end_date']) && $_SESSION['start_date'] !== '') {
-                        // Only start date is provided
-                        $start_date = $_SESSION['start_date'];
-                        $sql .= " AND created_at >= '$start_date 00:00:00'";
-                        $sumSql .= " AND created_at >= '$start_date 00:00:00'";
-                    } elseif (isset($_SESSION['start_date']) && isset($_SESSION['end_date']) && $_SESSION['end_date'] !== '') {
-                        // Only end date is provided
-                        $end_date = $_SESSION['end_date'];
-                        $sql .= " AND created_at <= '$end_date 23:59:59'";
-                        $sumSql .= " AND created_at <= '$end_date 23:59:59'";
-                    } elseif (isset($_SESSION['start_date']) && isset($_SESSION['end_date']) && $_SESSION['start_date'] !== '' && $_SESSION['end_date'] === '') {
-                        // Only start date is provided and end date is empty
-                        $start_date = $_SESSION['start_date'];
-                        $sql .= " AND created_at >= '$start_date 00:00:00'";
-                        $sumSql .= " AND created_at >= '$start_date 00:00:00'";
+                    if ($start_date && $end_date) {
+                        $sql .= " AND created_at BETWEEN '$start_date' AND '$end_date'";
+                        $sumSql .= " AND created_at BETWEEN '$start_date' AND '$end_date'";
                     }
+
+
+                    // if (isset($_SESSION['start_date']) && isset($_SESSION['end_date']) && $_SESSION['start_date'] !== '' && $_SESSION['end_date'] !== '') {
+                    //     // Both start and end dates are provided
+                    //     // $start_date = $_SESSION['start_date'];
+                    //     // $end_date = $_SESSION['end_date'];
+                    //     // $sql .= " AND created_at BETWEEN '$start_date 00:00:00' AND '$end_date 23:59:59'";
+                    //     // $sumSql .= " AND created_at BETWEEN '$start_date 00:00:00' AND '$end_date 23:59:59'";
+                    // } elseif (isset($_SESSION['start_date']) && !isset($_SESSION['end_date']) && $_SESSION['start_date'] !== '') {
+                    //     // Only start date is provided
+                    //     $start_date = $_SESSION['start_date'];
+                    //     $sql .= " AND created_at >= '$start_date 00:00:00'";
+                    //     $sumSql .= " AND created_at >= '$start_date 00:00:00'";
+                    // } elseif (isset($_SESSION['start_date']) && isset($_SESSION['end_date']) && $_SESSION['end_date'] !== '') {
+                    //     // Only end date is provided
+                    //     $end_date = $_SESSION['end_date'];
+                    //     $sql .= " AND created_at <= '$end_date 23:59:59'";
+                    //     $sumSql .= " AND created_at <= '$end_date 23:59:59'";
+                    // } elseif (isset($_SESSION['start_date']) && isset($_SESSION['end_date']) && $_SESSION['start_date'] !== '' && $_SESSION['end_date'] === '') {
+                    //     // Only start date is provided and end date is empty
+                    //     $start_date = $_SESSION['start_date'];
+                    //     $sql .= " AND created_at >= '$start_date 00:00:00'";
+                    //     $sumSql .= " AND created_at >= '$start_date 00:00:00'";
+                    // }
                     if (isset($_SESSION['time_filter']) && $_SESSION != "") {
                         $timeFilter = $_SESSION['time_filter'];
                         if ($timeFilter === '1') {

@@ -56,9 +56,6 @@
 		$chats = getChats($_SESSION['user_id'], $chatWith['id'], $conn);
 		opened($chatWith['id'], $conn, $chats);
 	}
-
-
-
 	?>
 
 	<style>
@@ -162,7 +159,7 @@
 		/* Custom CSS styles */
 		.chat-box {
 			background-image: url("../uploads/chat-5.avif");
-			height: 80%;
+			height: 87%;
 			width: 100%;
 
 			/* Limit the height of the chat box */
@@ -340,7 +337,7 @@
 		// include("./Public/Pages/Common/main_content.php");
 		?>
 		<div class="content-inner container-fluid pb-0" id="page_layout">
-			<div class="w-800 shadow p-4 rounded" style="height:90vh;">
+			<div class=" rounded" style="height:92vh;width:100%;">
 
 				<div class="chat-header" style=" width: 100%; padding: 10px; display: flex; align-items: center;">
 
@@ -380,18 +377,19 @@
 						</div>
 					</div>
 					<?php
+					if ($_SESSION['role'] == 'User') {
+						echo '<a name="" id="" class="btn btn-secondary shprofile" href="./Redeem_Request" role="button">Redeem </a>';
+					}
+
 					if ($chatWith['role'] == 'User') {
 						echo '<a name="" id="" class="btn btn-primary shprofile" href="./Show_Profile?u=' . $chatWith['id'] . '" role="button">Show Profile</a>';
-						echo '				<a name="" id="" class="btn btn-secondary shprofile" href="./cash_out?u=' . $chatWith['username'] . '" role="button">Redeem </a>
+						echo '				<a name="" id="" class="btn btn-primary shprofile" href="./cash_out?u=' . $chatWith['username'] . '" role="button">Redeem </a>
 					<a name="" id="" class="btn btn-danger shprofile" href="./deposit?u=' . $chatWith['username'] . '" role="button">Recharge </a>';
 					}
 					?>
 
 
 				</div>
-
-
-
 				<?php function linkify($text)
 				{
 					$urlPattern = '/\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|]/i';
@@ -512,7 +510,6 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 		<script>
-			
 			document.addEventListener("visibilitychange", function() {
 				if (!document.hidden) {
 					// The user has switched back to the tab, fetch new messages immediately
@@ -569,6 +566,7 @@
 
 
 			}
+
 			function scrollToMessage(msgId) {
 				const messageElement = document.getElementById(msgId);
 				if (messageElement) {
@@ -787,7 +785,6 @@
 			});
 		</script>
 		<?
-		include("./Public/Pages/Common/footer.php");
 		?>
 
 	</main>

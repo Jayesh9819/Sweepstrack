@@ -3,6 +3,8 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="manifest" href="../manifest.json">
+
 
 
     <?php include     "./Public/Pages/Common/header.php";
@@ -59,7 +61,7 @@
             <div class="row no-gutters align-items-center bg-white">
                 <div class="col-md-12 col-lg-6 align-self-center">
                     <div class="row justify-content-center">
-                        <div style="position: relative ; left: -50px;" class="col-md-12 col-lg-6 align-self-center">
+                        <div style="position: relative ; left: 80px;" class="col-md-12 col-lg-6 align-self-center">
                             <a href="#" class="navbar-brand d-flex align-items-center mb-3 justify-content-center text-primary">
                                 <div class="logo-normal">
                                     <img src="<?php echo $settings['logo']; ?>" style=" height: 100px; " alt="">
@@ -116,10 +118,14 @@
                                                 </div>
                                             </form>
                                             <p class="mt-3 text-center">
-                                                <button onclick="window.location.href='<?php echo $settings['androidlink']; ?>'" class="btn btn-primary">Download for Android</button>
+                                            <button  id="addToHomeScreenButton" class="btn btn-primary">Download for Android</button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <button onclick="window.location.href='<?php echo $settings['ioslink']; ?>'" class="btn btn-primary">Download for iOS</button>
+                                            </p>
+    <!-- <button id="addToHomeScreenButton" >Add to Home Screen</button> -->
+
+    
 
                                                 <!-- For iOS -->
-                                                <button onclick="window.location.href='<?php echo $settings['ioslink']; ?>'" class="btn btn-primary">Download for iOS</button>
                                             <p class="mt-3 text-center">
                                                 For iOS Install using Scarlet or AltStore or similar tools
                                             </p>
@@ -134,15 +140,33 @@
                     <img src="<?php echo $settings['banner']; ?>" class="img-fluid gradient-main" alt="images" loop autoplay muted></img>
                 </div>
             </div>
-            <div id="chatButton" class="chat-button">
-                Open Chat
-            </div>
+            <style>
+                .chat-button{
+                    left: 60%;
+                }
+                @media only screen and (min-width: 600px) {
+                    .chat-button{
+                    left: 90%;
+                }
+  
+}
+
+
+
+
+            </style>
+            
+                <div id="chatButton"  style="right: 20px;"  class="chat-button">
+                    Open Chat
+                </div>
             <div id="userFormModal" class="modal">
                 <div class="modal-content">
                     <span class="close-button">&times;</span>
-                    <form id="userInfoForm">
+                    <form id="userInfoFor" action="../App/helper/saveUserData.php" method="POST">
                         <label for="name">Name:</label>
                         <input type="text" id="name" name="name" required>
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email">
                         <label for="refercode">Refer Code (Optional):</label>
                         <input type="text" id="refercode" name="refercode">
                         <button type="submit">Start Chat</button>
@@ -152,6 +176,54 @@
 
         </section>
     </div>
+
+
+
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('service-worker.js').then(function(registration) {
+                console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            }, function(err) {
+                console.log('ServiceWorker registration failed: ', err);
+            });
+        });
+    }
+
+
+
+    let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  // Prevent the default prompt from showing
+  e.preventDefault();
+  // Store the event for later use
+  deferredPrompt = e;
+  // Optionally show your custom "Add to Home Screen" button or link
+  showAddToHomeScreenButton();
+});
+
+function showAddToHomeScreenButton() {
+  // Display your custom button or link and attach an event listener to trigger the prompt
+  const addToHomeScreenButton = document.getElementById('addToHomeScreenButton');
+//   addToHomeScreenButton.style.display = 'block';
+  addToHomeScreenButton.addEventListener('click', () => {
+    // Show the prompt
+    deferredPrompt.prompt();
+    // Wait for the user to respond to the prompt
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the A2HS prompt');
+      } else {
+        console.log('User dismissed the A2HS prompt');
+      }
+      // Clear the deferredPrompt variable
+      deferredPrompt = null;
+    });
+  });
+}
+</script>
+
 
     <script src="../Public/Pages/Signing/login/script.js"></script>
 

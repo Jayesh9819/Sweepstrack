@@ -12,7 +12,7 @@
         echo "<script type='text/javascript'>document.addEventListener('DOMContentLoaded', function() { toastr['$type']('$message'); });</script>";
     }
 
-   
+
     if (isset($_SESSION['toast'])) {
         $toast = $_SESSION['toast'];
         echoToastScript($toast['type'], $toast['message']);
@@ -27,7 +27,7 @@
         unset($_SESSION['login_error']); // Clear the error message
     }
 
-   
+
     ?>
     <style>
         #referralLinkInput {
@@ -167,14 +167,13 @@
             $result = $stmt->get_result();
             $row = $result->fetch_assoc();
             $refercode = $row['refer_code'];
-            $page = $row['pagename'];
             $stmt->close();
 
             // Generate the referral link
-            $referralLink = "https://sweepstrac.net/index.php/Register_to_CustCount?r=" . $refercode . "&p=" . $page;
+            $domain = "https://quickchat.biz/index.php/referchar"; // Replace with your domain
+            $referralLink = $domain . "?user="; // Later appended via JavaScript
             ?>
-            <br> <br>
-            <br>
+
             <div class="container py-5">
                 <div class="row justify-content-center">
                     <div class="col-md-10">
@@ -182,15 +181,25 @@
                             <div class="card-body">
                                 <h5 class="card-title">Your Referral Details</h5>
                                 <p class="card-text">Share your referral link to invite friends and earn rewards!</p>
+                                <div class="form-group">
+                                    <label for="referredName">Name of Friend:</label>
+                                    <input type="text" class="form-control" id="referredName" placeholder="Enter your friend's name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="referredName">Email of Friend:</label>
+                                    <input type="email" class="form-control" id="email" placeholder="Enter your friend's Email">
+                                </div>
                                 <div class="input-group mb-3">
-                                    <input type="text" class="form-control" value="<?php echo htmlspecialchars($referralLink); ?>" id="referralLinkInput" readonly>
+                                    <input type="text" class="form-control" value="" id="referralLinkInput" readonly>
                                     <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" onclick="generateLink()">Generate Link</button>
                                         <button class="btn btn-outline-secondary" type="button" onclick="copyReferralLink()">Copy</button>
                                         <button class="btn btn-outline-primary" type="button" onclick="shareReferralLink()">Share</button>
                                     </div>
                                 </div>
                                 <div class="mt-4">
                                     <h6>Your Referral Code: <strong><?php echo htmlspecialchars($refercode); ?></strong></h6>
+                                    <h6>Your Referral ID: <strong><?php echo $userId; ?></strong></h6>
                                 </div>
                             </div>
                         </div>
@@ -287,7 +296,7 @@
         </div>
         <?
         include("./Public/Pages/Common/footer.php");
-       
+
         ?>
 
     </main>
@@ -313,7 +322,13 @@
 
     ?>
     <script>
-        // Function to copy referral link to clipboard
+        function generateLink() {
+            var name = document.getElementById('referredName').value;
+            var email = document.getElementById('email').value; // Get the email from the input
+            var link = '<?php echo $referralLink; ?>' + encodeURIComponent(name) + "&refer=<?php echo $refercode; ?>&email=" + encodeURIComponent(email);
+            document.getElementById('referralLinkInput').value = link;
+        }
+
         function copyReferralLink() {
             var copyText = document.getElementById("referralLinkInput");
             copyText.select(); // Select the text field
@@ -326,7 +341,7 @@
             var shareUrl = document.getElementById("referralLinkInput").value;
             if (navigator.share) {
                 navigator.share({
-                        title: 'Join me on CustCount',
+                        title: 'Join me on QuickChat',
                         url: shareUrl
                     }).then(() => {
                         console.log('Thanks for sharing!');

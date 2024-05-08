@@ -92,11 +92,117 @@
         header("Location: " . $_SERVER['PHP_SELF']);
         exit;
     }
+    function updateChatSetting($conn, $userId, $type, $path, $isActive)
+    {
+        // Check if the setting already exists
+        $stmt = $conn->prepare("SELECT id FROM chatSettings WHERE user_id = ? AND type = ?");
+        $stmt->bind_param("is", $userId, $type);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $existing = $result->fetch_assoc();
+
+        if ($existing) {
+            // Update existing setting
+            $stmt = $conn->prepare("UPDATE chatSettings SET path = ?, status = ?, updated_at = NOW() WHERE id = ?");
+            $stmt->bind_param("sii", $path, $isActive, $existing['id']);
+            $stmt->execute();
+        } else {
+            // Insert new setting
+            $stmt = $conn->prepare("INSERT INTO chatSettings (user_id, type, path, status, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(), NOW())");
+            $stmt->bind_param("issi", $userId, $type, $path, $isActive);
+            $stmt->execute();
+        }
+    }
+
+    // Check if the wallpaper form has been submitted
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['wallpaper'])) {
+        $userId = $_SESSION['user_id'];
+        $isActive = 1;  // Set as active
+        $path = $_POST['wallpaper'];  // Default selection
+
+        if ($path === "custom" && isset($_FILES['custom_wallpaper']['tmp_name'])) {
+            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/wallpapers/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            $fileName = time() . '-' . basename($_FILES['custom_wallpaper']['name']);
+            $targetFilePath = $uploadDir . $fileName;
+            if (move_uploaded_file($_FILES['custom_wallpaper']['tmp_name'], $targetFilePath)) {
+                $path = $fileName;  // Update path to the uploaded file
+            } else {
+                $path = "upload_failed";  // Handle upload failure
+            }
+        }
+        updateChatSetting($conn, $userId, "image", $path, $isActive);
+    }
+
+    // Check if the notification tone form has been submitted
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['notification_tone'])) {
+        $userId = $_SESSION['user_id'];
+        $isActive = 1;
+        $path = $_POST['notification_tone'];  // Default selection
+
+        if ($path === "custom" && isset($_FILES['custom_tone']['tmp_name'])) {
+            $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/uploads/tone/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+            $fileName = time() . '-' . basename($_FILES['custom_tone']['name']);
+            $targetFilePath = $uploadDir . $fileName;
+            if (move_uploaded_file($_FILES['custom_tone']['tmp_name'], $targetFilePath)) {
+                $path = $fileName;  // Update path to the uploaded file
+            } else {
+                $path = "upload_failed";  // Handle upload failure
+            }
+        }
+        updateChatSetting($conn, $userId, "sound", $path, $isActive);
+    }
     ?>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
         .settings-form {
             margin-bottom: 20px;
+        }
+
+        /* body,
+        html {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        } */
+
+        /* .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            padding: 10px;
+        } */
+
+        .image-box {
+            flex-basis: calc(50% - 20px);
+            /* Assuming 10px margin around each box */
+            margin: 10px;
+            height: 0;
+            padding-top: 25%;
+            /* This maintains a 4:2 aspect ratio */
+            position: relative;
+            background-color: #f0f0f0;
+            /* Light grey background for visibility */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Optional: adds shadow for better visibility */
+        }
+
+        .image-box img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Ensures the image covers the box, might crop */
         }
     </style>
 
@@ -166,12 +272,51 @@
                     </form>
 
                     <!-- Profile Picture Update Form -->
-                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" enctype="multipart/form-data" class="settings-form">
+                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="settings-form">
                         <div class="form-group">
                             <input type="file" name="profile_picture" required class="form-control-file">
                         </div>
                         <button type="submit" class="btn btn-primary">Upload Picture</button>
                     </form>
+                    <!-- Enhanced Wallpaper Selector -->
+                    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" class="settings-form">
+                        <!-- Wallpaper Selection and Custom Upload -->
+                        <div class="container">
+                            <div class="image-box">
+                                <img src="../assets/images/wallpape/1.jpeg"  alt="Image 1">
+                            </div>
+                            <div class="image-box">
+                                <img src="../assets/images/wallpape/2.jpg" alt="Image 2">
+                            </div>
+                            <div class="image-box">
+                                <img src="../assets/images/wallpape/3.jpeg" alt="Image 3">
+                            </div>
+                            <div class="image-box">
+                                <img src="../assets/images/wallpape/4.jpeg" alt="Image 4">
+                            </div>
+                        </div>
+
+                        <!-- Notification Tone Selection and Custom Upload -->
+                        <div class="form-group">
+                            <label for="notification_tone">Select notification tone:</label>
+                            <ul class="list-group">
+                                <li class="list-group-item" onclick="selectTone('ding')">Ding <audio src="path/to/ding.mp3" controls></audio></li>
+                                <li class="list-group-item" onclick="selectTone('chime')">Chime <audio src="path/to/chime.mp3" controls></audio></li>
+                                <li class="list-group-item" onclick="selectTone('alert')">Alert <audio src="path/to/alert.mp3" controls></audio></li>
+                                <li class="list-group-item">
+                                    Custom <input type="file" name="custom_tone" id="customToneInput" style="display:none;">
+                                    <button type="button" onclick="document.getElementById('customToneInput').click()">Upload</button>
+                                </li>
+                            </ul>
+                            <input type="hidden" name="notification_tone" id="notification_tone">
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary">Save Settings</button>
+                    </form>
+
+
+
                 </div>
             </div>
         </div>
@@ -201,7 +346,10 @@
     }
 
     ?>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- Live Customizer end -->
+
 
     <?php
     include("./Public/Pages/Portal/scripts.php");

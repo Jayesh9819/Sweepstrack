@@ -2,6 +2,8 @@
 <html lang="en" dir="ltr">
 
 <head>
+	<meta http-equiv="refresh" content="30">
+
 	<?php
 	ob_start();
 	include("./Public/Pages/Common/header.php");
@@ -49,6 +51,15 @@
 			$user = getUser($_SESSION['username'], $conn);
 
 			$conversations = getConversation($user['id'], $conn);
+		}
+		$role = $_SESSION['role'];
+		if ($role == 'Admin' || $role == 'Manager' || $role == 'Supervisor') {
+			$sql = "SELECT * FROM user WHERE role = 'Agent' AND last_seen(last_seen) COLLATE utf8mb4_unicode_ci  = 'Active' ";
+
+			$stmt = $conn->prepare($sql);
+			$stmt->execute();
+			$onlineAgents = $stmt->fetchAll(PDO::FETCH_ASSOC);
+			$pending = getAllUnreadMessages($conn);
 		}
 		if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
 			// This is an AJAX request
@@ -338,7 +349,9 @@
 											<h5 style="margin: 0; font-size: 16px; font-weight: 500; color: darkblue;"><?= htmlspecialchars($conversation['username']); ?></h5>
 											<?php
 											if ($conversation['role'] == 'User') {
-												echo '											<h5 style="margin: 0; font-size: 16px; font-weight: 500; color: darkblue;">Page Name:-' . htmlspecialchars($conversation['pagename']) . '</h5>';
+												echo '<h5 style="margin: 0; font-size: 16px; font-weight: 500; color: darkblue;">Page Name:-' . htmlspecialchars($conversation['pagename']) . '</h5>';
+											} elseif ($conversation['role'] == 'query') {
+												echo '<h5 style="margin: 0; font-size: 16px; font-weight: 500; color: darkblue;">Page Name:-' . htmlspecialchars($conversation['pagename']) . '</h5>';
 											}
 											?>
 											<h6 style="color: #010011; font-size: 14px; display: block;"><?= lastChat($_SESSION['user_id'], $conversation['id'], $conn); ?></h6>
@@ -360,7 +373,95 @@
 								No messages yet, start the conversation
 							</div>
 						<?php } ?>
+
 					</ul>
+					<?php if ($role == 'Admin' || $role == 'Manager' || $role == 'Supervisor') {
+					?>
+						<h3>Pending Chats</h3>
+						<ul id="chatList" class="list-group mvh-50 overflow-auto" style="padding: 0; margin: 0; list-style: none; background-color: #121212;">
+							<?php
+							if (!empty($pending)) {
+								foreach ($pending as $conversation) {
+									$hasUnread = !empty($conversation['unread_count']) && $conversation['unread_count'] > 0;
+									$bgColor = $hasUnread ? 'limegreen' : 'lightblue';
+							?> <?php if ($hasUnread) { ?>
+
+										<li class="list-group-item" style="border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; padding: 12px; background-color: <?= $bgColor; ?>;">
+											<a href="./Chat_Screen?user=<?= htmlspecialchars($conversation['from_user_name'] ?? 'Unknown'); ?>" style="display: flex; align-items: center; text-decoration: none; color: #ddd; width: 100%;">
+												<div class="chat-avatar" style="flex-shrink: 0;">
+													<img src="../uploads/profile/<?= !empty($conversation['p_p']) ? htmlspecialchars($conversation['p_p']) : '07.png'; ?>" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid #2c2c2c;">
+												</div>
+												<div class="chat-details" style="flex-grow: 1; margin-left: 15px;">
+													<h5 style="margin: 0; font-size: 16px; font-weight: 500; color: darkblue;"><?= htmlspecialchars($conversation['from_user_name'] ?? 'Unknown'); ?></h5>
+													<?php
+													echo '<h5 style="margin: 0; font-size: 16px; font-weight: 500; color: darkblue;">Page Name: -' . htmlspecialchars($conversation['from_pagename'] ?? 'N/A') . '</h5>';
+													?>
+												</div>
+												<span class="badge badge-primary unread-badge" data-conversation-id="<?= $conversation['from_user_id']; ?>" style="background-color: #007bff; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px;">
+													<?= $conversation['unread_count']; ?>
+												</span>
+												
+												<?php } ?>
+
+											</a>
+										</li>
+									<?php
+								}
+							} else { ?>
+									<div class="alert alert-info" style="text-align: center; background-color: #282828; color: #ccc; padding: 20px; margin-top: 20px; border-radius: 4px;">
+										<i class="fa fa-comments" style="font-size: 24px; display: block; margin-bottom: 10px;"></i>
+										No messages yet, start the conversation
+									</div>
+								<?php } ?>
+
+						</ul>
+						<h3>Online Agents</h3>
+						<ul id="chatList" class="list-group mvh-50 overflow-auto" style="padding: 0; margin: 0; list-style: none; background-color: #121212;">
+							<?php
+							if (!empty($onlineAgents)) {
+								foreach ($onlineAgents as $conversation) {
+									$hasUnread = !empty($conversation['unread_messages']) && $conversation['unread_messages'] > 0;
+									$bgColor = $hasUnread ? 'limegreen' : 'lightblue';
+									$statusDot = last_seen($conversation['last_seen']) == "Active" ? '<span class="status-dot" style="width: 10px; height: 10px; background-color: #0f0; border-radius: 50%; display: inline-block; margin-left: 10px;"></span>' : '';
+							?>
+									<li class="list-group-item" style="border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; padding: 12px; background-color: <?= $bgColor; ?>;">
+										<a href="./Chat_Screen?user=<?= htmlspecialchars($conversation['username']); ?>" style="display: flex; align-items: center; text-decoration: none; color: #ddd; width: 100%;">
+											<div class="chat-avatar" style="flex-shrink: 0;">
+												<img src="../uploads/profile/<?= !empty($conversation['p_p']) ? htmlspecialchars($conversation['p_p']) : '07.png'; ?>" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid #2c2c2c;">
+											</div>
+											<div class="chat-details" style="flex-grow: 1; margin-left: 15px;">
+												<h5 style="margin: 0; font-size: 16px; font-weight: 500; color: darkblue;"><?= htmlspecialchars($conversation['username']); ?></h5>
+												<?php
+												if ($conversation['role'] == 'User') {
+													echo '<h5 style="margin: 0; font-size: 16px; font-weight: 500; color: darkblue;">Page Name:-' . htmlspecialchars($conversation['pagename']) . '</h5>';
+												} elseif ($conversation['role'] == 'query') {
+													echo '<h5 style="margin: 0; font-size: 16px; font-weight: 500; color: darkblue;">Page Name:-' . htmlspecialchars($conversation['pagename']) . '</h5>';
+												}
+												?>
+												<h6 style="color: #010011; font-size: 14px; display: block;"><?= lastChat($_SESSION['user_id'], $conversation['id'], $conn); ?></h6>
+											</div>
+											<?php if ($hasUnread) { ?>
+												<span class="badge badge-primary unread-badge" data-conversation-id="<?= $conversation['id']; ?>" style="background-color: #007bff; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px;">
+													<?= $conversation['unread_messages']; ?>
+												</span>
+												<?= $statusDot; ?>
+
+											<?php } ?>
+
+										</a>
+									</li>
+								<?php
+								}
+							} else { ?>
+								<div class="alert alert-info" style="text-align: center; background-color: #282828; color: #ccc; padding: 20px; margin-top: 20px; border-radius: 4px;">
+									<i class="fa fa-comments" style="font-size: 24px; display: block; margin-bottom: 10px;"></i>
+									No messages yet, start the conversation
+								</div>
+							<?php } ?>
+
+						</ul>
+					<?php } ?>
+
 					</div>
 			</div>
 

@@ -113,7 +113,8 @@
                                             <th scope="col">ID</th>
                                             <th scope="col">Username</th>
                                             <th scope="col"> Amount</th>
-                                            <th scope="col">Bonus Amount</th>
+                                            <th scope="col">Excess Amount</th>
+                                            <th scope="col">Tip Amount</th>
                                             <th scope="col">Platform</th>
                                             <th scope="col">Cash App Name</th>
                                             <th scope="col">By Username</th>
@@ -128,8 +129,9 @@
                                                 <tr>
                                                         <td>{$row['tid']}</td>
                                                         <td>{$row['username']}</td>
-                                                        <td>{$row['recharge']}</td>
-                                                        <td>{$row['bonus']}</td>
+                                                        <td>{$row['redeem']}</td>
+                                                        <td>{$row['excess']}</td>
+                                                        <td>{$row['tip']}</td>
                                                         <td>{$row['platform']}</td>
                                                         <td>{$row['cashapp']}</td>
                                                         <td>{$row['by_u']}</td>

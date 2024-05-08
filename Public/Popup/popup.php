@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,10 +19,12 @@
             margin-top: 10px;
             z-index: 10000;
         }
+
         .popup-buttons {
             text-align: right;
             margin-top: 10px;
         }
+
         button {
             padding: 5px 10px;
             margin-left: 5px;
@@ -31,11 +34,14 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
         button:hover {
             opacity: 0.8;
         }
+
         #closeAll {
-            display: none; /* Initially hide the close all button */
+            display: none;
+            /* Initially hide the close all button */
             position: fixed;
             top: 20px;
             right: 20px;
@@ -49,86 +55,97 @@
         }
     </style>
 </head>
+
 <body>
     <button id="closeAll">Close All</button>
+    <div id="popupContainer"></div>
+
     <script>
-    function playNotificationSound() {
-        let audio = new Audio('noti.wav');
-        audio.play();
-    }
+        function playNotificationSound() {
+            let audio = new Audio('noti.wav');
+            audio.play();
+        }
 
-    let eventSource = new EventSource('../Public/Popup/bpop.php');
-    let popupContainer = document.createElement('div');
-    let notificationCount = 0; // Initialize notification count
+        function createPopup(data) {
+            let notification = data.message.trim();
+            if (notification.toLowerCase() !== "no new transactions") {
+                let popup = document.createElement('div');
+                popup.classList.add('popup');
+                popup.textContent = notification;
+                popup.style.backgroundColor = {
+                    high: 'red',
+                    medium: 'yellow',
+                    low: 'green'
+                } [data.color] || 'grey'; // Default color if priority is undefined
 
-    popupContainer.style.position = 'fixed';
-    popupContainer.style.top = '50px';
-    popupContainer.style.left = '50%';
-    popupContainer.style.transform = 'translateX(-50%)';
-    popupContainer.style.width = '320px';
-    document.body.appendChild(popupContainer);
+                let closeButton = document.createElement('button');
+                closeButton.textContent = 'Close';
+                closeButton.onclick = function() {
+                    popupContainer.removeChild(popup);
+                    notificationCount--;
+                    updateCloseAllVisibility();
+                };
 
-    eventSource.onmessage = function(event) {
-        let data = JSON.parse(event.data);
-        let notification = data.message.trim(); // Trim any extra whitespace
+                let viewButton = document.createElement('button');
+                viewButton.textContent = 'View';
+                viewButton.onclick = function() {
+                    window.location.href = data.url;
+                };
 
-        if (notification.toLowerCase() !== "no new transactions") {
-            let popup = document.createElement('div');
-            popup.classList.add('popup');
-            popup.textContent = notification;
-            // Set color based on priority
-            if (data.priority === 'high') {
-                popup.style.backgroundColor = 'red';
-            } else if (data.priority === 'medium') {
-                popup.style.backgroundColor = 'yellow';
-            } else {
-                popup.style.backgroundColor = 'green';
-            }
+                let buttonContainer = document.createElement('div');
+                buttonContainer.classList.add('popup-buttons');
+                buttonContainer.appendChild(viewButton);
+                buttonContainer.appendChild(closeButton);
 
-            let closeButton = document.createElement('button');
-            closeButton.textContent = 'Close';
-            closeButton.addEventListener('click', function() {
-                popupContainer.removeChild(popup);
-                notificationCount--; // Decrement count
+                popup.appendChild(buttonContainer);
+                popupContainer.appendChild(popup);
+                notificationCount++;
                 updateCloseAllVisibility();
-            });
+                playNotificationSound();
+            }
+        }
 
-            let viewButton = document.createElement('button');
-            viewButton.textContent = 'View';
-            viewButton.addEventListener('click', function() {
-                window.location.href = data.url; // Use dynamic URL from the server
-            });
+        let eventSource = new EventSource('../Public/Popup/bpop.php');
+        let popupContainer = document.getElementById('popupContainer');
+        let notificationCount = 0; // Initialize notification count
 
-            let buttonContainer = document.createElement('div');
-            buttonContainer.classList.add('popup-buttons');
-            buttonContainer.appendChild(viewButton);
-            buttonContainer.appendChild(closeButton);
+        eventSource.onmessage = function(event) {
+            let data = JSON.parse(event.data);
+            createPopup(data);
+        };
 
-            popup.appendChild(buttonContainer);
-            popupContainer.appendChild(popup);
-            notificationCount++; // Increment count
+        eventSource.onerror = function(event) {
+            console.error("EventSource encountered an error: ", event);
+        };
+
+        document.getElementById('closeAll').addEventListener('click', function() {
+            while (popupContainer.firstChild) {
+                popupContainer.removeChild(popupContainer.firstChild);
+            }
+            notificationCount = 0;
             updateCloseAllVisibility();
-            playNotificationSound();
+        });
+
+        function updateCloseAllVisibility() {
+            const closeAllButton = document.getElementById('closeAll');
+            closeAllButton.style.display = notificationCount > 2 ? 'block' : 'none';
         }
-    };
-
-    eventSource.onerror = function(event) {
-        console.error("EventSource encountered an error: ", event);
-    };
-
-    document.getElementById('closeAll').addEventListener('click', function() {
-        while (popupContainer.firstChild) {
-            popupContainer.removeChild(popupContainer.firstChild);
-        }
-        notificationCount = 0; // Reset count
-        updateCloseAllVisibility();
-    });
-
-    function updateCloseAllVisibility() {
-        const closeAllButton = document.getElementById('closeAll');
-        closeAllButton.style.display = notificationCount > 2 ? 'block' : 'none';
-    }
-</script>
+        setInterval(() => {
+            fetch('../Public/Popup/delay.php') // Adjust path as needed
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) { 
+                        createPopup({
+                            message: data.message,
+                            color: data.color,
+                            url:data.url
+                        });
+                    }
+                })
+                .catch(error => console.error('Failed to fetch periodic data:', error));
+        }, 600000); // 600,000 ms is 10 minutes
+    </script>
 
 </body>
+
 </html>

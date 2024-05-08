@@ -64,10 +64,9 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
         include './App/db/db_connect.php';
         // include './App/db/db_users.php';
         $role = $_SESSION['role'];
-        if ($role == 'Admin' ) {
+        if ($role == 'Admin') {
             $sql = "SELECT * FROM user WHERE Role = 'Agent'";
-        } 
-        else {
+        } else {
             $branch = $_SESSION['branch1'];
             $sql = "SELECT * FROM user WHERE Role = 'Agent' And branchname='$branch'";
         }
@@ -125,9 +124,9 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
                             <div class="card-header">
                                 <h4 class="mb-0">Agent List</h4>
                                 <form action="./add_user" method="POST">
-                                        <input type="text" name="role" value="Agent" hidden>
-                                        <button class="btn btn-outline-success rounded-pill mt-2" type="submit">Add Agent </button>
-                                    </form>
+                                    <input type="text" name="role" value="Agent" hidden>
+                                    <button class="btn btn-outline-success rounded-pill mt-2" type="submit">Add Agent </button>
+                                </form>
 
                             </div>
                             <?php
@@ -144,7 +143,7 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
 
                                 <div class="card-body">
                                     <div class="custom-table-effect table-responsive  border rounded">
-                                    <table class="table mb-0" id="example" >
+                                        <table class="table mb-0" id="example">
                                             <thead>
                                                 <tr class="bg-white">
                                                     <?php
@@ -210,7 +209,7 @@ if (in_array($role, ['Agent', 'Supervisor', 'Manager', 'Admin'])) {
 
             <?php
             include("./Public/Pages/Common/footer.php");
-           
+
             ?>
 
     </main>
