@@ -121,7 +121,6 @@
                                             <button  id="addToHomeScreenButton" class="btn btn-primary">Download for Android</button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             <button onclick="window.location.href='<?php echo $settings['ioslink']; ?>'" class="btn btn-primary">Download for iOS</button>
                                             </p>
-    <!-- <button id="addToHomeScreenButton" >Add to Home Screen</button> -->
 
     
 
