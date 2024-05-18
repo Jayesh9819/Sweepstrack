@@ -132,7 +132,7 @@ if (isset($_GET['start_time']) && isset($_GET['end_time'])) {
     $totalRecharge = $rechargeResult->fetch_assoc()['total_recharge'];
     $totalRedeem = $redeemResult->fetch_assoc()['total_redeem'];
     $activeUsers = $activeUsersResult->fetch_assoc()['active_users'];
-
+//
     // Close the database connection
     $conn->close();
 
